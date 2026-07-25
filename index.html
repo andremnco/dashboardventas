@@ -3,806 +3,629 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SaaS Premium ERP - Suplementos</title>
+    <title>DropSupps ERP - Cotizador Avanzado</title>
     
-    <!-- Tipografía Inter -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
-    <!-- Iconos Phosphor (Estilo Premium) -->
-    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js"></script>
 
     <style>
-        /* =========================================
-           VARIABLES PREMIUM & DESIGN SYSTEM
-           ========================================= */
+        /* === VARIABLES PREMIUM === */
         :root {
-            /* Colores Base */
             --primary: #56E859;
-            --primary-hover: #45D148;
+            --primary-gradient: linear-gradient(135deg, #56E859 0%, #2ea031 100%);
+            --primary-dark: #2ea031;
             --primary-light: rgba(86, 232, 89, 0.15);
-            
-            --bg-body: #F7F9FA;
-            --bg-surface: #FFFFFF;
-            
-            /* Escala de Grises (Stripe/Linear style) */
-            --text-main: #111827;
-            --text-muted: #6B7280;
-            --text-light: #9CA3AF;
-            --border-color: rgba(0, 0, 0, 0.06);
-            --border-hover: rgba(0, 0, 0, 0.12);
-            
-            /* UI Elements */
-            --radius-sm: 8px;
+            --bg-color: #f1f5f9;
+            --surface: #ffffff;
+            --surface-glass: rgba(255, 255, 255, 0.9);
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --danger: #ef4444;
+            --danger-light: rgba(239, 68, 68, 0.1);
+            --warning: #f59e0b;
+            --info: #3b82f6;
+            --sidebar-w: 250px;
+            --header-h: 64px;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.05);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.05);
+            --radius-sm: 6px;
             --radius-md: 12px;
-            --radius-lg: 18px; /* Solicitado */
-            
-            /* Sombras & Glassmorphism */
-            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.02);
-            --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.04);
-            --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.06);
-            --glass-bg: rgba(255, 255, 255, 0.75);
-            
-            /* Animaciones */
-            --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
-            --transition-smooth: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --radius-lg: 20px;
+            --transition: all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
 
-        /* =========================================
-           RESETS & BASE
-           ========================================= */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        [data-theme="dark"] {
+            --bg-color: #090e17;
+            --surface: #151e2e;
+            --surface-glass: rgba(21, 30, 46, 0.9);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: #2a3b54;
+            --shadow-sm: 0 4px 6px rgba(0,0,0,0.2);
+            --shadow-md: 0 10px 15px -3px rgba(0,0,0,0.3);
+            --shadow-lg: 0 20px 25px -5px rgba(0,0,0,0.4);
+            --primary-light: rgba(86, 232, 89, 0.1);
         }
 
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg-body);
-            color: var(--text-main);
-            -webkit-font-smoothing: antialiased;
-            overflow: hidden; /* Prevent body scroll, handle inside main */
-        }
-
-        /* =========================================
-           LAYOUT ARCHITECTURE
-           ========================================= */
-        .app-container {
-            display: flex;
-            height: 100vh;
-            width: 100vw;
-        }
-
-        /* SIDEBAR */
-        .sidebar {
-            width: 260px;
-            background: var(--bg-surface);
-            border-right: 1px solid var(--border-color);
-            padding: 24px 16px;
-            display: flex;
-            flex-direction: column;
-            transition: var(--transition-smooth);
-            z-index: 100;
-        }
-
-        .sidebar.collapsed {
-            width: 80px;
-        }
-
-        .logo-area {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 0 12px 32px;
-            font-weight: 700;
-            font-size: 1.1rem;
-            letter-spacing: -0.02em;
-        }
-
-        .logo-icon {
-            width: 32px;
-            height: 32px;
-            background: var(--text-main);
-            color: var(--primary);
-            border-radius: var(--radius-sm);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-        }
-
-        .nav-menu {
-            list-style: none;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .nav-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px;
-            border-radius: var(--radius-md);
-            color: var(--text-muted);
-            text-decoration: none;
-            font-weight: 500;
-            font-size: 0.95rem;
-            transition: var(--transition-fast);
-            cursor: pointer;
-        }
-
-        .nav-item i {
-            font-size: 20px;
-        }
-
-        .nav-item:hover {
-            background: rgba(0, 0, 0, 0.03);
-            color: var(--text-main);
-        }
-
-        .nav-item.active {
-            background: var(--primary-light);
-            color: var(--text-main);
-        }
-
-        /* MAIN CONTENT AREA */
-        .main-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            overflow-y: auto;
-            position: relative;
-        }
-
-        /* HEADER FLOTANTE (Glassmorphism) */
-        .topbar {
-            position: sticky;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 72px;
-            background: var(--glass-bg);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 40px;
-            z-index: 50;
-        }
-
-        .topbar-left {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-
-        .search-input-wrapper {
-            position: relative;
-            width: 320px;
-        }
-
-        .search-input-wrapper i {
-            position: absolute;
-            left: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-muted);
-        }
-
-        .search-input {
-            width: 100%;
-            background: var(--bg-surface);
-            border: 1px solid var(--border-color);
-            padding: 10px 16px 10px 40px;
-            border-radius: var(--radius-md);
-            font-family: inherit;
-            font-size: 0.9rem;
-            transition: var(--transition-fast);
-            box-shadow: var(--shadow-sm);
-        }
-
-        .search-input:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px var(--primary-light);
-        }
-
-        .user-profile {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .avatar {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: var(--text-main);
-            color: var(--primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-        }
-
-        /* VIEW CONTAINER */
-        .view-container {
-            padding: 40px;
-            max-width: 1600px;
-            margin: 0 auto;
-            width: 100%;
-            display: none;
-            animation: fadeIn 0.4s ease-out;
-        }
-
-        .view-container.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* =========================================
-           UI COMPONENTS
-           ========================================= */
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            margin-bottom: 32px;
-        }
-
-        .page-title {
-            font-size: 1.75rem;
-            font-weight: 700;
-            letter-spacing: -0.03em;
-        }
-
-        .page-subtitle {
-            color: var(--text-muted);
-            margin-top: 4px;
-            font-size: 0.95rem;
-        }
-
-        /* Botones */
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 10px 20px;
-            border-radius: var(--radius-md);
-            font-weight: 600;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: var(--transition-fast);
-            border: none;
-        }
-
-        .btn-primary {
-            background: var(--text-main);
-            color: var(--primary);
-        }
-
-        .btn-primary:hover {
-            background: #000;
-            transform: translateY(-1px);
-            box-shadow: var(--shadow-md);
-        }
-
-        /* Tarjetas */
-        .card {
-            background: var(--bg-surface);
-            border-radius: var(--radius-lg);
-            padding: 24px;
-            border: 1px solid var(--border-color);
-            box-shadow: var(--shadow-sm);
-            transition: var(--transition-smooth);
-        }
-
-        .card:hover {
-            box-shadow: var(--shadow-md);
-            border-color: var(--border-hover);
-            transform: translateY(-2px);
-        }
-
-        .badge {
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            background: var(--primary-light);
-            color: #166534;
-        }
-
-        /* =========================================
-           DASHBOARD GRID
-           ========================================= */
-        .metric-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 24px;
-            margin-bottom: 32px;
-        }
-
-        .metric-card {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .metric-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            color: var(--text-muted);
-            font-size: 0.9rem;
-            font-weight: 500;
-        }
-
-        .metric-value {
-            font-size: 2rem;
-            font-weight: 700;
-            letter-spacing: -0.04em;
-            color: var(--text-main);
-        }
-
-        .metric-trend {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            font-size: 0.85rem;
-            font-weight: 500;
-        }
-
-        .trend-up { color: #16A34A; }
-        .trend-down { color: #DC2626; }
-
-        /* =========================================
-           BUSCADOR CLÍNICO (AI)
-           ========================================= */
-        .ai-search-container {
-            max-width: 800px;
-            margin: 40px auto;
-            text-align: center;
-        }
+        /* === GLOBAL === */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { font-size: 14px; background-color: var(--bg-color); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; transition: var(--transition); }
+        h1, h2, h3, h4 { font-weight: 700; letter-spacing: -0.01em; color: var(--text-main); }
         
-        .ai-input-wrapper {
-            position: relative;
-            margin-top: 32px;
-        }
+        .flex { display: flex; } .grid { display: grid; }
+        .justify-between { justify-content: space-between; } .align-center { align-items: center; }
+        .gap-1 { gap: 0.5rem; } .gap-2 { gap: 1rem; } .gap-3 { gap: 1.5rem; }
+        .mt-1 { margin-top: 1rem; } .mb-1 { margin-bottom: 1rem; }
+        
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        [data-theme="dark"] ::-webkit-scrollbar-thumb { background: #334155; }
 
-        .ai-input {
-            width: 100%;
-            padding: 20px 24px 20px 60px;
-            font-size: 1.1rem;
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-md);
-            transition: var(--transition-smooth);
-        }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(15px) scale(0.99); } to { opacity: 1; transform: translateY(0) scale(1); } }
+        .animate-in { animation: fadeInUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; }
+        .stagger-1 { animation-delay: 0.05s; } .stagger-2 { animation-delay: 0.1s; } .stagger-3 { animation-delay: 0.15s; }
 
-        .ai-input:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 4px var(--primary-light), var(--shadow-lg);
-        }
+        /* === CONTROLES === */
+        .btn { padding: 0.6rem 1.2rem; border: none; border-radius: var(--radius-sm); cursor: pointer; font-weight: 600; font-size: 0.85rem; transition: var(--transition); display: inline-flex; align-items: center; gap: 0.5rem; justify-content: center;}
+        .btn-primary { background: var(--primary-gradient); color: #000; box-shadow: 0 2px 8px rgba(86, 232, 89, 0.25); }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(86, 232, 89, 0.4); }
+        .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text-main); }
+        .btn-outline:hover { background: var(--bg-color); border-color: var(--text-muted); }
+        .btn-icon { padding: 0.5rem; background: transparent; border: none; cursor: pointer; color: var(--text-muted); font-size: 1rem; border-radius: var(--radius-sm); transition: var(--transition); }
+        .btn-icon:hover { color: var(--primary-dark); background: var(--primary-light); transform: scale(1.05); }
 
-        .ai-input-wrapper i {
-            position: absolute;
-            left: 24px;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 24px;
-            color: var(--primary);
-        }
+        .form-control { padding: 0.6rem 1rem; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); color: var(--text-main); outline: none; transition: var(--transition); width: 100%; font-size: 0.85rem; }
+        .form-control:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
 
-        .ai-results {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-            margin-top: 32px;
-            text-align: left;
-            opacity: 0;
-            transform: translateY(10px);
-            transition: var(--transition-smooth);
-        }
+        .autofill-dropdown { position: absolute; top: 100%; left: 0; width: 100%; background: var(--surface-glass); backdrop-filter: blur(8px); border: 1px solid var(--border); border-radius: var(--radius-sm); box-shadow: var(--shadow-lg); z-index: 50; display: none; overflow: hidden; margin-top: 4px; }
+        .autofill-item { padding: 0.6rem 1rem; cursor: pointer; font-size: 0.85rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 0.8rem; transition: var(--transition); }
+        .autofill-item:hover { background: var(--primary-light); padding-left: 1.5rem; }
+        .autofill-item img { width: 24px; height: 24px; border-radius: 4px; object-fit: cover; }
 
-        .ai-results.show {
-            opacity: 1;
-            transform: translateY(0);
-        }
+        /* === COLORES DE PLATAFORMAS === */
+        .plat-badge { padding: 0.2rem 0.6rem; border-radius: 4px; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; display: inline-block; letter-spacing: 0.05em; border: 1px solid transparent; }
+        .plat-aliclick { background: rgba(59, 130, 246, 0.15); color: #2563eb; border-color: rgba(59, 130, 246, 0.3); }
+        .plat-dropi { background: rgba(249, 115, 22, 0.15); color: #ea580c; border-color: rgba(249, 115, 22, 0.3); }
+        .plat-alibaba { background: rgba(234, 179, 8, 0.15); color: #ca8a04; border-color: rgba(234, 179, 8, 0.3); }
+        .plat-1688 { background: rgba(239, 68, 68, 0.15); color: #dc2626; border-color: rgba(239, 68, 68, 0.3); }
+        .plat-aliexpress { background: rgba(244, 63, 94, 0.15); color: #e11d48; border-color: rgba(244, 63, 94, 0.3); }
+        .plat-otro { background: rgba(100, 116, 139, 0.15); color: #475569; border-color: rgba(100, 116, 139, 0.3); }
+        [data-theme="dark"] .plat-aliclick { color: #60a5fa; } [data-theme="dark"] .plat-dropi { color: #fb923c; } [data-theme="dark"] .plat-alibaba { color: #facc15; } [data-theme="dark"] .plat-1688 { color: #f87171; } [data-theme="dark"] .plat-aliexpress { color: #fb7185; } [data-theme="dark"] .plat-otro { color: #94a3b8; }
 
-        .supplement-card {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
+        /* === SIDEBAR === */
+        .sidebar { width: var(--sidebar-w); background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; z-index: 10; }
+        .logo { font-size: 1.4rem; font-weight: 900; padding: 1.5rem; display: flex; align-items: center; gap: 0.6rem; border-bottom: 1px solid var(--border); }
+        .logo i { background: var(--primary-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .nav-menu { padding: 1rem 0.8rem; display: flex; flex-direction: column; gap: 0.3rem; flex: 1; overflow-y: auto;}
+        .nav-item { padding: 0.75rem 1rem; border-radius: var(--radius-sm); cursor: pointer; display: flex; align-items: center; justify-content: space-between; color: var(--text-muted); transition: var(--transition); font-weight: 600; font-size: 0.85rem; border-left: 3px solid transparent; }
+        .nav-item-left { display: flex; align-items: center; gap: 0.8rem; }
+        .nav-item-left i { font-size: 1rem; width: 16px; text-align: center; }
+        .nav-item:hover { background: var(--bg-color); color: var(--text-main); transform: translateX(3px); }
+        .nav-item.active { background: var(--primary-light); color: var(--primary-dark); border-left-color: var(--primary); transform: translateX(0); }
+        [data-theme="dark"] .nav-item.active { color: var(--primary); }
+        .badge { background: var(--warning); color: #fff; font-size: 0.7rem; font-weight: 800; padding: 0.15rem 0.5rem; border-radius: 12px; }
+        
+        .sidebar-title { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); font-weight: 800; margin: 1rem 0 0.2rem 1rem; }
+        .sidebar-bottom { padding: 1rem; border-top: 1px solid var(--border); background: var(--surface); }
 
-        .supplement-card img {
-            width: 100%;
-            height: 160px;
-            object-fit: cover;
-            border-radius: var(--radius-md);
-            background: #f3f4f6;
-        }
+        /* === HEADER Y MAIN CONTENT === */
+        .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; position: relative;}
+        .header { height: var(--header-h); background: var(--surface-glass); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 2rem; z-index: 5; }
+        .search-bar { position: relative; width: 400px; }
+        .search-bar input { border-radius: 30px; padding: 0.5rem 1.2rem 0.5rem 2.8rem; background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow-sm); }
+        .search-bar i { position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 1rem;}
+        
+        .content-scroll { flex: 1; overflow-y: auto; padding: 2rem; }
+        .section-title { font-size: 1.6rem; margin-bottom: 1.5rem; color: var(--text-main); display: flex; justify-content: space-between; align-items: flex-end; }
 
-        /* =========================================
-           COTIZADOR (Split Layout)
-           ========================================= */
-        .quoter-layout {
-            display: grid;
-            grid-template-columns: 1fr 400px;
-            gap: 32px;
-            height: calc(100vh - 200px);
-        }
+        /* === DASHBOARD CARDS & LISTS === */
+        .stats-grid { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.2rem; margin-bottom: 2rem; }
+        .stat-card { background: var(--surface); padding: 1.5rem; border-radius: var(--radius-md); box-shadow: var(--shadow-md); border: 1px solid var(--border); position: relative; overflow: hidden; transition: var(--transition); display: flex; flex-direction: column;}
+        .stat-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); border-color: var(--primary); }
+        .stat-card-icon { position: absolute; top: -10px; right: -10px; font-size: 5rem; color: var(--text-main); opacity: 0.03; transform: rotate(-15deg); transition: var(--transition); }
+        .stat-card:hover .stat-card-icon { transform: rotate(0deg) scale(1.1); opacity: 0.06; }
+        .stat-card h3 { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.3rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; z-index: 1;}
+        .stat-card .value { font-size: 1.8rem; font-weight: 800; color: var(--text-main); z-index: 1;}
 
-        .quoter-cart {
-            background: var(--bg-surface);
-            border-radius: var(--radius-lg);
-            border: 1px solid var(--border-color);
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
+        .dash-lists-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+        .dash-panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1.2rem; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; gap: 0.8rem; }
+        .dash-panel h3 { font-size: 0.9rem; color: var(--text-main); border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;}
+        .dash-list-item { display: flex; align-items: center; gap: 0.8rem; padding: 0.5rem 0; border-bottom: 1px dashed var(--border); font-size: 0.85rem; }
+        .dash-list-item:last-child { border-bottom: none; }
+        .dash-list-item img { width: 30px; height: 30px; border-radius: 4px; object-fit: cover; background: var(--bg-color); }
+        .dash-list-badge { background: var(--bg-color); padding: 0.2rem 0.5rem; border-radius: 20px; font-size: 0.7rem; font-weight: 700; color: var(--text-muted); }
 
-        .quoter-panel {
-            background: var(--text-main);
-            color: white;
-            border-radius: var(--radius-lg);
-            padding: 32px;
-            display: flex;
-            flex-direction: column;
-            gap: 24px;
-            box-shadow: var(--shadow-lg);
-        }
+        /* === TABLAS REDUCIDAS === */
+        .table-container { background: var(--surface); border-radius: var(--radius-md); box-shadow: var(--shadow-md); border: 1px solid var(--border); overflow: hidden; }
+        table { width: 100%; border-collapse: collapse; text-align: left; }
+        th, td { padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); vertical-align: middle; font-size: 0.85rem;}
+        th { background: var(--bg-color); font-weight: 700; color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; cursor: pointer; transition: var(--transition);}
+        th:hover { color: var(--text-main); background: var(--border); }
+        tr:hover td { background: var(--bg-color); }
+        
+        .sup-avatar { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 1px solid var(--border); background: var(--bg-color); display: flex; justify-content: center; align-items: center; font-weight: bold; color: var(--text-muted); font-size: 0.8rem;}
 
-        .panel-row {
-            display: flex;
-            justify-content: space-between;
-            padding-bottom: 16px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
+        /* === GRID PRODUCTOS & MED CARDS === */
+        .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; }
+        .product-card { background: var(--surface); border-radius: var(--radius-md); border: 1px solid var(--border); overflow: hidden; box-shadow: var(--shadow-md); transition: var(--transition); display: flex; flex-direction: column; }
+        .product-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); border-color: var(--primary-light); }
+        
+        .prod-header { display: flex; gap: 1rem; padding: 1.2rem; border-bottom: 1px dashed var(--border); align-items: center; }
+        .prod-img { width: 60px; height: 60px; border-radius: var(--radius-sm); object-fit: cover; border: 1px solid var(--border); background: var(--bg-color); display: flex; justify-content: center; align-items: center; font-size: 1.5rem; color: var(--text-muted); flex-shrink: 0; }
+        .prod-titles h4 { font-size: 1rem; margin-bottom: 0.2rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        
+        .sup-item { display: flex; justify-content: space-between; align-items: center; background: var(--surface); padding: 0.6rem 0.8rem; border-radius: var(--radius-sm); border: 1px solid var(--border); margin-bottom: 0.5rem; transition: var(--transition); }
+        .sup-item:hover { border-color: var(--primary); transform: translateX(2px); }
 
-        .panel-row:last-child {
-            border-bottom: none;
-            padding-top: 16px;
-            font-size: 1.25rem;
-            font-weight: 700;
-        }
+        /* === COTIZADOR GENERAL (MERGED) === */
+        .quoter-layout { display: grid; grid-template-columns: 320px 1fr; gap: 1.5rem; height: calc(100vh - 150px); }
+        .quoter-sidebar { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); display: flex; flex-direction: column; overflow: hidden; box-shadow: var(--shadow-sm); }
+        .quoter-header { padding: 1rem; border-bottom: 1px solid var(--border); background: var(--bg-color); }
+        .quoter-list { flex: 1; overflow-y: auto; padding: 1rem; display: flex; flex-direction: column; gap: 0.8rem; background: var(--bg-color); }
+        
+        .quote-item { background: var(--surface); border: 1px solid var(--border); padding: 0.8rem; border-radius: var(--radius-sm); display: flex; flex-direction: column; gap: 0.5rem; position: relative; box-shadow: var(--shadow-sm);}
+        .quote-qty-control { display: flex; align-items: center; gap: 0.5rem; }
+        .qty-btn { width: 28px; height: 28px; border-radius: 4px; border: 1px solid var(--border); background: var(--bg-color); cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+        .qty-input { width: 40px; text-align: center; border: 1px solid var(--border); border-radius: 4px; padding: 0.2rem; font-weight: 700; font-size: 0.85rem;}
+        
+        .match-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); margin-bottom: 1.5rem; box-shadow: var(--shadow-md); position: relative; overflow: hidden; display: flex; flex-direction: column;}
+        .match-header { display: flex; justify-content: space-between; align-items: flex-start; padding: 1.2rem; border-bottom: 1px dashed var(--border); background: var(--surface); }
+        
+        /* Inline Calculator inside Match */
+        .match-calc-section { background: var(--bg-color); padding: 1.2rem; border-top: 1px solid var(--border); display: grid; grid-template-columns: 1fr 200px; gap: 1.5rem; align-items: center; }
+        .calc-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        .calc-group { display: flex; flex-direction: column; gap: 0.3rem; }
+        .calc-group label { font-size: 0.7rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; }
+        .calc-group input { padding: 0.5rem; border: 1px solid var(--border); border-radius: 4px; font-weight: 600; background: var(--surface); }
+        .calc-res-box { background: var(--surface); border: 2px solid var(--primary); border-radius: 8px; padding: 1rem; text-align: center; box-shadow: 0 4px 10px rgba(86, 232, 89, 0.15); }
 
-        .profit-badge {
-            background: var(--primary);
-            color: var(--text-main);
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-weight: 700;
-        }
+        /* === MODALES === */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.7); display: none; justify-content: center; align-items: center; z-index: 1000; backdrop-filter: blur(5px); }
+        .modal { background: var(--surface); width: 95%; max-width: 900px; max-height: 92vh; border-radius: var(--radius-md); display: flex; flex-direction: column; box-shadow: var(--shadow-lg); border: 1px solid var(--border); animation: fadeInUp 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+        .modal-header { padding: 1.2rem 2rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: var(--surface); border-radius: var(--radius-md) var(--radius-md) 0 0; }
+        .modal-body { padding: 2rem; overflow-y: auto; background: var(--bg-color); }
+        .modal-footer { padding: 1rem 2rem; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 1rem; background: var(--surface); border-radius: 0 0 var(--radius-md) var(--radius-md); }
+        
+        .sup-header-form { display: flex; gap: 1.5rem; margin-bottom: 1.5rem; background: var(--surface); padding: 1.5rem; border-radius: var(--radius-sm); border: 1px solid var(--border); box-shadow: var(--shadow-sm); }
+        .img-upload-box { width: 100px; aspect-ratio: 1; border: 2px dashed var(--border); border-radius: var(--radius-sm); display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; position: relative; overflow: hidden; background: var(--bg-color); transition: var(--transition); flex-shrink: 0;}
+        .img-upload-box img { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; display: none; }
+        .img-upload-box input[type="file"] { position: absolute; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+        .product-item-form { background: var(--surface); border: 1px solid var(--border); padding: 1.5rem; border-radius: var(--radius-sm); margin-bottom: 1.5rem; position: relative; display: flex; flex-direction: column; gap: 1rem; transition: var(--transition); box-shadow: var(--shadow-sm); }
 
-        /* Responsive */
-        @media (max-width: 1024px) {
-            .quoter-layout {
-                grid-template-columns: 1fr;
-                height: auto;
-            }
+        .toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 2000; display: flex; flex-direction: column; gap: 10px; }
+
+        @media print {
+            body { background: white; color: black; }
+            .sidebar, .header, .quoter-sidebar, .toast-container, .modal-overlay, .btn { display: none !important; }
+            .main-content { overflow: visible; } .content-scroll { padding: 0; overflow: visible; }
+            .quoter-layout { display: block; height: auto; }
+            .match-card { page-break-inside: avoid; border: 1px solid #ccc; box-shadow: none; margin-bottom: 2rem; }
+            .match-calc-section { display: none !important; } /* Hide calculator when printing quote */
         }
+        .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
-<div class="app-container">
-    
     <!-- SIDEBAR -->
-    <aside class="sidebar" id="sidebar">
-        <div class="logo-area">
-            <div class="logo-icon"><i class="ph-bold ph-leaf"></i></div>
-            <span class="logo-text">NutriERP</span>
-        </div>
-        <nav>
-            <ul class="nav-menu">
-                <li><a class="nav-item active" onclick="switchTab('dashboard')"><i class="ph ph-squares-four"></i> Dashboard</a></li>
-                <li><a class="nav-item" onclick="switchTab('providers')"><i class="ph ph-buildings"></i> Proveedores</a></li>
-                <li><a class="nav-item" onclick="switchTab('products')"><i class="ph ph-pill"></i> Productos</a></li>
-                <li><a class="nav-item" onclick="switchTab('quoter')"><i class="ph ph-calculator"></i> Cotizador</a></li>
-                <li><a class="nav-item" onclick="switchTab('clinical')"><i class="ph ph-brain"></i> IA Clínica</a></li>
-                <li><a class="nav-item" onclick="switchTab('import')"><i class="ph ph-cloud-arrow-up"></i> Datos</a></li>
-            </ul>
+    <aside class="sidebar">
+        <div class="logo"><i class="fa-solid fa-layer-group"></i> DropSupps</div>
+        <nav class="nav-menu">
+            <div class="sidebar-title">Principal</div>
+            <div class="nav-item active" onclick="switchView('dashboard')"><div class="nav-item-left"><i class="fa-solid fa-chart-pie"></i> Resumen</div></div>
+            <div class="nav-item" onclick="switchView('suppliers')"><div class="nav-item-left"><i class="fa-solid fa-building"></i> Proveedores</div></div>
+            <div class="nav-item" onclick="switchView('products')"><div class="nav-item-left"><i class="fa-solid fa-tags"></i> Catálogo B2B</div></div>
+            
+            <div class="sidebar-title">Ventas & Herramientas</div>
+            <div class="nav-item" onclick="switchView('med-search')"><div class="nav-item-left" style="color: var(--info);"><i class="fa-solid fa-stethoscope"></i> Búsqueda Clínica</div></div>
+            <div class="nav-item" onclick="switchView('quoter')" style="background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.2);"><div class="nav-item-left" style="color: var(--warning);"><i class="fa-solid fa-calculator"></i> Cotizador General</div><span class="badge" id="quoteBadge">0</span></div>
+
+            <div class="sidebar-title">Sistema</div>
+            <div class="nav-item" onclick="openModal('importModal')"><div class="nav-item-left"><i class="fa-solid fa-database"></i> Datos (Excel/JSON)</div></div>
         </nav>
+        <div class="sidebar-bottom">
+            <div class="nav-item" onclick="toggleTheme()" style="margin-bottom: 0.5rem; background: var(--bg-color);"><div class="nav-item-left"><i class="fa-solid fa-moon"></i> Aspecto</div></div>
+        </div>
     </aside>
 
-    <!-- MAIN CONTENT -->
     <main class="main-content">
-        
-        <!-- HEADER -->
-        <header class="topbar">
-            <div class="topbar-left">
-                <button class="btn" style="padding: 8px; background: transparent;" onclick="toggleSidebar()">
-                    <i class="ph ph-list" style="font-size: 24px; color: var(--text-muted);"></i>
-                </button>
-                <div class="search-input-wrapper">
-                    <i class="ph ph-magnifying-glass"></i>
-                    <input type="text" class="search-input" placeholder="Buscar SKUs, proveedores...">
-                </div>
+        <header class="header">
+            <div class="search-bar">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="globalSearch" placeholder="Buscar productos, SKUs..." oninput="handleSearch()">
             </div>
-            <div class="user-profile">
-                <button class="btn" style="background: transparent; padding: 8px;"><i class="ph ph-bell" style="font-size: 24px; color: var(--text-muted);"></i></button>
-                <div class="avatar">UX</div>
-            </div>
+            <button class="btn btn-primary" onclick="openSupplierModal()"><i class="fa-solid fa-plus"></i> Nuevo Proveedor</button>
         </header>
 
-        <!-- VIEWS -->
-
         <!-- 1. DASHBOARD -->
-        <section id="dashboard" class="view-container active">
-            <div class="section-header">
-                <div>
-                    <h1 class="page-title">Visión General</h1>
-                    <p class="page-subtitle">Rendimiento de dropshipping y métricas clave.</p>
-                </div>
-                <button class="btn btn-primary"><i class="ph ph-download-simple"></i> Exportar Reporte</button>
+        <div class="content-scroll animate-in" id="view-dashboard">
+            <div class="section-title"><h2>Panel Ejecutivo</h2></div>
+            <div class="stats-grid grid">
+                <div class="stat-card stagger-1"><i class="fa-solid fa-building stat-card-icon"></i><h3>Proveedores</h3><div class="value" id="stat-suppliers">0</div></div>
+                <div class="stat-card stagger-2"><i class="fa-solid fa-box stat-card-icon"></i><h3>Productos Únicos</h3><div class="value" id="stat-products">0</div></div>
+                <div class="stat-card stagger-3" style="border-bottom: 3px solid var(--info);"><i class="fa-solid fa-wallet stat-card-icon" style="color:var(--info);"></i><h3>Valor Inventario</h3><div class="value text-info" id="stat-inventory" style="font-size:1.5rem;">S/ 0.00</div></div>
             </div>
 
-            <div class="metric-grid">
-                <div class="card metric-card">
-                    <div class="metric-header">
-                        <span>Ingresos Totales (Mes)</span>
-                        <i class="ph ph-trend-up"></i>
-                    </div>
-                    <div class="metric-value">$124,500</div>
-                    <div class="metric-trend trend-up"><i class="ph ph-arrow-up-right"></i> +14.5% vs mes anterior</div>
+            <!-- Nuevas métricas dinámicas -->
+            <div class="dash-lists-container">
+                <div class="dash-panel stagger-1">
+                    <h3><i class="fa-solid fa-clock-rotate-left text-green"></i> Recién Agregados</h3>
+                    <div id="dash-recent" style="display:flex; flex-direction:column; gap:0.5rem;"></div>
                 </div>
-                <div class="card metric-card">
-                    <div class="metric-header">
-                        <span>Margen Promedio</span>
-                        <i class="ph ph-percent"></i>
-                    </div>
-                    <div class="metric-value">42.8%</div>
-                    <div class="metric-trend trend-up"><i class="ph ph-arrow-up-right"></i> +2.1% optimización</div>
+                <div class="dash-panel stagger-2">
+                    <h3><i class="fa-solid fa-magnifying-glass text-info"></i> Términos Más Buscados</h3>
+                    <div id="dash-searched" style="display:flex; flex-direction:column; gap:0.5rem;"></div>
                 </div>
-                <div class="card metric-card">
-                    <div class="metric-header">
-                        <span>Productos Activos</span>
-                        <i class="ph ph-package"></i>
-                    </div>
-                    <div class="metric-value">1,432</div>
-                    <div class="metric-trend"><span class="badge">12 sin stock</span></div>
-                </div>
-                <div class="card metric-card">
-                    <div class="metric-header">
-                        <span>Proveedores Conectados</span>
-                        <i class="ph ph-plugs-connected"></i>
-                    </div>
-                    <div class="metric-value">24</div>
-                    <div class="metric-trend trend-up"><i class="ph ph-check-circle"></i> 100% operativos</div>
+                <div class="dash-panel stagger-3">
+                    <h3><i class="fa-solid fa-fire text-warning"></i> Más Solicitados (Cotizados)</h3>
+                    <div id="dash-quoted" style="display:flex; flex-direction:column; gap:0.5rem;"></div>
                 </div>
             </div>
+        </div>
 
-            <!-- Gráfico Placeholder (Estructura Premium) -->
-            <div class="card" style="height: 400px; display: flex; flex-direction: column;">
-                <div class="section-header" style="margin-bottom: 20px;">
-                    <h3 style="font-size: 1.1rem; font-weight: 600;">Rendimiento de Plataformas</h3>
-                    <select style="border: 1px solid var(--border-color); border-radius: 8px; padding: 6px 12px; font-family: inherit;">
-                        <option>Últimos 30 días</option>
-                        <option>Este año</option>
-                    </select>
-                </div>
-                <div style="flex: 1; border: 1px dashed var(--border-color); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; color: var(--text-light); background: #fafafa;">
-                    [Área reservada para integración con Chart.js / Recharts]
+        <!-- 2. PROVEEDORES -->
+        <div class="content-scroll hidden animate-in" id="view-suppliers">
+            <div class="section-title">
+                <h2>Directorio B2B</h2>
+                <select class="form-control" style="width: 200px;" id="filterPlatform" onchange="renderSuppliersTable()"><option value="">Todas plataformas</option><option value="Aliclick">Aliclick</option><option value="Dropi">Dropi</option><option value="Alibaba">Alibaba</option><option value="1688">1688</option><option value="AliExpress">AliExpress</option><option value="Otro">Otro</option></select>
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead><tr><th>Logo</th><th onclick="sortTable('name')">Empresa</th><th onclick="sortTable('platform')">Plataforma</th><th onclick="sortTable('prodCount')">Productos</th><th>Contacto</th><th style="text-align: right;">Gestión</th></tr></thead>
+                    <tbody id="supplierTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 3. PRODUCTOS -->
+        <div class="content-scroll hidden animate-in" id="view-products">
+            <div class="section-title"><h2>Catálogo de Precios</h2><select class="form-control" style="width:200px;" id="filterCategory" onchange="renderProductsGrid()"><option value="">Categorías</option></select></div>
+            <div class="products-grid" id="productsGridContainer"></div>
+        </div>
+
+        <!-- 4. BUSCADOR MEDICO -->
+        <div class="content-scroll hidden animate-in" id="view-med-search">
+            <div class="section-title"><h2>Búsqueda Clínica</h2></div>
+            <div style="background:var(--surface); padding:2rem; border-radius:var(--radius-md); text-align:center; margin-bottom:2rem; box-shadow:var(--shadow-sm);">
+                <div class="search-bar" style="width:100%; max-width:600px; margin:0 auto; display:flex; gap:1rem;">
+                    <i class="fa-solid fa-stethoscope" style="left:1.5rem;"></i>
+                    <input type="text" id="medicalSearchInput" placeholder="Ej: hipertensión, insomnio..." oninput="handleMedicalSearch()" style="padding-left:3.5rem;">
+                    <button class="btn btn-primary" style="background:var(--info); color:white;" onclick="handleMedicalSearch()">Analizar</button>
                 </div>
             </div>
-        </section>
+            <div id="medSearchResultsContainer" class="products-grid"></div>
+        </div>
 
-        <!-- 2. BUSCADOR CLÍNICO IA -->
-        <section id="clinical" class="view-container">
-            <div class="ai-search-container">
-                <i class="ph-duotone ph-sparkle" style="font-size: 48px; color: var(--primary); margin-bottom: 16px;"></i>
-                <h1 class="page-title">Asistente Clínico Inteligente</h1>
-                <p class="page-subtitle" style="font-size: 1.1rem;">Describe un síntoma o problema y la IA mapeará los suplementos óptimos en tiempo real.</p>
-                
-                <div class="ai-input-wrapper">
-                    <i class="ph ph-magic-wand"></i>
-                    <input type="text" id="aiSearchInput" class="ai-input" placeholder="Ej: 'El cliente tiene problemas para dormir y estrés alto...'">
-                </div>
-
-                <!-- Resultados dinámicos de IA -->
-                <div class="ai-results" id="aiResults">
-                    <div class="card supplement-card">
-                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                            <span class="badge">Alta Relevancia</span>
-                            <i class="ph-fill ph-check-circle" style="color: var(--primary); font-size: 20px;"></i>
-                        </div>
-                        <h3 style="font-size: 1.2rem; margin-top: 12px;">Glicinato de Magnesio</h3>
-                        <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.5;">Ideal para relajación muscular y del sistema nervioso central.</p>
-                        <div style="margin-top: auto; padding-top: 16px; border-top: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
-                            <span style="font-weight: 600;">$14.50 CPA</span>
-                            <button class="btn" style="padding: 6px 12px; background: #f3f4f6;">Ver 5 Proveedores</button>
-                        </div>
-                    </div>
-                    
-                    <div class="card supplement-card">
-                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                            <span class="badge" style="background: #e0e7ff; color: #3730a3;">Sinergia</span>
-                        </div>
-                        <h3 style="font-size: 1.2rem; margin-top: 12px;">L-Teanina</h3>
-                        <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.5;">Reduce la ansiedad sin causar somnolencia, mejora ondas alfa.</p>
-                        <div style="margin-top: auto; padding-top: 16px; border-top: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
-                            <span style="font-weight: 600;">$9.20 CPA</span>
-                            <button class="btn" style="padding: 6px 12px; background: #f3f4f6;">Ver 3 Proveedores</button>
-                        </div>
-                    </div>
-
-                    <div class="card supplement-card">
-                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                            <span class="badge" style="background: #fce7f3; color: #be185d;">Alternativa</span>
-                        </div>
-                        <h3 style="font-size: 1.2rem; margin-top: 12px;">Ashwagandha KSM-66</h3>
-                        <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.5;">Adaptógeno clínicamente probado para reducir el cortisol.</p>
-                        <div style="margin-top: auto; padding-top: 16px; border-top: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
-                            <span style="font-weight: 600;">$18.00 CPA</span>
-                            <button class="btn" style="padding: 6px 12px; background: #f3f4f6;">Ver 8 Proveedores</button>
-                        </div>
-                    </div>
-                </div>
+        <!-- 5. COTIZADOR GENERAL (COMBINADO) -->
+        <div class="content-scroll hidden animate-in" id="view-quoter">
+            <div class="section-title">
+                <div><h2>Cotizador General & Ads</h2><p style="font-size:0.85rem; color:var(--text-muted); font-weight:400; margin-top:5px;">Arma tu cesta, encuentra al proveedor y simula tu campaña publicitaria.</p></div>
+                <button class="btn btn-outline" onclick="window.print()"><i class="fa-solid fa-print"></i> Imprimir Presupuesto</button>
             </div>
-        </section>
-
-        <!-- 3. COTIZADOR INTELIGENTE -->
-        <section id="quoter" class="view-container">
-            <div class="section-header">
-                <div>
-                    <h1 class="page-title">Simulador de Rentabilidad</h1>
-                    <p class="page-subtitle">Arma el stack y calcula ROI, CPA y envíos en tiempo real.</p>
-                </div>
-            </div>
-
             <div class="quoter-layout">
-                <!-- Cesta (Estilo Shopify/Linear) -->
-                <div class="quoter-cart">
-                    <div style="padding: 24px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
-                        <h3 style="font-size: 1.1rem;">Stack de Productos</h3>
-                        <button class="btn" style="background: transparent; color: var(--text-muted);"><i class="ph ph-plus"></i> Añadir SKU</button>
-                    </div>
-                    <div style="padding: 24px; flex: 1; background: #fafafa;">
-                        <!-- Item de Cesta -->
-                        <div style="display: flex; gap: 16px; background: var(--bg-surface); padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--border-color); margin-bottom: 12px;">
-                            <div style="width: 64px; height: 64px; background: #e5e7eb; border-radius: 8px;"></div>
-                            <div style="flex: 1;">
-                                <div style="display: flex; justify-content: space-between;">
-                                    <h4 style="font-weight: 600;">Complejo B Premium</h4>
-                                    <span style="font-weight: 600;">$12.50</span>
-                                </div>
-                                <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 4px;">Proveedor: <span style="color: var(--text-main); font-weight: 500;">NaturaLabs USA</span></p>
-                            </div>
+                <div class="quoter-sidebar">
+                    <div class="quoter-header">
+                        <div class="search-bar" style="width: 100%;">
+                            <i class="fa-solid fa-barcode"></i><input type="text" id="quoteSearch" placeholder="Escribe para añadir..." oninput="showQuoteAutocomplete()" autocomplete="off">
+                            <div id="autocomplete-list" class="autofill-dropdown"></div>
                         </div>
                     </div>
+                    <div class="quoter-list" id="quoteListContainer"></div>
+                    <div style="padding: 1rem; border-top: 1px solid var(--border); background: var(--surface);">
+                        <button class="btn btn-outline" style="width: 100%; color: var(--danger); border-color: var(--danger-light);" onclick="clearQuote()"><i class="fa-solid fa-trash"></i> Vaciar Cesta</button>
+                    </div>
                 </div>
+                <div style="overflow-y: auto; padding-right: 0.5rem;" id="quoterResultsContainer"></div>
+            </div>
+        </div>
+    </main>
 
-                <!-- Panel Financiero (Estilo Stripe Dashboard) -->
-                <div class="quoter-panel">
-                    <div>
-                        <h3 style="font-size: 1.2rem; margin-bottom: 8px;">Análisis Unitario</h3>
-                        <p style="color: var(--text-light); font-size: 0.9rem;">Cálculos automáticos basados en API de envío.</p>
+    <!-- MODAL REGISTRO PROVEEDOR -->
+    <div class="modal-overlay" id="supplierModal">
+        <div class="modal">
+            <div class="modal-header"><h2 id="modalTitle">Ficha de Proveedor</h2><button class="btn-icon" onclick="closeModal('supplierModal')"><i class="fa-solid fa-times"></i></button></div>
+            <div class="modal-body">
+                <form id="supplierForm">
+                    <input type="hidden" id="supId">
+                    <div class="sup-header-form">
+                        <div class="img-upload-box" style="border-radius:50%; width:80px; height:80px;"><input type="file" accept="image/*" onchange="handleImageSelect(this, 'sup-logo-img', 'sup-logo-b64')"><img id="sup-logo-img" src="" style="border-radius:50%;"><i class="fa-solid fa-building" id="sup-logo-icon" style="font-size:1.5rem; color:var(--border);"></i><input type="hidden" id="sup-logo-b64"></div>
+                        <div style="flex:1;">
+                            <div class="grid" style="grid-template-columns: 2fr 1fr; gap:1rem; margin-bottom:0.5rem;">
+                                <div class="form-group"><label>Empresa *</label><input type="text" id="supName" class="form-control" required></div>
+                                <div class="form-group"><label>Plataforma *</label><select id="supPlatform" class="form-control" required><option value="Aliclick">Aliclick</option><option value="Dropi">Dropi</option><option value="Alibaba">Alibaba</option><option value="1688">1688</option><option value="AliExpress">AliExpress</option><option value="Otro">Otro</option></select></div>
+                            </div>
+                            <div class="grid" style="grid-template-columns: repeat(3, 1fr); gap:1rem;">
+                                <div class="form-group"><label>WhatsApp</label><input type="text" id="supWhatsapp" class="form-control"></div>
+                                <div class="form-group"><label>País</label><input type="text" id="supCountry" class="form-control"></div>
+                                <div class="form-group"><label>Entrega (Días)</label><input type="text" id="supDelivery" class="form-control"></div>
+                            </div>
+                        </div>
                     </div>
                     
-                    <div style="margin-top: 16px;">
-                        <div class="panel-row">
-                            <span style="color: var(--text-light);">Costo de Productos (COGS)</span>
-                            <span>$12.50</span>
+                    <div class="flex justify-between align-center mt-1" style="padding-top:1rem; border-top:1px solid var(--border); margin-bottom:1rem;">
+                        <h3 style="font-size:1.1rem;"><i class="fa-solid fa-box text-green"></i> Catálogo de Referencias</h3>
+                        <button type="button" class="btn btn-outline" style="background:var(--surface); padding: 0.4rem 0.8rem;" onclick="addProductField()"><i class="fa-solid fa-plus"></i> Añadir Referencia</button>
+                    </div>
+                    <div id="productsContainer" style="display:flex; flex-direction:column;"></div>
+                </form>
+            </div>
+            <div class="modal-footer"><button class="btn btn-outline" onclick="closeModal('supplierModal')">Cancelar</button><button class="btn btn-primary" onclick="saveSupplier()">Guardar Ficha</button></div>
+        </div>
+    </div>
+
+    <!-- MODAL DATA -->
+    <div class="modal-overlay" id="importModal">
+        <div class="modal" style="max-width: 450px;"><div class="modal-header"><h2>Gestión de Datos</h2><button class="btn-icon" onclick="closeModal('importModal')"><i class="fa-solid fa-times"></i></button></div>
+            <div class="modal-body flex" style="flex-direction: column; gap: 1rem;">
+                <div class="stat-card" style="text-align:center; cursor:pointer; border:2px dashed var(--border);" onclick="document.getElementById('fileImport').click()"><i class="fa-solid fa-file-excel fa-2x text-green mb-1"></i><h3>Importar Productos (Excel)</h3><input type="file" id="fileImport" class="hidden" accept=".xlsx, .xls, .csv" onchange="handleImport(event)"></div>
+                <div class="stat-card" style="text-align:center; cursor:pointer; border:2px dashed var(--border);" onclick="document.getElementById('fileRestore').click()"><i class="fa-solid fa-database fa-2x mb-1" style="color:var(--warning)"></i><h3>Restaurar Backup (JSON)</h3><input type="file" id="fileRestore" class="hidden" accept=".json" onchange="restoreBackup(event)"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+        // === CORE INIT & UTILS ===
+        let isDarkMode = localStorage.getItem('theme') === 'dark'; if(isDarkMode) document.body.setAttribute('data-theme', 'dark');
+        function toggleTheme() { isDarkMode = !isDarkMode; document.body.setAttribute('data-theme', isDarkMode ? 'dark' : 'light'); localStorage.setItem('theme', isDarkMode ? 'dark' : 'light'); }
+        function showToast(msg, type = 'success') {
+            const container = document.getElementById('toastContainer'); const toast = document.createElement('div');
+            toast.style = `background:var(--surface); border-left:4px solid ${type==='error'?'var(--danger)':'var(--primary)'}; padding:0.8rem 1.2rem; border-radius:6px; box-shadow:var(--shadow-lg); color:var(--text-main); font-size:0.85rem; font-weight:600; animation:fadeInUp 0.3s forwards; display:flex; gap:0.8rem; align-items:center; margin-top:10px;`;
+            toast.innerHTML = `<i class="fa-solid ${type==='error'?'fa-triangle-exclamation':'fa-check-circle'}" style="color:${type==='error'?'var(--danger)':'var(--primary-dark)'};"></i> <span>${msg}</span>`;
+            container.appendChild(toast); setTimeout(() => toast.remove(), 3500);
+        }
+        function generateId() { return Date.now().toString(36) + Math.random().toString(36).substr(2, 5); }
+        function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
+        // Plataformas Colors Helper
+        function getPlatBadge(plat) {
+            const p = plat.toLowerCase(); let c = 'plat-otro';
+            if(p==='aliclick') c='plat-aliclick'; else if(p==='dropi') c='plat-dropi'; else if(p==='alibaba') c='plat-alibaba'; else if(p==='1688') c='plat-1688'; else if(p==='aliexpress') c='plat-aliexpress';
+            return `<span class="plat-badge ${c}">${plat}</span>`;
+        }
+
+        // === STATS TRACKING (LocalStorage) ===
+        function trackSearch(term) {
+            if(!term || term.length < 3) return;
+            let stats = JSON.parse(localStorage.getItem('searchStats') || '{}');
+            stats[term] = (stats[term] || 0) + 1; localStorage.setItem('searchStats', JSON.stringify(stats));
+            renderDashboardLists();
+        }
+        function trackQuoteItem(prodName) {
+            if(!prodName) return;
+            let stats = JSON.parse(localStorage.getItem('quoteStats') || '{}');
+            stats[prodName] = (stats[prodName] || 0) + 1; localStorage.setItem('quoteStats', JSON.stringify(stats));
+            renderDashboardLists();
+        }
+
+        // === DB IndexedDB ===
+        const DB_NAME = 'DropSupps_V8_Merge'; const STORE_NAME = 'suppliers';
+        let db, allSuppliers = [], currentView = 'dashboard', quoteList = [];
+
+        const initDB = () => new Promise((resolve, reject) => {
+            const req = indexedDB.open(DB_NAME, 1);
+            req.onupgradeneeded = e => { db = e.target.result; if (!db.objectStoreNames.contains(STORE_NAME)) db.createObjectStore(STORE_NAME, { keyPath: 'id' }); };
+            req.onsuccess = e => { db = e.target.result; resolve(db); }; req.onerror = () => reject('Error DB');
+        });
+        const dbOp = (type, payload = null) => new Promise((resolve, reject) => {
+            const tx = db.transaction([STORE_NAME], type === 'get' || type === 'getAll' ? 'readonly' : 'readwrite');
+            let req; switch(type){case 'getAll':req=tx.objectStore(STORE_NAME).getAll();break;case 'put':req=tx.objectStore(STORE_NAME).put(payload);break;case 'delete':req=tx.objectStore(STORE_NAME).delete(payload);break;case 'clear':req=tx.objectStore(STORE_NAME).clear();break;}
+            req.onsuccess = () => resolve(req.result); req.onerror = () => reject(req.error);
+        });
+
+        async function loadData() { allSuppliers = await dbOp('getAll'); updateDashboard(); updateCategoryFilter(); renderDashboardLists(); refreshCurrentView(); }
+        function switchView(view) { currentView = view; document.querySelectorAll('.content-scroll').forEach(el => el.classList.add('hidden')); document.getElementById(`view-${view}`).classList.remove('hidden'); document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active')); event.currentTarget.classList.add('active'); refreshCurrentView(); }
+        function refreshCurrentView() { 
+            if(currentView==='suppliers') renderSuppliersTable(); if(currentView==='products') renderProductsGrid(); 
+            if(currentView==='quoter') updateQuoterUI(); if(currentView==='med-search') handleMedicalSearch(); 
+        }
+        function handleSearch() { const q = document.getElementById('globalSearch').value; trackSearch(q); refreshCurrentView(); }
+
+        // === IMG COMPRESS ===
+        function handleImageSelect(input, imgId, b64Id) {
+            const f = input.files[0]; if(!f) return; const r = new FileReader();
+            r.onload = e => {
+                const img = new Image(); img.onload = () => {
+                    const canvas = document.createElement('canvas'); let w = img.width, h = img.height;
+                    if(w>500){h*=500/w;w=500;} canvas.width=w; canvas.height=h;
+                    canvas.getContext('2d').drawImage(img,0,0,w,h); const b64 = canvas.toDataURL('image/jpeg',0.6);
+                    document.getElementById(imgId).src=b64; document.getElementById(imgId).style.display='block'; document.getElementById(b64Id).value=b64;
+                    const icon = input.parentElement.querySelector('i'); if(icon) icon.style.display='none';
+                }; img.src = e.target.result;
+            }; r.readAsDataURL(f);
+        }
+
+        // === FORMS ===
+        function addProductField(p = {}) {
+            const uId = generateId(); const div = document.createElement('div'); div.className = 'product-item-form';
+            const b64 = p.image || ''; const d = b64 ? 'block' : 'none';
+            div.innerHTML = `
+                <i class="fa-solid fa-trash" style="position:absolute; top:-10px; right:-10px; color:var(--danger); cursor:pointer; font-size:1rem; background:var(--bg-color); padding:8px; border-radius:50%; z-index:2;" onclick="this.parentElement.remove()"></i>
+                <div style="display:flex; gap:1.2rem; border-bottom:1px dashed var(--border); padding-bottom:1.2rem;">
+                    <div class="img-upload-box"><input type="file" accept="image/*" onchange="handleImageSelect(this, 'img-${uId}', 'b64-${uId}')"><img id="img-${uId}" src="${b64}" style="display:${d}"><i id="icon-${uId}" class="fa-regular fa-image" style="display:${b64?'none':'block'}; font-size:1.5rem; color:var(--text-muted);"></i><input type="hidden" class="p-img" id="b64-${uId}" value="${b64}"></div>
+                    <div style="flex: 1;">
+                        <div class="grid" style="grid-template-columns: 2fr 1fr; gap:1rem; margin-bottom:0.8rem;">
+                            <div class="form-group"><label style="font-size:0.75rem;">Nombre Producto</label><input type="text" class="form-control p-name" value="${p.name||''}" required></div>
+                            <div class="form-group"><label style="font-size:0.75rem;">Categoría</label><input type="text" class="form-control p-cat" value="${p.category||''}"></div>
                         </div>
-                        <div class="panel-row">
-                            <span style="color: var(--text-light);">Estimado de Envío (3PL)</span>
-                            <span>$4.20</span>
-                        </div>
-                        <div class="panel-row">
-                            <span style="color: var(--text-light);">Pasarela de Pago (Stripe 2.9%)</span>
-                            <span>$1.16</span>
-                        </div>
-                        <div class="panel-row" style="margin-top: 16px; color: var(--primary);">
-                            <span>Precio de Venta Sugerido</span>
-                            <span>$39.99</span>
-                        </div>
-                        <div class="panel-row">
-                            <span>Ganancia Neta</span>
-                            <div style="display: flex; align-items: center; gap: 12px;">
-                                <span class="profit-badge">55% Margen</span>
-                                <span style="font-size: 1.5rem;">$22.13</span>
-                            </div>
+                        <div class="grid" style="grid-template-columns: repeat(4, 1fr); gap:1rem;">
+                            <div class="form-group"><label style="font-size:0.75rem;">Costo (S/)</label><input type="number" step="0.01" class="form-control p-price" value="${p.supplierPrice||''}"></div>
+                            <div class="form-group"><label style="font-size:0.75rem;">Sugerido (S/)</label><input type="number" step="0.01" class="form-control p-rec" value="${p.recommendedPrice||''}"></div>
+                            <div class="form-group"><label style="font-size:0.75rem;">SKU</label><input type="text" class="form-control p-sku" value="${p.sku||''}"></div>
+                            <div class="form-group"><label style="font-size:0.75rem;">Stock</label><input type="number" class="form-control p-stock" value="${p.stock||''}"></div>
                         </div>
                     </div>
-
-                    <button class="btn btn-primary" style="width: 100%; justify-content: center; padding: 16px; font-size: 1rem; margin-top: auto;">
-                        Guardar Cotización
-                    </button>
                 </div>
-            </div>
-        </section>
-
-        <!-- Placeholders para las otras vistas -->
-        <section id="providers" class="view-container">
-            <h1 class="page-title">Directorio de Proveedores</h1>
-            <p style="margin-top: 20px; color: var(--text-muted);">Arquitectura de tarjetas pendiente (Sigue el mismo patrón Premium).</p>
-        </section>
-        
-        <section id="products" class="view-container">
-            <h1 class="page-title">Catálogo PIM</h1>
-            <p style="margin-top: 20px; color: var(--text-muted);">Arquitectura PIM de productos pendiente.</p>
-        </section>
-
-        <section id="import" class="view-container">
-            <h1 class="page-title">Gestión de Datos</h1>
-            <p style="margin-top: 20px; color: var(--text-muted);">Interfaz Drag & Drop para Excel/JSON pendiente.</p>
-        </section>
-
-    </main>
-</div>
-
-<!-- =========================================
-     JAVASCRIPT (Lógica Visual & Microinteracciones)
-     ========================================= -->
-<script>
-    // 1. Navegación SPA (Switching de Tabs fluido)
-    function switchTab(tabId) {
-        // Quitar active de los menús
-        document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-        // Añadir active al clickeado
-        event.currentTarget.classList.add('active');
-
-        // Ocultar todas las vistas
-        document.querySelectorAll('.view-container').forEach(el => {
-            el.classList.remove('active');
-        });
-
-        // Mostrar la vista objetivo con ligera demora para que aplique la animación CSS
-        const targetView = document.getElementById(tabId);
-        if(targetView) {
-            setTimeout(() => {
-                targetView.classList.add('active');
-            }, 50);
+                <div style="background:var(--bg-color); padding:1rem; border-radius:var(--radius-sm); border:1px solid var(--border);">
+                    <div class="grid" style="grid-template-columns: 1fr 1fr; gap:1rem;">
+                        <div class="form-group"><label style="font-size:0.75rem;">Problemas que alivia</label><input type="text" class="form-control p-problems" value="${p.problems||''}"></div>
+                        <div class="form-group"><label style="font-size:0.75rem;">Beneficios / Tags</label><input type="text" class="form-control p-benefits" value="${p.benefits||''}"></div>
+                    </div>
+                </div>
+            `;
+            document.getElementById('productsContainer').appendChild(div);
         }
-    }
 
-    // 2. Colapso de Sidebar (Microinteracción)
-    function toggleSidebar() {
-        const sidebar = document.getElementById('sidebar');
-        sidebar.classList.toggle('collapsed');
+        async function saveSupplier() {
+            const products = []; document.querySelectorAll('.product-item-form').forEach(el => { const n = el.querySelector('.p-name').value.trim(); if(n) products.push({ id: generateId(), name: n, category: el.querySelector('.p-cat').value, supplierPrice: el.querySelector('.p-price').value, recommendedPrice: el.querySelector('.p-rec').value, sku: el.querySelector('.p-sku').value, stock: el.querySelector('.p-stock').value, image: el.querySelector('.p-img').value, problems: el.querySelector('.p-problems').value, benefits: el.querySelector('.p-benefits').value, createdAt: Date.now() }); });
+            const sup = { id: document.getElementById('supId').value || generateId(), logo: document.getElementById('sup-logo-b64').value, name: document.getElementById('supName').value.trim(), platform: document.getElementById('supPlatform').value, whatsapp: document.getElementById('supWhatsapp').value, country: document.getElementById('supCountry').value, deliveryTime: document.getElementById('supDelivery').value, products: products, createdAt: Date.now() };
+            if(!sup.name) return showToast('Nombre obligatorio', 'error'); await dbOp('put', sup); showToast('Ficha guardada'); closeModal('supplierModal'); loadData();
+        }
+
+        function openSupplierModal() { document.getElementById('supplierForm').reset(); document.getElementById('supId').value = ''; document.getElementById('sup-logo-img').style.display='none'; document.getElementById('sup-logo-icon').style.display='block'; document.getElementById('sup-logo-b64').value=''; document.getElementById('productsContainer').innerHTML = ''; addProductField(); openModal('supplierModal'); }
+        function editSupplier(id) {
+            const s = allSuppliers.find(x => x.id === id); if(!s) return;
+            document.getElementById('supId').value=s.id; document.getElementById('supName').value=s.name; document.getElementById('supPlatform').value=s.platform; document.getElementById('supWhatsapp').value=s.whatsapp||''; document.getElementById('supCountry').value=s.country||''; document.getElementById('supDelivery').value=s.deliveryTime||'';
+            if(s.logo){document.getElementById('sup-logo-img').src=s.logo;document.getElementById('sup-logo-img').style.display='block';document.getElementById('sup-logo-b64').value=s.logo;document.getElementById('sup-logo-icon').style.display='none';}else{document.getElementById('sup-logo-img').style.display='none';document.getElementById('sup-logo-icon').style.display='block';document.getElementById('sup-logo-b64').value='';}
+            document.getElementById('productsContainer').innerHTML=''; if(s.products.length===0) addProductField(); else s.products.forEach(p=>addProductField(p)); openModal('supplierModal');
+        }
+
+        // === RENDER VIEWS ===
+        let sortCol = '', sortAsc = true; function sortTable(col) { if(sortCol === col) sortAsc = !sortAsc; else { sortCol = col; sortAsc = true; } renderSuppliersTable(); }
+        function renderSuppliersTable() {
+            const tbody = document.getElementById('supplierTableBody'); const q = document.getElementById('globalSearch').value.toLowerCase(); const plat = document.getElementById('filterPlatform').value;
+            let filtered = allSuppliers.filter(s => (s.name.toLowerCase().includes(q) || s.products.some(p => p.name && p.name.toLowerCase().includes(q))) && (plat ? s.platform === plat : true));
+            if(sortCol) filtered.sort((a,b) => { let vA=a[sortCol], vB=b[sortCol]; if(sortCol==='prodCount'){vA=a.products.length;vB=b.products.length;} if(typeof vA==='string') return sortAsc?vA.localeCompare(vB):vB.localeCompare(vA); return sortAsc?vA-vB:vB-vA; });
+            tbody.innerHTML = '';
+            filtered.forEach(s => {
+                const logoHtml = s.logo ? `<img src="${s.logo}" class="sup-avatar">` : `<div class="sup-avatar">${s.name.charAt(0)}</div>`;
+                tbody.innerHTML += `<tr><td>${logoHtml}</td><td><strong style="color:var(--text-main);">${s.name}</strong></td><td>${getPlatBadge(s.platform)}</td><td><strong class="text-green">${s.products.length}</strong></td><td>${s.whatsapp||'-'}</td><td style="text-align:right;"><button class="btn-outline" style="padding:0.3rem 0.6rem; font-size:0.75rem;" onclick="editSupplier('${s.id}')">Editar <i class="fa-solid fa-pen"></i></button></td></tr>`;
+            });
+        }
+
+        function updateCategoryFilter() { const cats = new Set(); allSuppliers.forEach(s => s.products.forEach(p => { if(p.category) cats.add(p.category.trim()); })); const sel = document.getElementById('filterCategory'); sel.innerHTML = '<option value="">Categorías (Todas)</option>'; Array.from(cats).sort().forEach(c => sel.innerHTML += `<option value="${c}">${c}</option>`); }
         
-        // Ocultar/mostrar textos
-        const texts = sidebar.querySelectorAll('.nav-item, .logo-text');
-        texts.forEach(el => {
-            if(sidebar.classList.contains('collapsed')) {
-                // Lógica de CSS en un proyecto real para colapsar textos,
-                // aquí simulado simplificado:
-                if(el.classList.contains('logo-text')) el.style.display = 'none';
-            } else {
-                if(el.classList.contains('logo-text')) el.style.display = 'block';
-            }
-        });
-    }
+        function renderProductsGrid() {
+            const cont = document.getElementById('productsGridContainer'); const q = document.getElementById('globalSearch').value.toLowerCase().trim(); const cat = document.getElementById('filterCategory').value;
+            let grouped = {}; allSuppliers.forEach(sup => sup.products.forEach(p => {
+                if(!p.name) return; let nKey = p.name.trim().toLowerCase(); if (!grouped[nKey]) grouped[nKey] = { originalName: p.name.trim(), category: p.category||'Sin cat', image: p.image||null, searchString: `${p.name} ${p.category} ${p.sku}`.toLowerCase(), suppliers: [] }; else if (p.image && !grouped[nKey].image) grouped[nKey].image = p.image; grouped[nKey].suppliers.push({ supName: sup.name, platform: sup.platform, price: parseFloat(p.supplierPrice)||0 });
+            }));
+            let arr = Object.values(grouped).filter(p => (q==='' || p.searchString.includes(q)) && (cat==='' || p.category===cat));
+            document.getElementById('productCountBadge').innerText = `${arr.length} únicos`; cont.innerHTML = '';
+            arr.forEach((p, idx) => {
+                p.suppliers.sort((a,b) => a.price - b.price);
+                let supHtml = p.suppliers.map(s => `<div class="sup-item"><div><div style="font-weight:600;font-size:0.85rem;color:var(--text-main);">${s.supName}</div>${getPlatBadge(s.platform)}</div><div style="font-weight:800;font-size:1rem;color:var(--primary-dark);">S/ ${s.price.toFixed(2)}</div></div>`).join('');
+                cont.innerHTML += `<div class="product-card animate-in" style="animation-delay:${idx*0.03}s"><div class="prod-header"><div class="prod-img">${p.image?`<img src="${p.image}" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;">`:`<i class="fa-solid fa-box"></i>`}</div><div class="prod-titles"><h4 title="${p.originalName}">${p.originalName}</h4><span style="font-size:0.7rem; color:var(--text-muted); font-weight:700; text-transform:uppercase;">${p.category}</span></div></div><div style="padding:1rem;flex:1;background:var(--bg-color);"><div style="font-size:0.65rem;color:var(--text-muted);font-weight:700;text-transform:uppercase;margin-bottom:0.5rem;">Opciones (${p.suppliers.length})</div><div style="max-height:120px;overflow-y:auto;">${supHtml}</div></div><div style="padding:0.8rem;background:var(--surface);border-top:1px solid var(--border);display:flex;"><button class="btn btn-outline" style="flex:1; font-size:0.8rem;" onclick="addToQuote('${p.originalName}')"><i class="fa-solid fa-plus"></i> Cotizar</button></div></div>`;
+            });
+        }
 
-    // 3. Simulación de Buscador Clínico IA
-    const aiInput = document.getElementById('aiSearchInput');
-    const aiResults = document.getElementById('aiResults');
+        // === DASHBOARD STATS ===
+        function updateDashboard() {
+            document.getElementById('stat-suppliers').innerText = allSuppliers.length;
+            let uNames = new Set(), invVal = 0;
+            allSuppliers.forEach(s => s.products.forEach(p => { if(p.name) uNames.add(p.name.trim().toLowerCase()); invVal += ((parseInt(p.stock)||0) * (parseFloat(p.supplierPrice)||0)); }));
+            document.getElementById('stat-products').innerText = uNames.size; document.getElementById('stat-inventory').innerText = `S/ ${invVal.toLocaleString('es-PE', {minimumFractionDigits:2})}`;
+        }
+        function renderDashboardLists() {
+            // Recien agregados (aplanar, ordenar por createdAt o id)
+            let allP = []; allSuppliers.forEach(s => s.products.forEach(p => allP.push({...p, sName: s.name})));
+            allP.reverse(); // Simplified pseudo-sort
+            const dRec = document.getElementById('dash-recent'); dRec.innerHTML = '';
+            allP.slice(0, 5).forEach(p => dRec.innerHTML += `<div class="dash-list-item">${p.image?`<img src="${p.image}">`:'<img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" style="background:var(--border);">'} <div style="flex:1; overflow:hidden;"><div style="white-space:nowrap; text-overflow:ellipsis; overflow:hidden; font-weight:600;">${p.name}</div><div style="font-size:0.7rem; color:var(--text-muted);">${p.sName}</div></div></div>`);
+            
+            // Buscados
+            let sStats = JSON.parse(localStorage.getItem('searchStats') || '{}');
+            let sArr = Object.keys(sStats).map(k => ({term: k, count: sStats[k]})).sort((a,b)=>b.count-a.count);
+            const dSearch = document.getElementById('dash-searched'); dSearch.innerHTML = '';
+            sArr.slice(0, 5).forEach(s => dSearch.innerHTML += `<div class="dash-list-item"><i class="fa-solid fa-magnifying-glass text-muted"></i> <div style="flex:1; font-weight:600;">${s.term}</div> <span class="dash-list-badge">${s.count}</span></div>`);
+            if(sArr.length===0) dSearch.innerHTML = `<div style="color:var(--text-muted); font-size:0.8rem;">No hay datos aún.</div>`;
 
-    if(aiInput) {
-        aiInput.addEventListener('input', function(e) {
-            const val = e.target.value.toLowerCase();
-            if (val.length > 5 && (val.includes('dormir') || val.includes('ansiedad') || val.includes('estrés'))) {
-                // Simular retraso de API
-                setTimeout(() => {
-                    aiResults.classList.add('show');
-                }, 400);
-            } else {
-                aiResults.classList.remove('show');
-            }
-        });
-    }
-</script>
+            // Cotizados
+            let qStats = JSON.parse(localStorage.getItem('quoteStats') || '{}');
+            let qArr = Object.keys(qStats).map(k => ({term: k, count: qStats[k]})).sort((a,b)=>b.count-a.count);
+            const dQuote = document.getElementById('dash-quoted'); dQuote.innerHTML = '';
+            qArr.slice(0, 5).forEach(q => dQuote.innerHTML += `<div class="dash-list-item"><i class="fa-solid fa-basket-shopping text-warning"></i> <div style="flex:1; font-weight:600;">${q.term}</div> <span class="dash-list-badge">${q.count}</span></div>`);
+            if(qArr.length===0) dQuote.innerHTML = `<div style="color:var(--text-muted); font-size:0.8rem;">No hay datos aún.</div>`;
+        }
+
+        // === COTIZADOR GENERAL & CALCULADORA ADS MERGED ===
+        function addToQuote(pName) { let n = pName.trim(); const ex = quoteList.find(p => p.name.toLowerCase() === n.toLowerCase()); if (ex) ex.qty++; else quoteList.push({ name: n, qty: 1 }); showToast(`${n} añadido a la cesta.`); document.getElementById('quoteSearch').value = ''; document.querySelectorAll('.autofill-dropdown').forEach(d=>d.style.display='none'); updateQuoterUI(); trackQuoteItem(n); document.getElementById('quoteBadge').innerText = quoteList.reduce((acc, curr) => acc + curr.qty, 0); }
+        function changeQuoteQty(idx, d) { quoteList[idx].qty += d; if (quoteList[idx].qty <= 0) quoteList.splice(idx, 1); updateQuoterUI(); document.getElementById('quoteBadge').innerText = quoteList.reduce((a, c) => a + c.qty, 0); }
+        function clearQuote() { quoteList = []; updateQuoterUI(); document.getElementById('quoteBadge').innerText = 0; }
+        function showQuoteAutocomplete() { const val = document.getElementById('quoteSearch').value.toLowerCase(); const list = document.getElementById('autocomplete-list'); list.innerHTML = ''; if(!val) { list.style.display = 'none'; return; } const unique = new Set(); allSuppliers.forEach(s => s.products.forEach(p => { if(p.name && p.name.toLowerCase().includes(val)) unique.add(p.name.trim()); })); if(unique.size === 0) { list.style.display = 'none'; return; } Array.from(unique).slice(0, 5).forEach(prod => { const div = document.createElement('div'); div.className = 'autofill-item'; div.innerHTML = `<strong>${prod}</strong>`; div.onclick = () => addToQuote(prod); list.appendChild(div); }); list.style.display = 'block'; }
+        
+        window.calcMatchAds = function(supId, baseCost) {
+            const ship = parseFloat(document.getElementById(`calc-ship-${supId}`).value)||0;
+            const cpa = parseFloat(document.getElementById(`calc-cpa-${supId}`).value)||0;
+            const pv = parseFloat(document.getElementById(`calc-pv-${supId}`).value)||0;
+            const net = pv - baseCost - ship - cpa;
+            const roi = (baseCost+ship+cpa) > 0 ? (net / (baseCost+ship+cpa)) * 100 : 0;
+            const resBox = document.getElementById(`res-neto-${supId}`);
+            resBox.innerHTML = `<div style="font-size:0.7rem; font-weight:700; color:var(--text-muted);">GANANCIA NETA</div><div style="font-size:1.4rem; font-weight:900; color:${net>=0?'var(--primary-dark)':'var(--danger)'}">S/ ${net.toFixed(2)}</div><div style="font-size:0.8rem; font-weight:600; color:${net>=0?'var(--text-main)':'var(--danger)'}">ROI: ${roi.toFixed(1)}%</div>`;
+            resBox.style.borderColor = net >= 0 ? 'var(--primary)' : 'var(--danger)';
+        };
+
+        function updateQuoterUI() {
+            const listC = document.getElementById('quoteListContainer'); const resC = document.getElementById('quoterResultsContainer');
+            if(quoteList.length === 0) { listC.innerHTML = `<div style="text-align:center; padding:2rem; color:var(--text-muted);">Cesta vacía.</div>`; resC.innerHTML = `<div style="text-align:center; padding:4rem; color:var(--text-muted);">Elige productos para calcular el presupuesto y Ads.</div>`; return; }
+            listC.innerHTML = ''; quoteList.forEach((item, idx) => {
+                // Find suggested price from DB (Average)
+                let recPrices = []; allSuppliers.forEach(s => s.products.forEach(p => { if(p.name.toLowerCase()===item.name.toLowerCase() && p.recommendedPrice) recPrices.push(parseFloat(p.recommendedPrice)); }));
+                let avgRec = recPrices.length>0 ? (recPrices.reduce((a,b)=>a+b,0)/recPrices.length) : 0;
+                listC.innerHTML += `<div class="quote-item animate-in"><div style="font-weight:600; font-size:0.9rem;">${item.name}</div><div style="display:flex; justify-content:space-between; align-items:center;"><div class="quote-qty-control"><button class="qty-btn" onclick="changeQuoteQty(${idx}, -1)">-</button><input type="text" class="qty-input" value="${item.qty}" readonly><button class="qty-btn" onclick="changeQuoteQty(${idx}, 1)">+</button></div> <div style="font-size:0.75rem; color:var(--text-muted);">Sug: <strong style="color:var(--text-main)">S/ ${(avgRec*item.qty).toFixed(2)}</strong></div></div></div>`; 
+            });
+            let html = '', matches = 0;
+            allSuppliers.forEach(sup => {
+                let hasAll = true, prods = [], totalC = 0, totalR = 0;
+                for(let req of quoteList) {
+                    let p = sup.products.find(x => x.name.toLowerCase() === req.name.toLowerCase()); if(!p) { hasAll = false; break; }
+                    let cost = parseFloat(p.supplierPrice)||0, rec = parseFloat(p.recommendedPrice)||0, subC = cost * req.qty; totalC += subC; totalR += (rec * req.qty);
+                    prods.push({ n: p.name, p: cost, r: rec, q: req.qty, s: subC, img: p.image });
+                }
+                if(hasAll) { 
+                    matches++; 
+                    html += `<div class="match-card animate-in">
+                        <div class="match-header">
+                            <div><h3 style="font-size:1.4rem;color:var(--text-main);margin-bottom:0.4rem;">${sup.name}</h3>${getPlatBadge(sup.platform)}</div>
+                            <div style="text-align:right;"><div style="font-size:0.7rem;font-weight:700;color:var(--text-muted);">COSTO PROVEEDOR</div><div style="font-size:1.6rem;font-weight:900;color:var(--text-main);">S/ ${totalC.toFixed(2)}</div></div>
+                        </div>
+                        <table class="match-products-table"><thead><tr><th>Producto</th><th style="text-align:center;">Cant.</th><th style="text-align:right;">Sugerido (Und)</th><th style="text-align:right;">Costo Total</th></tr></thead><tbody>
+                        ${prods.map(x => `<tr><td><div style="display:flex;align-items:center;gap:10px;">${x.img?`<img src="${x.img}" style="width:30px;height:30px;border-radius:4px;object-fit:cover;">`:''}<strong style="color:var(--text-main); font-size:0.85rem;">${x.n}</strong></div></td><td style="text-align:center;font-weight:700;">x${x.q}</td><td style="text-align:right;color:var(--text-muted);">S/ ${x.r.toFixed(2)}</td><td style="text-align:right;font-weight:800;color:var(--primary-dark);">S/ ${x.s.toFixed(2)}</td></tr>`).join('')}
+                        </tbody></table>
+                        
+                        <div class="match-calc-section">
+                            <div>
+                                <h4 style="font-size:0.85rem; margin-bottom:0.8rem; color:var(--info);"><i class="fa-solid fa-calculator"></i> Calculadora Ads (Rentabilidad)</h4>
+                                <div class="calc-inputs">
+                                    <div class="calc-group"><label>Envío / Delivery (S/)</label><input type="number" id="calc-ship-${sup.id}" value="10" oninput="calcMatchAds('${sup.id}', ${totalC})"></div>
+                                    <div class="calc-group"><label>CPA Facebook (S/)</label><input type="number" id="calc-cpa-${sup.id}" value="15" oninput="calcMatchAds('${sup.id}', ${totalC})"></div>
+                                    <div class="calc-group" style="grid-column: span 2;"><label>Precio Venta Total (S/)</label><input type="number" id="calc-pv-${sup.id}" value="${totalR}" style="border-color:var(--primary); background:var(--primary-light);" oninput="calcMatchAds('${sup.id}', ${totalC})"></div>
+                                </div>
+                            </div>
+                            <div class="calc-res-box" id="res-neto-${sup.id}"></div>
+                        </div>
+                    </div>`; 
+                    // Init calc
+                    setTimeout(() => window.calcMatchAds(sup.id, totalC), 50);
+                }
+            });
+            if(matches === 0) resC.innerHTML = `<div style="text-align:center; padding: 4rem; color:var(--danger); background:var(--danger-light); border-radius:var(--radius-md);"><h2>Sin Resultados</h2><p>Ningún proveedor en tu base de datos tiene todos estos productos juntos.</p></div>`; else resC.innerHTML = `<h3 style="margin-bottom:1rem;"><i class="fa-solid fa-check-circle text-green"></i> ${matches} Proveedores Compatibles</h3>` + html;
+        }
+
+        // === MEDICAL SEARCH ===
+        const medicalSynonyms = { "presion": ["hipertension"], "azucar": ["diabetes"], "dormir": ["insomnio"], "nervios": ["ansiedad"], "cansancio": ["fatiga"], "articulaciones": ["dolor"], "higado": ["hepatico"], "digestion": ["estomago"], "inmune": ["defensas"] };
+        function getExpanded(q) { let t = new Set(); t.add(q); for(const [k,v] of Object.entries(medicalSynonyms)) { if(q.includes(k)) v.forEach(x=>t.add(x)); v.forEach(x=>{if(q.includes(x)) t.add(k)}); } return Array.from(t); }
+        function handleMedicalSearch() {
+            const q = document.getElementById('medicalSearchInput').value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim(); const cont = document.getElementById('medSearchResultsContainer');
+            if(!q) { cont.innerHTML = ``; return; } const terms = getExpanded(q); let matches = []; trackSearch(q);
+            allSuppliers.forEach(sup => { sup.products.forEach(p => { const str = `${p.name||''} ${p.problems||''} ${p.benefits||''} ${p.keywords||''} ${p.ingredients||''}`.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""); if(terms.some(t => str.includes(t))) matches.push({...p, supName:sup.name}); });});
+            cont.innerHTML = ''; if(matches.length===0) { cont.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--danger);">No hay coincidencias.</div>`; return; }
+            matches.forEach((p, idx) => { cont.innerHTML += `<div class="product-card animate-in" style="animation-delay:${idx*0.05}s; padding:1.2rem;"><div style="display:flex;gap:1rem;margin-bottom:1rem;">${p.image?`<img src="${p.image}" style="width:50px;height:50px;border-radius:6px;object-fit:cover;">`:'<i class="fa-solid fa-pills fa-2x"></i>'}<div><h4 style="font-size:0.95rem;">${p.name}</h4><div style="font-size:0.75rem;color:var(--text-muted);"><i class="fa-solid fa-building"></i> ${p.supName}</div></div></div><div style="font-size:0.8rem;margin-bottom:0.4rem;"><strong style="color:var(--info);">Beneficios:</strong> ${p.benefits||'-'}</div><div style="font-size:0.8rem;margin-bottom:1rem;"><strong style="color:var(--danger);">Para:</strong> ${p.problems||'-'}</div><button class="btn btn-outline" style="width:100%; font-size:0.8rem;" onclick="addToQuote('${p.name}')"><i class="fa-solid fa-plus"></i> Cotizar</button></div>`; });
+        }
+
+        function createBackup() {
+            if(allSuppliers.length === 0) return showToast('No hay datos', 'error');
+            const a = document.createElement('a'); a.href = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(allSuppliers)); a.download = "DropSuppsDB_" + Date.now() + ".json";
+            document.body.appendChild(a); a.click(); a.remove(); showToast('Backup descargado localmente');
+        }
+
+        window.onload = async () => { try { await initDB(); await loadData(); } catch(e) { console.error(e); } };
+    </script>
 </body>
 </html>
