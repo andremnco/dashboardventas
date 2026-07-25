@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SaaS Premium ERP - Suplementos</title>
+    
+    <!-- Tipografía Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Iconos Phosphor (Estilo Premium) -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <style>
+        /* =========================================
+           VARIABLES PREMIUM & DESIGN SYSTEM
+           ========================================= */
+        :root {
+            /* Colores Base */
+            --primary: #56E859;
+            --primary-hover: #45D148;
+            --primary-light: rgba(86, 232, 89, 0.15);
+            
+            --bg-body: #F7F9FA;
+            --bg-surface: #FFFFFF;
+            
+            /* Escala de Grises (Stripe/Linear style) */
+            --text-main: #111827;
+            --text-muted: #6B7280;
+            --text-light: #9CA3AF;
+            --border-color: rgba(0, 0, 0, 0.06);
+            --border-hover: rgba(0, 0, 0, 0.12);
+            
+            /* UI Elements */
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 18px; /* Solicitado */
+            
+            /* Sombras & Glassmorphism */
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.02);
+            --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.04);
+            --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.06);
+            --glass-bg: rgba(255, 255, 255, 0.75);
+            
+            /* Animaciones */
+            --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-smooth: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* =========================================
+           RESETS & BASE
+           ========================================= */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            -webkit-font-smoothing: antialiased;
+            overflow: hidden; /* Prevent body scroll, handle inside main */
+        }
+
+        /* =========================================
+           LAYOUT ARCHITECTURE
+           ========================================= */
+        .app-container {
+            display: flex;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 260px;
+            background: var(--bg-surface);
+            border-right: 1px solid var(--border-color);
+            padding: 24px 16px;
+            display: flex;
+            flex-direction: column;
+            transition: var(--transition-smooth);
+            z-index: 100;
+        }
+
+        .sidebar.collapsed {
+            width: 80px;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 12px 32px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            letter-spacing: -0.02em;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--text-main);
+            color: var(--primary);
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .nav-menu {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-radius: var(--radius-md);
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: var(--transition-fast);
+            cursor: pointer;
+        }
+
+        .nav-item i {
+            font-size: 20px;
+        }
+
+        .nav-item:hover {
+            background: rgba(0, 0, 0, 0.03);
+            color: var(--text-main);
+        }
+
+        .nav-item.active {
+            background: var(--primary-light);
+            color: var(--text-main);
+        }
+
+        /* MAIN CONTENT AREA */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        /* HEADER FLOTANTE (Glassmorphism) */
+        .topbar {
+            position: sticky;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 72px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 40px;
+            z-index: 50;
+        }
+
+        .topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .search-input-wrapper {
+            position: relative;
+            width: 320px;
+        }
+
+        .search-input-wrapper i {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+        .search-input {
+            width: 100%;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            padding: 10px 16px 10px 40px;
+            border-radius: var(--radius-md);
+            font-family: inherit;
+            font-size: 0.9rem;
+            transition: var(--transition-fast);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--text-main);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        /* VIEW CONTAINER */
+        .view-container {
+            padding: 40px;
+            max-width: 1600px;
+            margin: 0 auto;
+            width: 100%;
+            display: none;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        .view-container.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* =========================================
+           UI COMPONENTS
+           ========================================= */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 32px;
+        }
+
+        .page-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            letter-spacing: -0.03em;
+        }
+
+        .page-subtitle {
+            color: var(--text-muted);
+            margin-top: 4px;
+            font-size: 0.95rem;
+        }
+
+        /* Botones */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: var(--transition-fast);
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--text-main);
+            color: var(--primary);
+        }
+
+        .btn-primary:hover {
+            background: #000;
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* Tarjetas */
+        .card {
+            background: var(--bg-surface);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition-smooth);
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow-md);
+            border-color: var(--border-hover);
+            transform: translateY(-2px);
+        }
+
+        .badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            background: var(--primary-light);
+            color: #166534;
+        }
+
+        /* =========================================
+           DASHBOARD GRID
+           ========================================= */
+        .metric-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .metric-card {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .metric-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: -0.04em;
+            color: var(--text-main);
+        }
+
+        .metric-trend {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .trend-up { color: #16A34A; }
+        .trend-down { color: #DC2626; }
+
+        /* =========================================
+           BUSCADOR CLÍNICO (AI)
+           ========================================= */
+        .ai-search-container {
+            max-width: 800px;
+            margin: 40px auto;
+            text-align: center;
+        }
+        
+        .ai-input-wrapper {
+            position: relative;
+            margin-top: 32px;
+        }
+
+        .ai-input {
+            width: 100%;
+            padding: 20px 24px 20px 60px;
+            font-size: 1.1rem;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            transition: var(--transition-smooth);
+        }
+
+        .ai-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px var(--primary-light), var(--shadow-lg);
+        }
+
+        .ai-input-wrapper i {
+            position: absolute;
+            left: 24px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 24px;
+            color: var(--primary);
+        }
+
+        .ai-results {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-top: 32px;
+            text-align: left;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: var(--transition-smooth);
+        }
+
+        .ai-results.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .supplement-card {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .supplement-card img {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+            border-radius: var(--radius-md);
+            background: #f3f4f6;
+        }
+
+        /* =========================================
+           COTIZADOR (Split Layout)
+           ========================================= */
+        .quoter-layout {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 32px;
+            height: calc(100vh - 200px);
+        }
+
+        .quoter-cart {
+            background: var(--bg-surface);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .quoter-panel {
+            background: var(--text-main);
+            color: white;
+            border-radius: var(--radius-lg);
+            padding: 32px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .panel-row {
+            display: flex;
+            justify-content: space-between;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .panel-row:last-child {
+            border-bottom: none;
+            padding-top: 16px;
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .profit-badge {
+            background: var(--primary);
+            color: var(--text-main);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: 700;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .quoter-layout {
+                grid-template-columns: 1fr;
+                height: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+        <div class="logo-area">
+            <div class="logo-icon"><i class="ph-bold ph-leaf"></i></div>
+            <span class="logo-text">NutriERP</span>
+        </div>
+        <nav>
+            <ul class="nav-menu">
+                <li><a class="nav-item active" onclick="switchTab('dashboard')"><i class="ph ph-squares-four"></i> Dashboard</a></li>
+                <li><a class="nav-item" onclick="switchTab('providers')"><i class="ph ph-buildings"></i> Proveedores</a></li>
+                <li><a class="nav-item" onclick="switchTab('products')"><i class="ph ph-pill"></i> Productos</a></li>
+                <li><a class="nav-item" onclick="switchTab('quoter')"><i class="ph ph-calculator"></i> Cotizador</a></li>
+                <li><a class="nav-item" onclick="switchTab('clinical')"><i class="ph ph-brain"></i> IA Clínica</a></li>
+                <li><a class="nav-item" onclick="switchTab('import')"><i class="ph ph-cloud-arrow-up"></i> Datos</a></li>
+            </ul>
+        </nav>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+        
+        <!-- HEADER -->
+        <header class="topbar">
+            <div class="topbar-left">
+                <button class="btn" style="padding: 8px; background: transparent;" onclick="toggleSidebar()">
+                    <i class="ph ph-list" style="font-size: 24px; color: var(--text-muted);"></i>
+                </button>
+                <div class="search-input-wrapper">
+                    <i class="ph ph-magnifying-glass"></i>
+                    <input type="text" class="search-input" placeholder="Buscar SKUs, proveedores...">
+                </div>
+            </div>
+            <div class="user-profile">
+                <button class="btn" style="background: transparent; padding: 8px;"><i class="ph ph-bell" style="font-size: 24px; color: var(--text-muted);"></i></button>
+                <div class="avatar">UX</div>
+            </div>
+        </header>
+
+        <!-- VIEWS -->
+
+        <!-- 1. DASHBOARD -->
+        <section id="dashboard" class="view-container active">
+            <div class="section-header">
+                <div>
+                    <h1 class="page-title">Visión General</h1>
+                    <p class="page-subtitle">Rendimiento de dropshipping y métricas clave.</p>
+                </div>
+                <button class="btn btn-primary"><i class="ph ph-download-simple"></i> Exportar Reporte</button>
+            </div>
+
+            <div class="metric-grid">
+                <div class="card metric-card">
+                    <div class="metric-header">
+                        <span>Ingresos Totales (Mes)</span>
+                        <i class="ph ph-trend-up"></i>
+                    </div>
+                    <div class="metric-value">$124,500</div>
+                    <div class="metric-trend trend-up"><i class="ph ph-arrow-up-right"></i> +14.5% vs mes anterior</div>
+                </div>
+                <div class="card metric-card">
+                    <div class="metric-header">
+                        <span>Margen Promedio</span>
+                        <i class="ph ph-percent"></i>
+                    </div>
+                    <div class="metric-value">42.8%</div>
+                    <div class="metric-trend trend-up"><i class="ph ph-arrow-up-right"></i> +2.1% optimización</div>
+                </div>
+                <div class="card metric-card">
+                    <div class="metric-header">
+                        <span>Productos Activos</span>
+                        <i class="ph ph-package"></i>
+                    </div>
+                    <div class="metric-value">1,432</div>
+                    <div class="metric-trend"><span class="badge">12 sin stock</span></div>
+                </div>
+                <div class="card metric-card">
+                    <div class="metric-header">
+                        <span>Proveedores Conectados</span>
+                        <i class="ph ph-plugs-connected"></i>
+                    </div>
+                    <div class="metric-value">24</div>
+                    <div class="metric-trend trend-up"><i class="ph ph-check-circle"></i> 100% operativos</div>
+                </div>
+            </div>
+
+            <!-- Gráfico Placeholder (Estructura Premium) -->
+            <div class="card" style="height: 400px; display: flex; flex-direction: column;">
+                <div class="section-header" style="margin-bottom: 20px;">
+                    <h3 style="font-size: 1.1rem; font-weight: 600;">Rendimiento de Plataformas</h3>
+                    <select style="border: 1px solid var(--border-color); border-radius: 8px; padding: 6px 12px; font-family: inherit;">
+                        <option>Últimos 30 días</option>
+                        <option>Este año</option>
+                    </select>
+                </div>
+                <div style="flex: 1; border: 1px dashed var(--border-color); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; color: var(--text-light); background: #fafafa;">
+                    [Área reservada para integración con Chart.js / Recharts]
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. BUSCADOR CLÍNICO IA -->
+        <section id="clinical" class="view-container">
+            <div class="ai-search-container">
+                <i class="ph-duotone ph-sparkle" style="font-size: 48px; color: var(--primary); margin-bottom: 16px;"></i>
+                <h1 class="page-title">Asistente Clínico Inteligente</h1>
+                <p class="page-subtitle" style="font-size: 1.1rem;">Describe un síntoma o problema y la IA mapeará los suplementos óptimos en tiempo real.</p>
+                
+                <div class="ai-input-wrapper">
+                    <i class="ph ph-magic-wand"></i>
+                    <input type="text" id="aiSearchInput" class="ai-input" placeholder="Ej: 'El cliente tiene problemas para dormir y estrés alto...'">
+                </div>
+
+                <!-- Resultados dinámicos de IA -->
+                <div class="ai-results" id="aiResults">
+                    <div class="card supplement-card">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <span class="badge">Alta Relevancia</span>
+                            <i class="ph-fill ph-check-circle" style="color: var(--primary); font-size: 20px;"></i>
+                        </div>
+                        <h3 style="font-size: 1.2rem; margin-top: 12px;">Glicinato de Magnesio</h3>
+                        <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.5;">Ideal para relajación muscular y del sistema nervioso central.</p>
+                        <div style="margin-top: auto; padding-top: 16px; border-top: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-weight: 600;">$14.50 CPA</span>
+                            <button class="btn" style="padding: 6px 12px; background: #f3f4f6;">Ver 5 Proveedores</button>
+                        </div>
+                    </div>
+                    
+                    <div class="card supplement-card">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <span class="badge" style="background: #e0e7ff; color: #3730a3;">Sinergia</span>
+                        </div>
+                        <h3 style="font-size: 1.2rem; margin-top: 12px;">L-Teanina</h3>
+                        <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.5;">Reduce la ansiedad sin causar somnolencia, mejora ondas alfa.</p>
+                        <div style="margin-top: auto; padding-top: 16px; border-top: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-weight: 600;">$9.20 CPA</span>
+                            <button class="btn" style="padding: 6px 12px; background: #f3f4f6;">Ver 3 Proveedores</button>
+                        </div>
+                    </div>
+
+                    <div class="card supplement-card">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <span class="badge" style="background: #fce7f3; color: #be185d;">Alternativa</span>
+                        </div>
+                        <h3 style="font-size: 1.2rem; margin-top: 12px;">Ashwagandha KSM-66</h3>
+                        <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.5;">Adaptógeno clínicamente probado para reducir el cortisol.</p>
+                        <div style="margin-top: auto; padding-top: 16px; border-top: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-weight: 600;">$18.00 CPA</span>
+                            <button class="btn" style="padding: 6px 12px; background: #f3f4f6;">Ver 8 Proveedores</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. COTIZADOR INTELIGENTE -->
+        <section id="quoter" class="view-container">
+            <div class="section-header">
+                <div>
+                    <h1 class="page-title">Simulador de Rentabilidad</h1>
+                    <p class="page-subtitle">Arma el stack y calcula ROI, CPA y envíos en tiempo real.</p>
+                </div>
+            </div>
+
+            <div class="quoter-layout">
+                <!-- Cesta (Estilo Shopify/Linear) -->
+                <div class="quoter-cart">
+                    <div style="padding: 24px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+                        <h3 style="font-size: 1.1rem;">Stack de Productos</h3>
+                        <button class="btn" style="background: transparent; color: var(--text-muted);"><i class="ph ph-plus"></i> Añadir SKU</button>
+                    </div>
+                    <div style="padding: 24px; flex: 1; background: #fafafa;">
+                        <!-- Item de Cesta -->
+                        <div style="display: flex; gap: 16px; background: var(--bg-surface); padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--border-color); margin-bottom: 12px;">
+                            <div style="width: 64px; height: 64px; background: #e5e7eb; border-radius: 8px;"></div>
+                            <div style="flex: 1;">
+                                <div style="display: flex; justify-content: space-between;">
+                                    <h4 style="font-weight: 600;">Complejo B Premium</h4>
+                                    <span style="font-weight: 600;">$12.50</span>
+                                </div>
+                                <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 4px;">Proveedor: <span style="color: var(--text-main); font-weight: 500;">NaturaLabs USA</span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Panel Financiero (Estilo Stripe Dashboard) -->
+                <div class="quoter-panel">
+                    <div>
+                        <h3 style="font-size: 1.2rem; margin-bottom: 8px;">Análisis Unitario</h3>
+                        <p style="color: var(--text-light); font-size: 0.9rem;">Cálculos automáticos basados en API de envío.</p>
+                    </div>
+                    
+                    <div style="margin-top: 16px;">
+                        <div class="panel-row">
+                            <span style="color: var(--text-light);">Costo de Productos (COGS)</span>
+                            <span>$12.50</span>
+                        </div>
+                        <div class="panel-row">
+                            <span style="color: var(--text-light);">Estimado de Envío (3PL)</span>
+                            <span>$4.20</span>
+                        </div>
+                        <div class="panel-row">
+                            <span style="color: var(--text-light);">Pasarela de Pago (Stripe 2.9%)</span>
+                            <span>$1.16</span>
+                        </div>
+                        <div class="panel-row" style="margin-top: 16px; color: var(--primary);">
+                            <span>Precio de Venta Sugerido</span>
+                            <span>$39.99</span>
+                        </div>
+                        <div class="panel-row">
+                            <span>Ganancia Neta</span>
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <span class="profit-badge">55% Margen</span>
+                                <span style="font-size: 1.5rem;">$22.13</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary" style="width: 100%; justify-content: center; padding: 16px; font-size: 1rem; margin-top: auto;">
+                        Guardar Cotización
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Placeholders para las otras vistas -->
+        <section id="providers" class="view-container">
+            <h1 class="page-title">Directorio de Proveedores</h1>
+            <p style="margin-top: 20px; color: var(--text-muted);">Arquitectura de tarjetas pendiente (Sigue el mismo patrón Premium).</p>
+        </section>
+        
+        <section id="products" class="view-container">
+            <h1 class="page-title">Catálogo PIM</h1>
+            <p style="margin-top: 20px; color: var(--text-muted);">Arquitectura PIM de productos pendiente.</p>
+        </section>
+
+        <section id="import" class="view-container">
+            <h1 class="page-title">Gestión de Datos</h1>
+            <p style="margin-top: 20px; color: var(--text-muted);">Interfaz Drag & Drop para Excel/JSON pendiente.</p>
+        </section>
+
+    </main>
+</div>
+
+<!-- =========================================
+     JAVASCRIPT (Lógica Visual & Microinteracciones)
+     ========================================= -->
+<script>
+    // 1. Navegación SPA (Switching de Tabs fluido)
+    function switchTab(tabId) {
+        // Quitar active de los menús
+        document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+        // Añadir active al clickeado
+        event.currentTarget.classList.add('active');
+
+        // Ocultar todas las vistas
+        document.querySelectorAll('.view-container').forEach(el => {
+            el.classList.remove('active');
+        });
+
+        // Mostrar la vista objetivo con ligera demora para que aplique la animación CSS
+        const targetView = document.getElementById(tabId);
+        if(targetView) {
+            setTimeout(() => {
+                targetView.classList.add('active');
+            }, 50);
+        }
+    }
+
+    // 2. Colapso de Sidebar (Microinteracción)
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        sidebar.classList.toggle('collapsed');
+        
+        // Ocultar/mostrar textos
+        const texts = sidebar.querySelectorAll('.nav-item, .logo-text');
+        texts.forEach(el => {
+            if(sidebar.classList.contains('collapsed')) {
+                // Lógica de CSS en un proyecto real para colapsar textos,
+                // aquí simulado simplificado:
+                if(el.classList.contains('logo-text')) el.style.display = 'none';
+            } else {
+                if(el.classList.contains('logo-text')) el.style.display = 'block';
+            }
+        });
+    }
+
+    // 3. Simulación de Buscador Clínico IA
+    const aiInput = document.getElementById('aiSearchInput');
+    const aiResults = document.getElementById('aiResults');
+
+    if(aiInput) {
+        aiInput.addEventListener('input', function(e) {
+            const val = e.target.value.toLowerCase();
+            if (val.length > 5 && (val.includes('dormir') || val.includes('ansiedad') || val.includes('estrés'))) {
+                // Simular retraso de API
+                setTimeout(() => {
+                    aiResults.classList.add('show');
+                }, 400);
+            } else {
+                aiResults.classList.remove('show');
+            }
+        });
+    }
+</script>
+</body>
+</html>
