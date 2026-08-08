@@ -419,8 +419,9 @@
     .product-grid-6 { 
       display: grid; 
       grid-template-columns: repeat(6, 1fr); 
-      gap: 24px; 
-      padding-bottom: 2rem; 
+      gap: 28px; 
+      padding-bottom: 3rem; 
+      align-items: start;
     }
 
     .pos-layout { display: grid; grid-template-columns: 1.5fr 1fr; gap: 1.7rem; flex: 1; min-height: 0; }
@@ -647,6 +648,8 @@
         <!-- Tabs de Catálogo -->
         <div class="sub-tabs-group" id="tabs-catalogo">
             <button class="sub-tab" data-target="cat-comp" onclick="switchSubTab('cat-comp', this, true)"><i class="ph ph-list-dashes sub-tab-icon"></i><span class="sub-tab-text">Catálogo general</span></button>
+            <!-- NUEVA PESTAÑA AÑADIDA AQUÍ -->
+            <button class="sub-tab" data-target="cat-est" onclick="switchSubTab('cat-est', this, true)"><i class="ph ph-chart-bar sub-tab-icon"></i><span class="sub-tab-text">Estadísticas</span></button>
         </div>
 
         <!-- Tabs de Logística -->
@@ -970,7 +973,7 @@
           </div>
         </div>
 
-        <!-- ===== ESTADÍSTICAS DE PRODUCTOS ===== -->
+        <!-- ===== ESTADÍSTICAS DE PRODUCTOS (INICIO) ===== -->
         <div class="sub-content" id="inicio-est-prod">
           <div class="panel-head">
             <div class="panel-head-text">
@@ -1198,6 +1201,7 @@
     <!-- MÓDULO CATÁLOGO -->
     <div id="catalogo" class="section-content">
       <div class="folder-body">
+        
         <!-- ===== CATÁLOGO GENERAL ===== -->
         <div class="sub-content" id="cat-comp">
           <div class="panel-head">
@@ -1230,6 +1234,37 @@
           <div class="product-grid-6" id="inventoryGrid">
           </div>
         </div>
+
+        <!-- ===== ESTADÍSTICAS DEL CATÁLOGO ===== -->
+        <div class="sub-content" id="cat-est">
+          <div class="panel-head">
+            <div class="panel-head-text">
+              <h3>Estadísticas de Inventario</h3>
+              <p>Métricas generales del catálogo, valorización de stock y distribución de categorías.</p>
+            </div>
+            <div class="panel-head-actions">
+              <button class="btn btn-outline btn-sm"><i class="ph ph-download-simple"></i> Reporte de Inventario</button>
+            </div>
+          </div>
+          
+          <div class="kpi-strip" id="catEstKpiStrip"></div>
+          
+          <div class="split-layout" style="min-height: 380px;">
+            <div class="soft-panel" style="display:flex; flex-direction:column;">
+              <i class="ph-fill ph-chart-pie-slice bg-watermark"></i>
+              <h4><i class="ph-fill ph-chart-pie-slice"></i> Distribución de Categorías</h4>
+              <div id="catEstCategoryDonut" class="donut-wrap" style="flex:1;"></div>
+            </div>
+            <div class="soft-panel">
+              <i class="ph-fill ph-warning-circle bg-watermark"></i>
+              <h4><i class="ph-fill ph-warning-circle"></i> Alertas de Stock Bajo</h4>
+              <div class="data-table-wrap" style="border:none;">
+                <table class="mini-table" id="catEstLowStockTable"></table>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
 
@@ -2260,6 +2295,48 @@
         </div>`).join('');
     }
 
+    function renderCatStats() {
+      const kpi = document.getElementById('catEstKpiStrip');
+      if (kpi) {
+        const totalProducts = DB.products.length;
+        const totalStock = DB.products.reduce((sum, p) => sum + (p.unknownStock ? 0 : Number(p.stock || 0)), 0);
+        const categories = new Set(DB.products.map(p => p.category).filter(Boolean)).size;
+        const inventoryValue = DB.products.reduce((sum, p) => sum + Number(p.cost || 0) * (p.unknownStock ? 0 : Number(p.stock || 0)), 0);
+
+        kpi.innerHTML = kpiBoxes([
+          {icon:'ph-package', bg:'#dbeafe', color:'#106FEB', label:'Total Productos', value:totalProducts, trend:'catálogo', up:true},
+          {icon:'ph-stack', bg:'#fef3c7', color:'#b45309', label:'Unidades en Stock', value:totalStock, trend:'físico', up:true},
+          {icon:'ph-folders', bg:'#ede9fe', color:'#7c3aed', label:'Categorías', value:categories, trend:'activas', up:true},
+          {icon:'ph-currency-circle-dollar', bg:'#dcfce7', color:'#16a34a', label:'Valor Inventario', value:moneyShort(inventoryValue), trend:'costo', up:true}
+        ]);
+      }
+
+      const donutTarget = document.getElementById('catEstCategoryDonut');
+      if (donutTarget) {
+        const catCount = {};
+        DB.products.forEach(p => {
+          const cat = p.category || 'Sin categoría';
+          catCount[cat] = (catCount[cat] || 0) + 1;
+        });
+        const palette = ['#106FEB','#8B5CF6','#10B981','#F59E0B','#F43F5E','#0EA5E9','#EC4899'];
+        const donutItems = Object.entries(catCount).map(([name, value], i) => ({
+          name, value, color: (DB.catIcons[name] && DB.catIcons[name].color) || palette[i%palette.length]
+        }));
+        const total = donutItems.reduce((s,i)=>s+i.value,0);
+        if(total>0) renderDonut('catEstCategoryDonut', donutItems.map(item => ({...item, value: Math.round((item.value/total)*100)})));
+        else donutTarget.innerHTML = '<div style="padding:1rem;color:var(--text-muted);font-size:0.85rem;">Sin productos.</div>';
+      }
+
+      const lowStockTable = document.getElementById('catEstLowStockTable');
+      if (lowStockTable) {
+         const lowStock = DB.products.filter(p => !p.unknownStock && Number(p.stock || 0) <= Number(p.minStock || 0)).sort((a,b)=>Number(a.stock)-Number(b.stock));
+         lowStockTable.innerHTML = lowStock.length ? 
+           '<tr><th>Producto</th><th>Stock Actual</th><th>Estado</th></tr>' + 
+           lowStock.slice(0,6).map(p => `<tr><td class="cell-strong">${p.name}</td><td>${p.stock} uds.</td><td><span class="badge badge-danger">Bajo</span></td></tr>`).join('') 
+           : '<tr><td colspan="3" style="text-align:center;padding:1.5rem;color:var(--text-muted);">El inventario está saludable.</td></tr>';
+      }
+    }
+
     function kpiBoxes(items){
       return items.map(i => `
         <div class="kpi-box">
@@ -2763,7 +2840,7 @@
     };
 
     /* ============================================================
-       11. RENDER: CATÁLOGO GENERAL (NUEVA VISTA TARJETAS 6 COLS)
+       11. RENDER: CATÁLOGO GENERAL (NUEVA VISTA TARJETAS 6 COLS COMPACTA)
        ============================================================ */
     let isProdEditMode = false;
 
@@ -2936,43 +3013,43 @@
               const provName = provObj ? provObj.name : 'Sin proveedor';
               
               const imgRender = p.image 
-                  ? `<div style="width: 100%; aspect-ratio: 1/1; background-image: url('${p.image}'); background-size: cover; background-position: center; border-radius: 16px; margin-bottom: 16px; background-color: #ffffff; border: 1px solid var(--neutral-line); position: relative;">` 
-                  : `<div style="width: 100%; aspect-ratio: 1/1; background: ${meta.color}15; display:flex; align-items:center; justify-content:center; color: ${meta.color}; font-size: 5rem; border-radius: 16px; margin-bottom: 16px; position: relative; border: 1px solid var(--neutral-line);">
+                  ? `<div style="width: 100%; aspect-ratio: 1/1; background-image: url('${p.image}'); background-size: cover; background-position: center; border-radius: 14px; margin-bottom: 8px; background-color: #ffffff; border: 1px solid var(--neutral-line); position: relative;">` 
+                  : `<div style="width: 100%; aspect-ratio: 1/1; background: ${meta.color}15; display:flex; align-items:center; justify-content:center; color: ${meta.color}; font-size: 4rem; border-radius: 14px; margin-bottom: 8px; position: relative; border: 1px solid var(--neutral-line);">
                         <i class="ph-fill ${meta.icon}"></i>`;
               
               const actionButtons = isProdEditMode ? `
-                 <div style="display:flex; gap:8px; margin-top:12px; border-top:1px solid var(--neutral-line); padding-top:14px;">
+                 <div style="display:flex; gap:6px; margin-top:10px; border-top:1px solid var(--neutral-line); padding-top:10px;">
                     <button class="btn btn-outline btn-sm" style="flex:1; justify-content:center;" onclick="openProductModal('${p.id}')"><i class="ph ph-pencil-simple"></i> Editar</button>
                     <button class="btn btn-outline btn-sm btn-danger-outline" style="flex:0 0 40px; justify-content:center; padding:0;" onclick="deleteProduct('${p.id}')"><i class="ph ph-trash"></i></button>
                  </div>` : '';
 
               return `
-              <div class="entity-card" style="padding: 1.4rem; cursor:default; display:flex; flex-direction:column; gap:10px; height: 100%; box-shadow: 0 4px 15px rgba(0,0,0,0.04); border-radius: 28px;">
+              <div class="entity-card" style="padding: 1rem; cursor:default; display:flex; flex-direction:column; gap:4px; height: 100%; box-shadow: 0 4px 15px rgba(0,0,0,0.04); border-radius: 20px;">
                  ${imgRender}
-                    <span class="badge" style="position: absolute; top: 14px; left: 14px; background: rgba(255,255,255,0.95); backdrop-filter: blur(4px); box-shadow:0 4px 12px rgba(0,0,0,0.1); font-size:0.85rem; padding: 6px 12px;">${p.category}</span>
+                    <span class="badge" style="position: absolute; top: 10px; left: 10px; background: rgba(255,255,255,0.95); backdrop-filter: blur(4px); box-shadow:0 4px 10px rgba(0,0,0,0.1); font-size:0.75rem; padding: 4px 10px;">${p.category}</span>
                  </div>
                  
-                 <div style="display:flex; flex-direction:column; gap:6px; flex:1;">
-                    <b style="font-size:1.35rem; line-height:1.35; color:var(--text-main); display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;">${p.name}</b>
-                    <span style="font-size:0.95rem; color:var(--text-muted); font-weight:700; letter-spacing: 0.3px;"><i class="ph-fill ph-tag"></i> ${p.brand || p.lab || 'Sin marca'}</span>
+                 <div style="display:flex; flex-direction:column; gap:2px; flex:1;">
+                    <b style="font-size:1.05rem; line-height:1.2; color:var(--text-main); display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;">${p.name}</b>
+                    <span style="font-size:0.8rem; color:var(--text-muted); font-weight:700; letter-spacing: 0.2px;"><i class="ph-fill ph-tag"></i> ${p.brand || p.lab || 'Sin marca'}</span>
                     
-                    <div style="display:flex; flex-direction:column; gap:8px; margin-top:14px; background:#f8fafc; padding:14px; border-radius:16px; border:1px solid #eef0f3;">
-                        <div style="display:flex; justify-content:space-between; font-size:0.95rem;">
-                            <span style="color:var(--text-muted);">Proveedor:</span>
-                            <span style="font-weight:700; text-align:right; max-width:130px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="${provName}">${provName}</span>
+                    <div style="display:flex; flex-direction:column; gap:4px; margin-top:8px; background:#f8fafc; padding:8px 10px; border-radius:12px; border:1px solid #eef0f3;">
+                        <div style="display:flex; justify-content:space-between; font-size:0.8rem;">
+                            <span style="color:var(--text-muted);">Prov:</span>
+                            <span style="font-weight:700; text-align:right; max-width:90px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="${provName}">${provName}</span>
                         </div>
-                        <div style="display:flex; justify-content:space-between; font-size:0.95rem;">
+                        <div style="display:flex; justify-content:space-between; font-size:0.8rem;">
                             <span style="color:var(--text-muted);">Costo:</span>
                             <span style="font-weight:700; color:var(--danger-color);">${money(p.cost)}</span>
                         </div>
                     </div>
 
-                    <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-top:auto; padding-top: 16px;">
+                    <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-top:auto; padding-top: 10px;">
                        <div style="display:flex; flex-direction:column;">
-                          <span style="font-size:0.8rem; color:var(--text-muted); font-weight:700;">Precio Venta</span>
-                          <span style="font-size:1.75rem; font-weight:800; color:var(--primary-pill); line-height:1;">${money(p.price)}</span>
+                          <span style="font-size:0.7rem; color:var(--text-muted); font-weight:700;">Precio Venta</span>
+                          <span style="font-size:1.35rem; font-weight:800; color:var(--primary-pill); line-height:1;">${money(p.price)}</span>
                        </div>
-                       <span class="badge ${st.cls}" style="padding:8px 12px; font-size:0.85rem;">${st.label === 'Desconocido' ? '∞ Stock' : p.stock + ' uds'}</span>
+                       <span class="badge ${st.cls}" style="padding:6px 8px; font-size:0.75rem;">${st.label === 'Desconocido' ? '∞' : p.stock + ' uds'}</span>
                     </div>
                  </div>
                  
@@ -3237,6 +3314,7 @@
 
       const statusCls = {'Activo':'badge-ok', 'Pendiente':'badge-warn', 'Inactivo':'badge-danger'};
 
+      // 1. Render Vista Tarjetas
       gridContainer.innerHTML = DB.platforms.map(p => {
         const bgStyle = p.logo ? `background-image:url('${p.logo}'); background-size:cover; background-position:center; background-color:transparent;` : `background:${p.color || '#106FEB'};`;
         return `
@@ -3262,6 +3340,7 @@
         </div>`
       }).join('');
 
+      // 2. Render Vista Lista
       listBody.innerHTML = DB.platforms.map(p => {
         const bgStyle = p.logo ? `background-image:url('${p.logo}'); background-size:cover; background-position:center; background-color:transparent;` : `background:${p.color || '#106FEB'};`;
         return `
@@ -3285,6 +3364,7 @@
       }).join('');
     }
 
+    // Funciones del Modal y CRUD Plataformas
     window.openAddPlatformModal = function() {
       document.getElementById('platModalTitle').textContent = 'Agregar Plataforma';
       document.getElementById('fPlatId').value = '';
@@ -3416,7 +3496,7 @@
         document.getElementById('fCourierDir').value = '';
         document.getElementById('fCourierTel').value = '';
         document.getElementById('fCourierWsp').value = '';
-        document.getElementById('courierCoverageBody').innerHTML = '';
+        document.getElementById('courierCoverageBody').innerHTML = ''; // Limpiar zonas
         openModal('modalNuevoCourier');
     };
 
@@ -3463,6 +3543,7 @@
             logoUrl = URL.createObjectURL(fileInput.files[0]);
         }
 
+        // Recolectar datos de las zonas de cobertura
         const coverageRows = document.querySelectorAll('#courierCoverageBody tr');
         let coverageData = [];
         coverageRows.forEach(tr => {
@@ -3654,7 +3735,7 @@
     function clearDataUI(){
       const emptyRow = '<tr><td colspan="10" style="text-align:center;padding:2rem;color:var(--text-muted);">No hay datos registrados.</td></tr>';
       
-      ['clientTableBody','salesHistoryBody','courierTableBody', 'platformListBody', 'providerListBody']
+      ['clientTableBody','salesHistoryBody','courierTableBody', 'platformListBody', 'providerListBody', 'catEstLowStockTable']
         .forEach(id => { const node=document.getElementById(id); if(node) node.innerHTML=emptyRow; });
 
       ['providerGrid','agencyGrid','platformGrid','activityFeed','topProductsList','stockAlertList',
@@ -3835,6 +3916,48 @@
       }
     }
 
+    function renderCatStats() {
+      const kpi = document.getElementById('catEstKpiStrip');
+      if (kpi) {
+        const totalProducts = DB.products.length;
+        const totalStock = DB.products.reduce((sum, p) => sum + (p.unknownStock ? 0 : Number(p.stock || 0)), 0);
+        const categories = new Set(DB.products.map(p => p.category).filter(Boolean)).size;
+        const inventoryValue = DB.products.reduce((sum, p) => sum + Number(p.cost || 0) * (p.unknownStock ? 0 : Number(p.stock || 0)), 0);
+
+        kpi.innerHTML = kpiBoxes([
+          {icon:'ph-package', bg:'#dbeafe', color:'#106FEB', label:'Total Productos', value:totalProducts, trend:'catálogo', up:true},
+          {icon:'ph-stack', bg:'#fef3c7', color:'#b45309', label:'Unidades en Stock', value:totalStock, trend:'físico', up:true},
+          {icon:'ph-folders', bg:'#ede9fe', color:'#7c3aed', label:'Categorías', value:categories, trend:'activas', up:true},
+          {icon:'ph-currency-circle-dollar', bg:'#dcfce7', color:'#16a34a', label:'Valor Inventario', value:moneyShort(inventoryValue), trend:'costo', up:true}
+        ]);
+      }
+
+      const donutTarget = document.getElementById('catEstCategoryDonut');
+      if (donutTarget) {
+        const catCount = {};
+        DB.products.forEach(p => {
+          const cat = p.category || 'Sin categoría';
+          catCount[cat] = (catCount[cat] || 0) + 1;
+        });
+        const palette = ['#106FEB','#8B5CF6','#10B981','#F59E0B','#F43F5E','#0EA5E9','#EC4899'];
+        const donutItems = Object.entries(catCount).map(([name, value], i) => ({
+          name, value, color: (DB.catIcons[name] && DB.catIcons[name].color) || palette[i%palette.length]
+        }));
+        const total = donutItems.reduce((s,i)=>s+i.value,0);
+        if(total>0) renderDonut('catEstCategoryDonut', donutItems.map(item => ({...item, value: Math.round((item.value/total)*100)})));
+        else donutTarget.innerHTML = '<div style="padding:1rem;color:var(--text-muted);font-size:0.85rem;">Sin productos.</div>';
+      }
+
+      const lowStockTable = document.getElementById('catEstLowStockTable');
+      if (lowStockTable) {
+         const lowStock = DB.products.filter(p => !p.unknownStock && Number(p.stock || 0) <= Number(p.minStock || 0)).sort((a,b)=>Number(a.stock)-Number(b.stock));
+         lowStockTable.innerHTML = lowStock.length ? 
+           '<tr><th>Producto</th><th>Stock Actual</th><th>Estado</th></tr>' + 
+           lowStock.slice(0,6).map(p => `<tr><td class="cell-strong">${p.name}</td><td>${p.stock} uds.</td><td><span class="badge badge-danger">Bajo</span></td></tr>`).join('') 
+           : '<tr><td colspan="3" style="text-align:center;padding:1.5rem;color:var(--text-muted);">El inventario está saludable.</td></tr>';
+      }
+    }
+
     function renderStockAlerts(){
       const target = document.getElementById('stockAlertList');
       if (!target) return;
@@ -3871,6 +3994,7 @@
       renderSalesHistory();
 
       renderInventoryTable();
+      renderCatStats(); // <--- Llama a la estadística del nuevo catálogo aquí
       renderStockAlerts();
 
       renderProviders();
