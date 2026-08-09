@@ -4001,37 +4001,64 @@
        ============================================================ */
     function normalizeArray(value){ return Array.isArray(value) ? value : []; }
 
+    function unwrapServerData(data){
+      let source = data;
+      // Acepta respuestas directas y wrappers comunes de Apps Script.
+      for(let i=0; i<4 && source && typeof source === 'object'; i++){
+        if(source.result && typeof source.result === 'object') { source = source.result; continue; }
+        if(source.data && typeof source.data === 'object' && !Array.isArray(source.data)) { source = source.data; continue; }
+        if(source.response && typeof source.response === 'object') { source = source.response; continue; }
+        break;
+      }
+      return source && typeof source === 'object' ? source : {};
+    }
+
+    function pickServerArray(source, names){
+      const keys = Object.keys(source || {});
+      const wanted = names.map(n => String(n).toLowerCase().replace(/[^a-z0-9]/g,''));
+      for(const key of keys){
+        const normalized = String(key).toLowerCase().replace(/[^a-z0-9]/g,'');
+        if(wanted.includes(normalized) && Array.isArray(source[key])) return source[key];
+      }
+      return [];
+    }
+
     function normalizeServerData(data){
-      const source = data && typeof data === 'object' ? data : {};
-      DB.products = normalizeArray(source.products);
-      DB.clients = normalizeArray(source.clients);
-      DB.providers = normalizeArray(source.providers);
-      DB.couriers = normalizeArray(source.couriers);
-      DB.agencies = normalizeArray(source.agencies);
-      DB.platforms = normalizeArray(source.platforms);
-      DB.channels = normalizeArray(source.channels);
-      DB.sellers = normalizeArray(source.sellers);
-      DB.districts = normalizeArray(source.districts);
-      DB.quotes = normalizeArray(source.quotes);
-      
-      DB.activity = normalizeArray(source.activity);
-      DB.revenueByDay = normalizeArray(source.revenueByDay);
-      DB.salesTrend30 = normalizeArray(source.salesTrend30);
-      DB.salesHistory = normalizeArray(source.salesHistory);
+      const source = unwrapServerData(data);
+
+      DB.products = pickServerArray(source, ['products','producto','productos']);
+      DB.clients = pickServerArray(source, ['clients','client','cliente','clientes']);
+      DB.providers = pickServerArray(source, ['providers','provider','proveedor','proveedores']);
+      DB.couriers = pickServerArray(source, ['couriers','courier','motorizados']);
+      DB.agencies = pickServerArray(source, ['agencies','agency','agencia','agencias']);
+      DB.platforms = pickServerArray(source, ['platforms','platform','plataforma','plataformas']);
+      DB.channels = pickServerArray(source, ['channels','channel','canales','canal']);
+      DB.sellers = pickServerArray(source, ['sellers','seller','vendedores','vendedor']);
+      DB.districts = pickServerArray(source, ['districts','district','distritos','distrito']);
+      DB.quotes = pickServerArray(source, ['quotes','quote','cotizaciones','cotizacion']);
+      DB.activity = pickServerArray(source, ['activity','activities','actividad','actividades']);
+      DB.revenueByDay = pickServerArray(source, ['revenueByDay','revenue','ingresosPorDia']);
+      DB.salesTrend30 = pickServerArray(source, ['salesTrend30','salesTrend','tendenciaVentas']);
+      DB.salesHistory = pickServerArray(source, ['salesHistory','sales','ventasHistorial','ventas','ventas_historial']);
       salesHistoryData = DB.salesHistory;
 
-      if (Array.isArray(source.quoteStatuses) && source.quoteStatuses.length) {
-        DB.quoteStatuses = source.quoteStatuses;
-      }
+      if (Array.isArray(source.quoteStatuses) && source.quoteStatuses.length) DB.quoteStatuses = source.quoteStatuses;
       DB.goal = source.goal && typeof source.goal === 'object'
         ? {target:Number(source.goal.target)||0, current:Number(source.goal.current)||0}
         : {target:0,current:0};
 
-      const categoriesFromProducts = DB.products.map(p => p.category).filter(Boolean);
+      const categoriesFromProducts = DB.products.map(p => p.category || p.categoria || p.Categoria).filter(Boolean);
       DB.categories = Array.isArray(source.categories) && source.categories.length
         ? source.categories
         : [...new Set(categoriesFromProducts)];
 
+      // Mantiene configuraciones recibidas del backend para loadSettingsFromServer.
+      window.__ERP_SERVER_DATA__ = source;
+      console.log('Vida Sana 360 — datos normalizados:', {
+        products: DB.products.length, clients: DB.clients.length, providers: DB.providers.length,
+        couriers: DB.couriers.length, agencies: DB.agencies.length, platforms: DB.platforms.length,
+        quotes: DB.quotes.length, salesHistory: DB.salesHistory.length
+      });
       return DB;
     }
 
@@ -4077,7 +4104,7 @@
     }
 
     function loadSettingsFromServer(data){
-      const source = data && typeof data === 'object' ? data : {};
+      const source = unwrapServerData(data);
       const company = source.company || source.empresa || {};
       const fields = {
         empresaRazonSocial: company.razonSocial || company.razon_social || '',
