@@ -431,25 +431,30 @@
        AJUSTE ESPECÍFICO PARA LAS TARJETAS DE LOGÍSTICA
        Garantiza que sean más grandes, espaciadas y sin cortes
        ========================================================== */
-    .entity-grid { 
-        display: grid; 
-        grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); 
-        gap: 2rem; 
-        overflow-y: auto; 
-        padding: 16px 16px 40px 16px; 
-        margin: 0; 
-        align-content: start; 
+    .entity-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+        gap: 2.5rem; /* Incrementado para evitar que se junten */
+        overflow-y: auto;
+        padding: 16px 16px 40px 16px;
+        margin: 0;
+        align-content: start;
+        grid-auto-rows: min-content; /* Filas se adaptan automáticamente al contenido */
+        flex: 1; /* Permite el scroll independiente */
+        min-height: 0;
     }
-    
-    .entity-grid .entity-card { 
-        padding: 2rem; 
-        gap: 18px; 
-        min-height: max-content; 
-        height: 100%;
-        display: flex; 
-        flex-direction: column; 
-        justify-content: flex-start; 
-        box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+
+    .entity-grid .entity-card {
+        padding: 2rem;
+        gap: 18px;
+        height: auto; /* Corrección vital: auto permite que el flex-container crezca sin colapsar su contenido */
+        min-height: 100%; /* Las tarjetas se alinean a la celda del grid ocupándola completamente */
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        box-shadow: 0 6px 25px rgba(0,0,0,0.04);
+        /* Mantenemos el overflow hidden solo en X si hace falta o lo quitamos si se recortan los selectores */
+        overflow: hidden; 
     }
     
     .entity-grid .entity-logo { 
