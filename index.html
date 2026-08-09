@@ -1891,6 +1891,7 @@
 
   <script>
     // --- INTEGRACIÓN PARA GITHUB PAGES Y GOOGLE SHEETS ---
+    // Debe ser la URL /exec de la versión desplegada del code.gs.
     const GAS_URL = "https://script.google.com/macros/s/AKfycbxewfPz9kZ1Qfof1Z9YxRGXAWa1sU81R_IHYznXIMOi2e4WKyHODUwLNYMGVukZ-1WHug/exec";
 
     window.google = window.google || {};
@@ -2064,6 +2065,9 @@
         }
       });
 
+      const quoteDate = document.getElementById('fFechaEmisCot');
+      if (quoteDate && !quoteDate.value) quoteDate.value = new Date().toISOString().slice(0,10);
+
       const inputChat = document.getElementById('aiInputText');
       if(inputChat) {
           inputChat.addEventListener("keypress", function(event) {
@@ -2086,7 +2090,7 @@
   (function(){
 
     /* ============================================================
-       1. BASE DE DATOS COMPARTIDA (simulada, en memoria)
+       1. BASE DE DATOS EN MEMORIA (caché sincronizada con Google Sheets)
        ============================================================ */
     const DB = {
       categories: [],
@@ -2103,16 +2107,22 @@
       clients: [],
       providers: [],
       couriers: [],
+      courierCoverage: [],
       agencies: [],
       platforms: [],
       channels: [],
       sellers: [],
       districts: [],
+      users: [],
+      saleDetails: [],
+      company: {},
+      currentUser: {},
       quoteStatuses: ['Por enviar','Enviada','Negociación','Aprobada'],
       quotes: [],
       activity: [],
       revenueByDay: [],
       salesTrend30: [],
+      salesHistory30: [],
       goal: { target: 0, current: 0 },
       salesHistory: [],
       posCart: []
@@ -2183,23 +2193,25 @@
        3. RENDER: DASHBOARD
        ============================================================ */
     function renderDashboard(){
-      const totalRevenue = DB.revenueByDay.reduce((a,b)=>a+b,0);
+      const totalRevenue = DB.salesHistory.filter(s => String(s.status || '').toLowerCase() !== 'anulado').reduce((a,b)=>a+Number(b.total||0),0);
       animateCount('kpiRevenueTotal', totalRevenue, {prefix:'S/ ', duration:1000});
 
-      const days = ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
-      const max = DB.revenueByDay.length ? Math.max(...DB.revenueByDay) : 0;
-      document.getElementById('revenueBarChart').innerHTML = DB.revenueByDay.length ? DB.revenueByDay.map((v,i)=>`
+      const recentRevenue = DB.revenueByDay.map(x => typeof x === 'number' ? x : Number(x.revenue || x.value || x.total || 0));
+      const max = recentRevenue.length ? Math.max(...recentRevenue) : 0;
+      document.getElementById('revenueBarChart').innerHTML = recentRevenue.length ? recentRevenue.slice(-7).map((v,i)=>`
         <div class="bar-col">
           <span class="bar-value">${(v/1000).toFixed(1)}k</span>
           <div class="bar" style="height:${(v/max*100)}%;"></div>
           <span class="bar-label">${days[i]}</span>
         </div>`).join('') : '<div style="padding:2rem;color:var(--text-muted);">Sin ventas registradas.</div>';
 
-      animateCount('kpiTotalClientes', DB.clients.length + 128, {duration:800});
-      animateCount('kpiProductosActivos', DB.products.length + 96, {duration:800});
-      animateCount('kpiPedidosHoy', 23, {duration:700});
+      animateCount('kpiTotalClientes', DB.clients.length, {duration:800});
+      animateCount('kpiProductosActivos', DB.products.filter(p => String(p.status || 'Activo').toLowerCase() !== 'inactivo').length, {duration:800});
+      const today = new Date().toISOString().slice(0,10);
+      const ordersToday = DB.salesHistory.filter(s => String(s.date || '').slice(0,10) === today && String(s.status || '').toLowerCase() !== 'anulado').length;
+      animateCount('kpiPedidosHoy', ordersToday, {duration:700});
 
-      const totalSellerOrders = DB.sellers.reduce((a,s)=>a+Number(s.orders||0),0); const avgTicket = totalSellerOrders ? totalRevenue / totalSellerOrders : 0;
+      const totalSellerOrders = DB.salesHistory.filter(s => String(s.status || '').toLowerCase() !== 'anulado').length; const avgTicket = totalSellerOrders ? totalRevenue / totalSellerOrders : 0;
       animateCount('kpiTicketProm', avgTicket, {prefix:'S/ ', duration:900});
 
       renderDonut('channelDonut', DB.channels);
@@ -2272,12 +2284,12 @@
        4. RENDER: ESTADÍSTICAS DE VENTAS Y PRODUCTOS
        ============================================================ */
     function renderSalesStats(){
-      const totalRevenue = DB.revenueByDay.reduce((a,b)=>a+b,0) * 4.3;
-      const totalOrders = DB.sellers.reduce((a,s)=>a+s.orders,0);
+      const totalRevenue = DB.salesHistory.filter(s=>String(s.status||'').toLowerCase() !== 'anulado').reduce((a,s)=>a+Number(s.total||0),0);
+      const totalOrders = DB.salesHistory.filter(s=>String(s.status||'').toLowerCase() !== 'anulado').length;
       document.getElementById('salesKpiStrip').innerHTML = kpiBoxes([
         {icon:'ph-coins', bg:'#dbeafe', color:'#106FEB', label:'Ingresos (30d)', value: moneyShort(totalRevenue), trend:'real', up:true},
         {icon:'ph-shopping-cart-simple', bg:'#dcfce7', color:'#16a34a', label:'Pedidos totales', value: totalOrders, trend:'real', up:true},
-        {icon:'ph-receipt', bg:'#ede9fe', color:'#7c3aed', label:'Ticket promedio', value: moneyShort(totalRevenue/totalOrders), trend:'real', up:true},
+        {icon:'ph-receipt', bg:'#ede9fe', color:'#7c3aed', label:'Ticket promedio', value: moneyShort(totalOrders ? totalRevenue/totalOrders : 0), trend:'real', up:true},
         {icon:'ph-arrow-u-down-left', bg:'#fee2e2', color:'#dc2626', label:'Tasa de devolución', value: '2.8%', trend:'real', up:false}
       ]);
 
@@ -2289,7 +2301,7 @@
 
       document.getElementById('sellersTable').innerHTML = `
         <tr><th>Vendedor</th><th>Ventas</th><th>Pedidos</th></tr>
-        ${DB.sellers.map(s => `<tr><td class="cell-strong">${s.name}</td><td>${s.sales}</td><td>${s.orders}</td></tr>`).join('')}`;
+        ${DB.sellers.map(s => `<tr><td class="cell-strong">${s.name || '—'}</td><td>${s.sales || 0}</td><td>${s.orders || 0}</td></tr>`).join('')}`;
 
       document.getElementById('districtList').innerHTML = DB.districts.map(d => `
         <div>
@@ -2330,7 +2342,7 @@
       const search = (document.getElementById('cliSearchInput')?.value || '').toLowerCase();
       const segFilter = document.getElementById('cliSegmentFilter')?.value || '';
       const rows = DB.clients.filter(c =>
-        (c.name.toLowerCase().includes(search) || c.phone.includes(search) || c.email.toLowerCase().includes(search)) &&
+        (String(c.name||'').toLowerCase().includes(search) || String(c.phone||'').includes(search) || String(c.email||'').toLowerCase().includes(search)) &&
         (!segFilter || c.segment===segFilter)
       );
       document.getElementById('clientTableBody').innerHTML = rows.map(c => `
@@ -2441,7 +2453,7 @@
             console.error(error);
             showToast('No se pudo guardar el cliente en Sheets');
           })
-          .crearCliente({nombre:name, telefono:phone, correo:email, condicion:condition});
+          .crearCliente({id:newClient.id, name:name, phone:phone, email:email, address:document.getElementById('fDirCliente')?.value.trim() || '', condition:condition, segment:'Nuevo'});
       }
       
       closeModal('modalNuevoCliente');
@@ -2635,98 +2647,126 @@
     };
 
     window.confirmPosOrder = function() {
-        const name = document.getElementById('fPosClientName').value.trim();
-        const phone = document.getElementById('fPosClientPhone').value.trim();
-        const email = document.getElementById('fPosClientEmail').value.trim();
-        const address = document.getElementById('fPosClientAddress').value.trim();
-        let clientId = document.getElementById('fPosClientId').value;
+      const name = document.getElementById('fPosClientName').value.trim();
+      const phone = document.getElementById('fPosClientPhone').value.trim();
+      const email = document.getElementById('fPosClientEmail').value.trim();
+      const address = document.getElementById('fPosClientAddress').value.trim();
+      const notes = document.getElementById('fPosOrderNotes').value.trim();
+      let clientId = document.getElementById('fPosClientId').value;
 
-        if(!name || !phone) {
-            showToast('Nombre y teléfono son obligatorios');
-            return;
-        }
+      if(!name || !phone) {
+        showToast('Nombre y teléfono son obligatorios');
+        return;
+      }
 
-        if(!clientId) {
-            const existing = DB.clients.find(c => c.phone === phone);
-            if (existing) {
-                clientId = existing.id;
-            } else {
-                clientId = 'CLI-' + Date.now();
-                DB.clients.push({
-                    id: clientId,
-                    name: name,
-                    phone: phone,
-                    email: email,
-                    address: address,
-                    segment: 'Nuevo',
-                    orders: 0,
-                    totalSpent: 0,
-                    lastOrder: new Date().toISOString().slice(0,10),
-                    color: '#106FEB'
-                });
-            }
-        }
+      const existing = DB.clients.find(c => c.phone === phone);
+      if (!clientId && existing) clientId = existing.id;
+      if (!clientId) clientId = 'CLI-' + Date.now();
 
-        const payment = document.getElementById('posPaymentMethod')?.value || '';
-        const subtotal = DB.posCart.reduce((sum, item) => {
-            const product = DB.products.find(p => p.id === item.id);
-            return sum + (product ? Number(product.price || 0) * Number(item.qty || 0) : 0);
-        }, 0);
+      const payment = document.getElementById('posPaymentMethod')?.value || '';
+      const subtotal = DB.posCart.reduce((sum, item) => {
+        const product = DB.products.find(p => p.id === item.id);
+        return sum + (product ? Number(product.price || 0) * Number(item.qty || 0) : 0);
+      }, 0);
 
-        const saleData = {
-            order: 'VTA-' + Date.now().toString().slice(-6), 
-            clientName: name,
-            date: new Date().toISOString().slice(0,10),
-            channel: 'POS',
-            payment: payment,
-            total: subtotal,
-            status: 'Completado'
+      const discount = 0;
+      const shippingCost = 0;
+      const total = subtotal - discount + shippingCost;
+      const orderId = 'VTA-' + Date.now().toString().slice(-8);
+
+      const saleData = {
+        id: orderId,
+        order: orderId,
+        client: name,
+        clientName: name,
+        clientId: clientId,
+        date: new Date().toISOString().slice(0,10),
+        channel: 'POS',
+        payment: payment,
+        subtotal: subtotal,
+        discount: discount,
+        shippingCost: shippingCost,
+        total: total,
+        profit: DB.posCart.reduce((sum, item) => {
+          const p = DB.products.find(x => x.id === item.id);
+          return sum + (p ? (Number(p.price||0) - Number(p.cost||0)) * Number(item.qty||0) : 0);
+        }, 0),
+        status: 'Completado',
+        sellerId: DB.currentUser.id || '',
+        courierId: '',
+        district: '',
+        notes: notes
+      };
+
+      const cartItems = DB.posCart.map(item => {
+        const p = DB.products.find(x => x.id === item.id) || {};
+        return {
+          id: item.id,
+          productId: item.id,
+          qty: Number(item.qty || 0),
+          quantity: Number(item.qty || 0),
+          unitPrice: Number(p.price || 0),
+          unitCost: Number(p.cost || 0),
+          discount: 0
         };
+      });
 
-        const cartItems = DB.posCart.map(item => ({
-            id: item.id,
-            qty: Number(item.qty || 0)
-        }));
+      showToast('Generando pedido...');
 
-        const cObj = DB.clients.find(c => c.id === clientId);
-        if(cObj) {
-            cObj.orders = (cObj.orders || 0) + 1;
-            cObj.totalSpent = (cObj.totalSpent || 0) + subtotal;
-            cObj.lastOrder = saleData.date;
-        }
-
-        DB.salesHistory.unshift({
-            id: saleData.order,
-            order: saleData.order,
-            client: saleData.clientName,
-            date: saleData.date,
-            channel: saleData.channel,
-            payment: saleData.payment,
-            total: saleData.total,
-            status: saleData.status
-        });
-
-        showToast('Generando pedido...');
-        
-        if (typeof google !== 'undefined' && google.script && google.script.run) {
-            google.script.run
-                .withSuccessHandler(function(){
-                    DB.posCart = [];
-                    showToast('Pedido completado y guardado');
-                    closeModal('modalCheckoutPos');
-                    renderAll();
-                })
-                .withFailureHandler(function(error){
-                    console.error('Error procesando venta:', error);
-                    showToast('No se pudo guardar la venta');
-                })
-                .processSaleBackend(saleData, cartItems);
-        } else {
+      const saveSale = function(){
+        google.script.run
+          .withSuccessHandler(function(result){
             DB.posCart = [];
-            showToast('Pedido completado localmente');
+            showToast('Pedido completado y guardado');
             closeModal('modalCheckoutPos');
-            renderAll();
+            loadDataFromServer();
+          })
+          .withFailureHandler(function(error){
+            console.error('Error procesando venta:', error);
+            showToast('No se pudo guardar la venta');
+          })
+          .processSaleBackend(saleData, cartItems);
+      };
+
+      if (typeof google !== 'undefined' && google.script && google.script.run) {
+        /* Si el cliente es nuevo, primero se crea en Clientes con el mismo ID. */
+        if (!existing && !document.getElementById('fPosClientId').value) {
+          google.script.run
+            .withSuccessHandler(function(){
+              DB.clients.push({
+                id: clientId,
+                name: name,
+                phone: phone,
+                email: email,
+                address: address,
+                condition: '',
+                segment: 'Nuevo',
+                orders: 0,
+                totalSpent: 0,
+                lastOrder: '',
+                color: '#106FEB'
+              });
+              saveSale();
+            })
+            .withFailureHandler(function(error){
+              console.error('Error creando cliente:', error);
+              showToast('No se pudo crear el cliente');
+            })
+            .crearCliente({
+              id: clientId,
+              name: name,
+              phone: phone,
+              email: email,
+              address: address,
+              condition: '',
+              segment: 'Nuevo'
+            });
+        } else {
+          saveSale();
         }
+      } else {
+        showToast('La conexión con Google Sheets no está disponible');
+      }
     };
 
     /* ============================================================
@@ -2738,7 +2778,7 @@
       const search = (document.getElementById('histSearchInput')?.value || '').toLowerCase();
       const statusFilter = document.getElementById('histStatusFilter')?.value || '';
       const rows = DB.salesHistory.filter(s =>
-        (s.client.toLowerCase().includes(search) || s.order.toLowerCase().includes(search)) &&
+        (String(s.client||'').toLowerCase().includes(search) || String(s.order||'').toLowerCase().includes(search)) &&
         (!statusFilter || s.status===statusFilter)
       );
       const badgeCls = {Completado:'badge-ok', Procesando:'badge-warn', Anulado:'badge-danger'};
@@ -2766,38 +2806,54 @@
        9. RENDER: COTIZACIONES (LOCAL Y CLOUD)
        ============================================================ */
     window.createQuote = function(){
-      const client = document.getElementById('fClienteCot')?.value || '';
-      const total = parseFloat(document.getElementById('fMontoCot')?.value || 0);
+      const clientSelect = document.getElementById('fClienteCot');
+      const clientId = clientSelect?.value || '';
+      const clientObj = DB.clients.find(c => String(c.id) === String(clientId));
+      const client = clientObj ? clientObj.name : clientId;
+      const subtotal = parseFloat(document.getElementById('fMontoCot')?.value || 0);
+      const discountPct = parseFloat(document.getElementById('fDescCot')?.value || 0);
+      const shipping = parseFloat(document.getElementById('fEnvioCot')?.value || 0);
       const validUntil = document.getElementById('fFechaCot')?.value || '';
+      const notes = document.getElementById('fNotasCot')?.value || '';
+      const discount = subtotal * (discountPct / 100);
+      const total = Math.max(0, subtotal - discount + shipping);
 
-      if (!client || !total){ showToast('Completa cliente y monto'); return; }
-      
+      if (!clientId || !subtotal){ showToast('Completa cliente y monto'); return; }
+
       const quoteData = {
         id: 'COT-' + Date.now(),
+        clientId: clientId,
         client: client,
         total: total,
+        subtotal: subtotal,
+        discount: discount,
+        shipping: shipping,
         status: 'Por enviar',
-        date: new Date().toISOString().slice(0,10),
-        validUntil: validUntil
+        date: document.getElementById('fFechaEmisCot')?.value || new Date().toISOString().slice(0,10),
+        validUntil: validUntil,
+        sellerId: DB.currentUser.id || '',
+        notes: notes
       };
-      
+
       DB.quotes.push(quoteData);
 
-      if (typeof google !== 'undefined' && google.script && google.script.run){ 
-          google.script.run
-            .withSuccessHandler(function(){
-              showToast('Cotización guardada en Google Sheets');
-            })
-            .withFailureHandler(function(error){
-              console.error('Error guardando cotización:', error);
-              showToast('No se pudo guardar la cotización en la nube');
-            })
-            .saveQuote(quoteData);
+      if (typeof google !== 'undefined' && google.script && google.script.run){
+        google.script.run
+          .withSuccessHandler(function(){
+            closeModal('modalNuevaCotizacion');
+            showToast('Cotización guardada en Google Sheets');
+            loadDataFromServer();
+          })
+          .withFailureHandler(function(error){
+            console.error('Error guardando cotización:', error);
+            DB.quotes = DB.quotes.filter(q => q.id !== quoteData.id);
+            showToast('No se pudo guardar la cotización');
+          })
+          .saveQuote(quoteData);
+      } else {
+        closeModal('modalNuevaCotizacion');
+        showToast('La conexión con Google Sheets no está disponible');
       }
-      
-      closeModal('modalNuevaCotizacion');
-      showToast('Cotización guardada');
-      renderAll();
     };
 
     /* ============================================================
@@ -2933,7 +2989,7 @@
       }
 
       closeModal('modalNuevoProducto');
-      showToast(id ? 'Producto actualizado' : 'Producto guardado');
+      showToast(id ? 'Producto actualizado solo en esta sesión' : 'Producto creado solo en esta sesión');
       renderAll();
     };
 
@@ -3239,7 +3295,7 @@
         }
 
         closeModal('modalNuevoProveedor');
-        showToast(id ? 'Proveedor actualizado' : 'Proveedor guardado');
+        showToast(id ? 'Proveedor actualizado solo en esta sesión' : 'Proveedor creado solo en esta sesión');
         renderAll();
     };
 
@@ -3408,7 +3464,7 @@
 
       renderPlatforms();
       closeModal('modalNuevaPlataforma');
-      showToast(id ? 'Plataforma actualizada exitosamente' : 'Plataforma guardada exitosamente');
+      showToast(id ? 'Plataforma actualizada solo en esta sesión' : 'Plataforma creada solo en esta sesión');
     };
 
     /* ============================================================
@@ -3551,7 +3607,7 @@
 
         renderCouriers();
         closeModal('modalNuevoCourier');
-        showToast(id ? 'Courier actualizado' : 'Courier guardado');
+        showToast(id ? 'Courier actualizado solo en esta sesión' : 'Courier creado solo en esta sesión');
     };
 
     function renderCouriers(){
@@ -3661,29 +3717,83 @@
 
     function normalizeServerData(data){
       const source = data && typeof data === 'object' ? data : {};
+
       DB.products = normalizeArray(source.products);
       DB.clients = normalizeArray(source.clients);
       DB.providers = normalizeArray(source.providers);
       DB.couriers = normalizeArray(source.couriers);
+      DB.courierCoverage = normalizeArray(source.courierCoverage);
       DB.agencies = normalizeArray(source.agencies);
       DB.platforms = normalizeArray(source.platforms);
       DB.channels = normalizeArray(source.channels);
       DB.sellers = normalizeArray(source.sellers);
       DB.districts = normalizeArray(source.districts);
+      DB.users = normalizeArray(source.users);
+      DB.saleDetails = normalizeArray(source.saleDetails);
       DB.quotes = normalizeArray(source.quotes);
-      
       DB.activity = normalizeArray(source.activity);
-      DB.revenueByDay = normalizeArray(source.revenueByDay);
-      DB.salesTrend30 = normalizeArray(source.salesTrend30);
       DB.salesHistory = normalizeArray(source.salesHistory);
-      salesHistoryData = DB.salesHistory;
+      DB.salesHistory30 = normalizeArray(source.salesHistory30);
+
+      /* Backend nuevo: revenueByDay y salesTrend30 llegan como objetos. */
+      DB.revenueByDay = normalizeArray(source.revenueByDay).map(x =>
+        typeof x === 'number' ? x : Number(x.revenue || x.value || x.total || 0)
+      );
+
+      DB.salesTrend30 = normalizeArray(source.salesTrend30).map(x =>
+        typeof x === 'number' ? x : Number(x.sales || x.revenue || x.value || x.total || 0)
+      );
 
       if (Array.isArray(source.quoteStatuses) && source.quoteStatuses.length) {
         DB.quoteStatuses = source.quoteStatuses;
       }
+
       DB.goal = source.goal && typeof source.goal === 'object'
         ? {target:Number(source.goal.target)||0, current:Number(source.goal.current)||0}
         : {target:0,current:0};
+
+      DB.company = source.company && typeof source.company === 'object' ? source.company : {};
+      DB.currentUser = source.currentUser && typeof source.currentUser === 'object' ? source.currentUser : {};
+
+      /* Actividad: adaptar los nombres del backend a los nombres usados por la UI. */
+      DB.activity = DB.activity.map(a => ({
+        ...a,
+        desc: a.desc || a.description || '',
+        time: a.time || a.date || '',
+        icon: a.icon || 'ph-activity',
+        color: a.color || '#106FEB',
+        bg: a.bg || ((a.color || '#106FEB') + '18')
+      }));
+
+      /* Canales: el backend guarda sales/orders/percentage; el donut necesita value. */
+      DB.channels = DB.channels.map(c => ({
+        ...c,
+        name: c.name || c.channel || 'Canal',
+        value: Number(c.value ?? c.percentage ?? c.sales ?? 0),
+        color: c.color || '#106FEB'
+      }));
+
+      /* Couriers: reconstruir coverage desde la hoja CoberturaCourier. */
+      DB.couriers = DB.couriers.map(c => ({
+        ...c,
+        coverage: DB.courierCoverage
+          .filter(z => String(z.courierId || '') === String(c.id || ''))
+          .map(z => ({
+            id: z.id,
+            dept: z.dept || '',
+            prov: z.prov || '',
+            cob: z.cob || '',
+            costo: z.costo ?? 0,
+            tiempo: z.tiempo || ''
+          }))
+      }));
+
+      /* Agencias: compatibilidad entre deliveryTime y avgDays. */
+      DB.agencies = DB.agencies.map(a => ({
+        ...a,
+        avgDays: a.avgDays || a.deliveryTime || '—',
+        shipments: Number(a.shipments || 0)
+      }));
 
       const categoriesFromProducts = DB.products.map(p => p.category).filter(Boolean);
       DB.categories = Array.isArray(source.categories) && source.categories.length
@@ -3793,9 +3903,9 @@
 
       const currentValue = sel.value || '';
       sel.innerHTML = '<option value="">Seleccionar cliente...</option>' +
-        DB.clients.map(c => `<option value="${c.name}">${c.name}</option>`).join('');
+        DB.clients.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
 
-      if (currentValue && DB.clients.some(c => c.name === currentValue)) {
+      if (currentValue && DB.clients.some(c => String(c.id) === String(currentValue))) {
         sel.value = currentValue;
       }
     }
