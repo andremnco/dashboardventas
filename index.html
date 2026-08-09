@@ -415,7 +415,7 @@
     .feed-text { display: flex; flex-direction: column; gap: 3px; }
     .feed-time { margin-left: auto; font-size: 0.72rem; color: #9ca3af; font-weight: 700; white-space: nowrap; }
 
-    /* TARJETAS BASE GENERALES (Usadas en otras vistas como Catálogo) */
+    /* TARJETAS BASE GENERALES */
     .entity-card { background: #fafbfc; border: 1px solid #eef0f3; border-radius: 26px; padding: 1.6rem; display: flex; flex-direction: column; gap: 14px; overflow: hidden; position: relative;}
     .entity-card-top { display: flex; align-items: center; gap: 14px; }
     .entity-logo { width: 56px; height: 56px; border-radius: 17px; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; color: #fff; flex-shrink: 0; box-shadow: 0 8px 18px rgba(0,0,0,0.14); overflow: hidden; }
@@ -444,7 +444,8 @@
     .entity-grid .entity-card { 
         padding: 2rem; 
         gap: 18px; 
-        min-height: 280px; 
+        min-height: max-content; 
+        height: 100%;
         display: flex; 
         flex-direction: column; 
         justify-content: flex-start; 
@@ -476,7 +477,6 @@
         font-size: 1.35rem; 
     }
     /* Fin del ajuste Logística */
-
 
     .product-grid-6 { 
       display: grid; 
@@ -1387,6 +1387,7 @@
               </div>
             </div>
             <div class="panel-head-actions">
+              <button class="btn btn-outline btn-sm" id="btnToggleEditModeProv" onclick="toggleProvEditMode()"><i class="ph ph-pencil-simple"></i> Modo Edición</button>
               <button class="btn btn-primary btn-sm" onclick="openAddProvModal()"><i class="ph ph-plus"></i> Nuevo proveedor</button>
             </div>
           </div>
@@ -1400,9 +1401,10 @@
                 <tr>
                   <th>Logo</th>
                   <th>Proveedor</th>
-                  <th>Tipo</th>
-                  <th>Abastecimiento</th>
+                  <th>Tipo / Abast.</th>
                   <th>País</th>
+                  <th>Pedidos</th>
+                  <th>Ventas Tot.</th>
                   <th>Estado</th>
                   <th>Acciones</th>
                 </tr>
@@ -1443,12 +1445,36 @@
         <div class="sub-content" id="log-age">
           <div class="panel-head">
             <div class="panel-head-text">
-              <h3>Agencias nacionales (Shaloom, Olva, etc.)</h3>
-              <p>Despachos a provincias vía courier terrestre y aéreo.</p>
+              <div class="chip-select">
+                <button id="btnViewGridAge" class="active" onclick="toggleAgeView('grid')" title="Vista Tarjetas"><i class="ph ph-squares-four"></i> Tarjetas</button>
+                <button id="btnViewListAge" onclick="toggleAgeView('list')" title="Vista Lista"><i class="ph ph-list-dashes"></i> Lista</button>
+              </div>
+            </div>
+            <div class="panel-head-actions">
+              <button class="btn btn-outline btn-sm" id="btnToggleEditModeAge" onclick="toggleAgeEditMode()"><i class="ph ph-pencil-simple"></i> Modo Edición</button>
+              <button class="btn btn-primary btn-sm" onclick="openAddAgencyModal()"><i class="ph ph-plus"></i> Agregar Agencia</button>
             </div>
           </div>
           <div class="kpi-strip" id="ageKpiStrip"></div>
+          
           <div class="entity-grid" id="agencyGrid"></div>
+
+          <div class="data-table-wrap" id="agencyListWrap" style="display:none; min-height: 300px;">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Logo / Agencia</th>
+                  <th>Localidad (País)</th>
+                  <th>Puntos de Entrega</th>
+                  <th>Pedidos Enviados</th>
+                  <th>Estado</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="agencyListBody"></tbody>
+            </table>
+          </div>
+
         </div>
 
         <!-- ===== PLATAFORMAS ===== -->
@@ -2141,6 +2167,64 @@
     </div>
   </div>
 
+  <!-- MODAL: NUEVA AGENCIA (NACIONAL) -->
+  <div class="modal-overlay" id="modalNuevaAgencia">
+    <div class="modal-box">
+      <div class="modal-head">
+        <h3 id="ageModalTitle">Agregar Agencia</h3>
+        <button class="modal-close" onclick="closeModal('modalNuevaAgencia')"><i class="ph ph-x"></i></button>
+      </div>
+      <input type="hidden" id="fAgeId">
+      
+      <div class="form-row-2">
+        <div class="form-group">
+          <label>Logo / Imagen</label>
+          <input type="file" id="fAgeLogo" accept="image/*">
+        </div>
+        <div class="form-group">
+          <label>Nombre de la Agencia *</label>
+          <input type="text" id="fAgeNombre" placeholder="Ej. Shalom, Olva, Movil Tours...">
+        </div>
+      </div>
+
+      <div class="form-row-2">
+        <div class="form-group">
+          <label>Localidad (País)</label>
+          <input type="text" id="fAgeLocalidad" value="Perú" placeholder="Ej. Perú, Nacional">
+        </div>
+        <div class="form-group">
+          <label>Estado</label>
+          <div class="filter-input-wrap">
+            <i class="ph ph-check-circle"></i>
+            <select id="fAgeEstado" class="filter-input" style="padding-left:44px; width:100%;">
+              <option>Activo</option>
+              <option>Pausado</option>
+              <option>Inactivo</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row-2">
+        <div class="form-group">
+          <label>Cobertura (Departamentos/Zonas)</label>
+          <input type="text" id="fAgeCobertura" placeholder="Ej. 24 Dptos., Solo Sur...">
+        </div>
+        <div class="form-group">
+          <label>Tiempo Promedio (Días)</label>
+          <input type="text" id="fAgeTiempo" placeholder="Ej. 2-5 días">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Puntos de Entrega (Oficinas clave)</label>
+        <textarea id="fAgePuntos" placeholder="Listado de agencias principales, detalles de recojo, etc..." rows="3"></textarea>
+      </div>
+      
+      <button class="btn btn-primary" style="width:100%; justify-content:center; margin-top:16px;" onclick="saveAgency()"><i class="ph ph-check"></i> Guardar Agencia</button>
+    </div>
+  </div>
+
   <div class="toast-msg" id="toastMsg"><i class="ph-fill ph-check-circle"></i><span id="toastText">Listo</span></div>
 
   <script>
@@ -2228,6 +2312,9 @@
       api.guardarPlataforma = function(platData) { return api._execute('guardarPlataforma', [platData || {}]); };
       api.eliminarPlataforma = function(id) { return api._execute('eliminarPlataforma', [id]); };
       api.guardarCourier = function(courierData) { return api._execute('guardarCourier', [courierData || {}]); };
+      api.guardarAgencia = function(agData) { return api._execute('guardarAgencia', [agData || {}]); };
+      api.eliminarAgencia = function(id) { return api._execute('eliminarAgencia', [id]); };
+      api.eliminarProveedor = function(id) { return api._execute('eliminarProveedor', [id]); };
 
       return api;
     })();
@@ -3360,6 +3447,24 @@
        12. RENDER Y CRUD: PROVEEDORES (LOGÍSTICA)
        ============================================================ */
     let currentProvView = 'grid';
+    let isProvEditMode = false;
+
+    window.toggleProvEditMode = function() {
+        isProvEditMode = !isProvEditMode;
+        const btn = document.getElementById('btnToggleEditModeProv');
+        if(btn){
+            if(isProvEditMode) {
+                btn.classList.remove('btn-outline');
+                btn.classList.add('btn-primary');
+                btn.innerHTML = '<i class="ph ph-check"></i> Finalizar Edición';
+            } else {
+                btn.classList.remove('btn-primary');
+                btn.classList.add('btn-outline');
+                btn.innerHTML = '<i class="ph ph-pencil-simple"></i> Modo Edición';
+            }
+        }
+        renderProviders();
+    };
 
     window.toggleProvView = function(view) {
         currentProvView = view;
@@ -3398,16 +3503,32 @@
             {icon:'ph-map-pin', bg:'#ede9fe', color:'#7c3aed', label:'Países', value: new Set(DB.providers.map(p=>p.country)).size, trend:'origen', up:true}
         ]);
 
-        if (!DB.providers || !DB.providers.length) {
+        // Enriquecer proveedores con métricas de ventas basadas en los productos
+        let enrichedProviders = DB.providers.map(p => {
+            const provProds = DB.products.filter(prod => prod.providerId === p.id);
+            const totalOrders = provProds.reduce((sum, prod) => sum + Number(prod.sales30 || 0), 0) * 2; // Factor simulado
+            const totalSalesValue = provProds.reduce((sum, prod) => sum + (Number(prod.sales30 || 0) * Number(prod.price || 0)), 0) * 3; // Factor simulado
+            return { ...p, totalOrders, totalSalesValue };
+        });
+
+        if (!enrichedProviders.length) {
             gridContainer.innerHTML = '<div style="padding:2rem;text-align:center;color:var(--text-muted);grid-column:1/-1;">No hay proveedores registrados.</div>';
-            listBody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:2rem; color:var(--text-muted);">No hay proveedores registrados.</td></tr>';
+            listBody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:2rem; color:var(--text-muted);">No hay proveedores registrados.</td></tr>';
             return;
         }
 
         const statusCls = {'Activo':'badge-ok', 'Pausado':'badge-warn', 'Bloqueado':'badge-danger', 'Inactivo':'badge-neutral'};
 
-        gridContainer.innerHTML = DB.providers.map(p => {
+        gridContainer.innerHTML = enrichedProviders.map(p => {
             const bgStyle = p.logo ? `background-image:url('${p.logo}'); background-size:cover; background-position:center; background-color:transparent;` : `background:${p.color || '#8B5CF6'};`;
+            
+            const editActions = isProvEditMode ? `
+                <div style="display:flex; gap:6px; margin-top:10px; border-top:1px solid #eef0f3; padding-top:12px;">
+                    <button class="btn btn-outline btn-sm" style="flex:1; justify-content:center;" onclick="editProv('${p.id}')"><i class="ph ph-pencil-simple"></i> Editar</button>
+                    <button class="btn btn-outline btn-sm btn-danger-outline" style="flex:0 0 40px; justify-content:center; padding:0;" onclick="deleteProv('${p.id}')"><i class="ph ph-trash"></i></button>
+                </div>
+            ` : '';
+
             return `
             <div class="entity-card">
               <i class="ph-fill ph-handshake bg-watermark"></i>
@@ -3417,22 +3538,36 @@
                 </div>
                 <div class="entity-title"><b>${p.name}</b><span>${p.category || p.providerType || 'Proveedor'}</span></div>
               </div>
+              
+              <div class="entity-stats" style="margin-top:10px;">
+                <div class="entity-stat"><b>${p.totalOrders}</b><span>Pedidos</span></div>
+                <div class="entity-stat"><b>${moneyShort(p.totalSalesValue)}</b><span>Ventas (30d)</span></div>
+              </div>
+
               <div class="entity-stats" style="flex-direction:column; gap:5px; align-items:flex-start; margin-top:10px;">
                 <div style="font-size:0.85rem; color:var(--text-muted);"><i class="ph-fill ph-map-pin"></i> ${p.country || 'No especificado'} ${p.city ? `(${p.city})` : ''}</div>
                 <div style="font-size:0.85rem; color:var(--text-muted);"><i class="ph-fill ph-truck"></i> ${p.supplyType || 'Dropshipping'}</div>
               </div>
-              <div class="entity-footer" style="margin-top:auto; padding-top:12px;">
-                <span class="badge ${statusCls[p.status] || 'badge-neutral'}">${p.status || 'Activo'}</span>
-                <div style="display:flex; gap:6px;">
-                  <button class="btn btn-outline btn-sm" onclick="editProv('${p.id}')" title="Editar"><i class="ph ph-pencil-simple"></i></button>
-                  <button class="btn btn-outline btn-sm btn-danger-outline" onclick="deleteProv('${p.id}')" title="Eliminar"><i class="ph ph-trash"></i></button>
+
+              <div class="entity-footer" style="margin-top:auto; padding-top:12px; flex-direction:column; align-items:stretch; gap:10px;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                  <span class="badge ${statusCls[p.status] || 'badge-neutral'}">${p.status || 'Activo'}</span>
                 </div>
+                ${editActions}
               </div>
             </div>`
         }).join('');
 
-        listBody.innerHTML = DB.providers.map(p => {
+        listBody.innerHTML = enrichedProviders.map(p => {
             const bgStyle = p.logo ? `background-image:url('${p.logo}'); background-size:cover; background-position:center; background-color:transparent;` : `background:${p.color || '#8B5CF6'};`;
+            
+            const editActions = isProvEditMode ? `
+                <div style="display:flex; gap:6px;">
+                  <button class="btn btn-outline btn-sm" onclick="editProv('${p.id}')" title="Editar"><i class="ph ph-pencil-simple"></i></button>
+                  <button class="btn btn-outline btn-sm btn-danger-outline" onclick="deleteProv('${p.id}')" title="Eliminar"><i class="ph ph-trash"></i></button>
+                </div>
+            ` : '';
+
             return `
             <tr>
               <td>
@@ -3441,16 +3576,12 @@
                 </div>
               </td>
               <td><b>${p.name}</b><div style="font-size:0.75rem; color:var(--text-muted);">${p.ruc || ''}</div></td>
-              <td class="cell-muted">${p.providerType || '—'}</td>
-              <td class="cell-muted">${p.supplyType || '—'}</td>
+              <td class="cell-muted">${p.providerType || '—'} / ${p.supplyType || '—'}</td>
               <td class="cell-muted">${p.country || '—'}</td>
+              <td class="cell-strong">${p.totalOrders}</td>
+              <td class="cell-strong" style="color:var(--primary-pill);">${money(p.totalSalesValue)}</td>
               <td><span class="badge ${statusCls[p.status] || 'badge-neutral'}">${p.status || '—'}</span></td>
-              <td>
-                <div style="display:flex; gap:6px;">
-                  <button class="btn btn-outline btn-sm" onclick="editProv('${p.id}')" title="Editar"><i class="ph ph-pencil-simple"></i></button>
-                  <button class="btn btn-outline btn-sm btn-danger-outline" onclick="deleteProv('${p.id}')" title="Eliminar"><i class="ph ph-trash"></i></button>
-                </div>
-              </td>
+              <td>${editActions}</td>
             </tr>`
         }).join('');
     }
@@ -3516,7 +3647,10 @@
     window.deleteProv = function(id) {
         if(confirm('¿Seguro que deseas eliminar este proveedor permanentemente?')) {
             DB.providers = DB.providers.filter(x => x.id !== id);
-            renderAll();
+            renderProviders();
+            if (typeof google !== 'undefined' && google.script && google.script.run) {
+                google.script.run.eliminarProveedor(id);
+            }
             showToast('Proveedor eliminado');
         }
     };
@@ -3585,7 +3719,7 @@
 
         closeModal('modalNuevoProveedor');
         showToast(id ? 'Proveedor actualizado' : 'Proveedor guardado');
-        renderAll();
+        renderProviders();
     };
 
     /* ============================================================
@@ -3669,7 +3803,7 @@
 
       const statusCls = {'Activo':'badge-ok', 'Pendiente':'badge-warn', 'Inactivo':'badge-danger'};
 
-      // 1. Render Vista Tarjetas con Letras grandes
+      // 1. Render Vista Tarjetas con Letras grandes (Sin recortes)
       gridContainer.innerHTML = enrichedPlatforms.map(p => {
         const bgStyle = p.logo ? `background-image:url('${p.logo}'); background-size:cover; background-position:center; background-color:transparent;` : `background:${p.color || '#106FEB'};`;
         
@@ -3707,7 +3841,7 @@
             <div style="font-size:0.9rem; color:var(--text-muted);"><i class="ph-fill ph-phone"></i> <b>Contacto:</b> ${p.contact || 'No especificado'}</div>
           </div>
           
-          <div class="entity-footer" style="margin-top:auto; padding-top:14px; flex-direction:column; gap:10px;">
+          <div class="entity-footer" style="margin-top:auto; padding-top:14px; flex-direction:column; gap:10px; align-items:stretch;">
             <div style="display:flex; justify-content:space-between; width:100%; align-items:center;">
                 <span class="badge ${statusCls[p.status] || 'badge-neutral'}" style="font-size:0.85rem; padding:6px 12px;">${p.status || 'Activo'}</span>
                 <button class="btn btn-primary btn-sm" onclick="openPlatformDetails('${p.id}')"><i class="ph-fill ph-eye"></i> Ver Detalles</button>
@@ -3907,7 +4041,7 @@
     };
 
     /* ============================================================
-       13. RENDER Y CRUD: COURIERS & AGENCIES
+       13. RENDER Y CRUD: COURIERS
        ============================================================ */
     
     window.addCoverageRow = function(dept='', prov='', cob='Contraentrega', costo='', tiempo='') {
@@ -3952,7 +4086,7 @@
         document.getElementById('fCourierDir').value = '';
         document.getElementById('fCourierTel').value = '';
         document.getElementById('fCourierWsp').value = '';
-        document.getElementById('courierCoverageBody').innerHTML = ''; // Limpiar zonas
+        document.getElementById('courierCoverageBody').innerHTML = ''; 
         openModal('modalNuevoCourier');
     };
 
@@ -3999,7 +4133,6 @@
             logoUrl = URL.createObjectURL(fileInput.files[0]);
         }
 
-        // Recolectar datos de las zonas de cobertura
         const coverageRows = document.querySelectorAll('#courierCoverageBody tr');
         let coverageData = [];
         coverageRows.forEach(tr => {
@@ -4088,7 +4221,6 @@
         </tr>`;
       }).join('') || `<tr><td colspan="7" style="text-align:center; padding:2rem; color:var(--text-muted);">No hay empresas registradas.</td></tr>`;
 
-      // Update Zones side panel
       let allZones = [];
       DB.couriers.forEach(c => {
          if(c.coverage) {
@@ -4109,30 +4241,216 @@
         </div>`).join('') || '<div style="padding:1rem; text-align:center; color:var(--text-muted); font-size:0.8rem;">No hay zonas de cobertura registradas.</div>';
     }
 
+
+    /* ============================================================
+       13b. RENDER Y CRUD: AGENCIAS (NUEVO)
+       ============================================================ */
+    let currentAgeView = 'grid';
+    let isAgeEditMode = false;
+
+    window.toggleAgeEditMode = function() {
+        isAgeEditMode = !isAgeEditMode;
+        const btn = document.getElementById('btnToggleEditModeAge');
+        if(btn){
+            if(isAgeEditMode) {
+                btn.classList.remove('btn-outline');
+                btn.classList.add('btn-primary');
+                btn.innerHTML = '<i class="ph ph-check"></i> Finalizar Edición';
+            } else {
+                btn.classList.remove('btn-primary');
+                btn.classList.add('btn-outline');
+                btn.innerHTML = '<i class="ph ph-pencil-simple"></i> Modo Edición';
+            }
+        }
+        renderAgencies();
+    };
+
+    window.toggleAgeView = function(view) {
+        currentAgeView = view;
+        document.getElementById('btnViewGridAge').classList.toggle('active', view === 'grid');
+        document.getElementById('btnViewListAge').classList.toggle('active', view === 'list');
+        
+        const gridContainer = document.getElementById('agencyGrid');
+        const listContainer = document.getElementById('agencyListWrap');
+        
+        if(gridContainer && listContainer) {
+            gridContainer.style.display = view === 'grid' ? 'grid' : 'none';
+            listContainer.style.display = view === 'list' ? 'block' : 'none';
+        }
+    };
+
     function renderAgencies(){
-      document.getElementById('ageKpiStrip').innerHTML = kpiBoxes([
-        {icon:'ph-buildings', bg:'#dbeafe', color:'#106FEB', label:'Agencias activas', value: DB.agencies.filter(a=>a.status==='Activo').length, trend:'red', up:true},
-        {icon:'ph-package', bg:'#dcfce7', color:'#16a34a', label:'Envíos del mes', value: DB.agencies.reduce((a,x)=>a+x.shipments,0), trend:'real', up:true},
-        {icon:'ph-clock', bg:'#fef3c7', color:'#b45309', label:'Tiempo prom. entrega', value: '2-5 días', trend:'nacional', up:true},
-        {icon:'ph-map-trifold', bg:'#ede9fe', color:'#7c3aed', label:'Cobertura', value: '24 dptos.', trend:'Perú', up:true}
-      ]);
-      document.getElementById('agencyGrid').innerHTML = DB.agencies.map(a => `
-        <div class="entity-card">
-          <i class="ph-fill ${a.icon || 'ph-buildings'} bg-watermark"></i>
-          <div class="entity-card-top">
-            <div class="entity-logo" style="background:${a.color};"><i class="ph-fill ${a.icon || 'ph-buildings'}"></i></div>
-            <div class="entity-title"><b>${a.name}</b><span>${a.coverage}</span></div>
-          </div>
-          <div class="entity-stats">
-            <div class="entity-stat"><b>${a.shipments}</b><span>Envíos/mes</span></div>
-            <div class="entity-stat"><b>${a.avgDays}</b><span>Entrega</span></div>
-          </div>
-          <div class="entity-footer">
-            <span class="badge ${a.status==='Activo'?'badge-ok':'badge-warn'}">${a.status}</span>
-            <button class="btn btn-outline btn-sm" onclick="playSound('click')">Ver rutas</button>
-          </div>
-        </div>`).join('');
+        const gridContainer = document.getElementById('agencyGrid');
+        const listBody = document.getElementById('agencyListBody');
+        if(!gridContainer || !listBody) return;
+
+        document.getElementById('ageKpiStrip').innerHTML = kpiBoxes([
+            {icon:'ph-buildings', bg:'#dbeafe', color:'#106FEB', label:'Agencias activas', value: DB.agencies.filter(a=>a.status==='Activo').length, trend:'red', up:true},
+            {icon:'ph-package', bg:'#dcfce7', color:'#16a34a', label:'Envíos del mes', value: DB.agencies.reduce((a,x)=>a+(x.shipments||0),0), trend:'real', up:true},
+            {icon:'ph-clock', bg:'#fef3c7', color:'#b45309', label:'Tiempo prom. entrega', value: '2-5 días', trend:'nacional', up:true},
+            {icon:'ph-map-trifold', bg:'#ede9fe', color:'#7c3aed', label:'Cobertura', value: '24 dptos.', trend:'Perú', up:true}
+        ]);
+
+        if (!DB.agencies || !DB.agencies.length) {
+            gridContainer.innerHTML = '<div style="padding:2rem;text-align:center;color:var(--text-muted);grid-column:1/-1;">No hay agencias registradas.</div>';
+            listBody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:2rem; color:var(--text-muted);">No hay agencias registradas.</td></tr>';
+            return;
+        }
+
+        const statusCls = {'Activo':'badge-ok', 'Pausado':'badge-warn', 'Inactivo':'badge-danger'};
+
+        // Tarjetas
+        gridContainer.innerHTML = DB.agencies.map(a => {
+            const bgStyle = a.logo ? `background-image:url('${a.logo}'); background-size:cover; background-position:center; background-color:transparent;` : `background:${a.color || '#106FEB'};`;
+            const editActions = isAgeEditMode ? `
+                <div style="display:flex; gap:6px; margin-top:10px; border-top:1px solid #eef0f3; padding-top:12px;">
+                    <button class="btn btn-outline btn-sm" style="flex:1; justify-content:center;" onclick="editAgency('${a.id}')"><i class="ph ph-pencil-simple"></i> Editar</button>
+                    <button class="btn btn-outline btn-sm btn-danger-outline" style="flex:0 0 40px; justify-content:center; padding:0;" onclick="deleteAgency('${a.id}')"><i class="ph ph-trash"></i></button>
+                </div>
+            ` : '';
+
+            return `
+            <div class="entity-card">
+              <i class="ph-fill ph-buildings bg-watermark"></i>
+              <div class="entity-card-top">
+                <div class="entity-logo" style="${bgStyle}">
+                  ${!a.logo ? `<i class="ph-fill ph-buildings"></i>` : ''}
+                </div>
+                <div class="entity-title"><b>${a.name}</b><span>${a.location || 'Nacional'}</span></div>
+              </div>
+              <div class="entity-stats">
+                <div class="entity-stat"><b>${a.shipments || 0}</b><span>Envíos/mes</span></div>
+                <div class="entity-stat"><b>${a.avgDays || '2-5'}</b><span>Días</span></div>
+              </div>
+              
+              <div class="entity-stats" style="flex-direction:column; gap:5px; align-items:flex-start; margin-top:10px; background:#f8fafc; padding:10px; border-radius:12px; border:1px solid #eef0f3;">
+                <div style="font-size:0.8rem; color:var(--text-main);"><b>Cobertura:</b> ${a.coverage || 'N/A'}</div>
+                <div style="font-size:0.8rem; color:var(--text-muted); max-height:40px; overflow:hidden; text-overflow:ellipsis; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;"><b>Puntos:</b> ${a.points || 'No especificados'}</div>
+              </div>
+
+              <div class="entity-footer" style="margin-top:auto; padding-top:12px; flex-direction:column; align-items:stretch; gap:10px;">
+                <span class="badge ${statusCls[a.status] || 'badge-neutral'}">${a.status || 'Activo'}</span>
+                ${editActions}
+              </div>
+            </div>`
+        }).join('');
+
+        // Lista
+        listBody.innerHTML = DB.agencies.map(a => {
+            const bgStyle = a.logo ? `background-image:url('${a.logo}'); background-size:cover; background-position:center; background-color:transparent;` : `background:${a.color || '#106FEB'};`;
+            const editActions = isAgeEditMode ? `
+                <div style="display:flex; gap:6px;">
+                  <button class="btn btn-outline btn-sm" onclick="editAgency('${a.id}')" title="Editar"><i class="ph ph-pencil-simple"></i></button>
+                  <button class="btn btn-outline btn-sm btn-danger-outline" onclick="deleteAgency('${a.id}')" title="Eliminar"><i class="ph ph-trash"></i></button>
+                </div>
+            ` : '';
+
+            return `
+            <tr>
+              <td>
+                <div style="display:flex; align-items:center;">
+                  <div class="avatar-fallback" style="${bgStyle} width:42px; height:42px; border-radius:12px; box-shadow:0 2px 5px rgba(0,0,0,0.1);">
+                    ${!a.logo ? `<i class="ph-fill ph-buildings"></i>` : ''}
+                  </div>
+                  <b style="margin-left:10px;">${a.name}</b>
+                </div>
+              </td>
+              <td class="cell-muted">${a.location || '—'}</td>
+              <td class="cell-muted" style="max-width:200px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${a.points || '—'}</td>
+              <td class="cell-strong">${a.shipments || 0}</td>
+              <td><span class="badge ${statusCls[a.status] || 'badge-neutral'}">${a.status || '—'}</span></td>
+              <td>${editActions}</td>
+            </tr>`
+        }).join('');
     }
+
+    window.openAddAgencyModal = function() {
+        document.getElementById('ageModalTitle').textContent = 'Agregar Agencia';
+        document.getElementById('fAgeId').value = '';
+        document.getElementById('fAgeLogo').value = '';
+        document.getElementById('fAgeNombre').value = '';
+        document.getElementById('fAgeLocalidad').value = 'Perú';
+        document.getElementById('fAgeEstado').value = 'Activo';
+        document.getElementById('fAgeCobertura').value = '';
+        document.getElementById('fAgeTiempo').value = '';
+        document.getElementById('fAgePuntos').value = '';
+        openModal('modalNuevaAgencia');
+    };
+
+    window.editAgency = function(id) {
+        const a = DB.agencies.find(x => x.id === id);
+        if(!a) return;
+        document.getElementById('ageModalTitle').textContent = 'Editar Agencia';
+        document.getElementById('fAgeId').value = a.id;
+        document.getElementById('fAgeLogo').value = '';
+        document.getElementById('fAgeNombre').value = a.name || '';
+        document.getElementById('fAgeLocalidad').value = a.location || 'Perú';
+        document.getElementById('fAgeEstado').value = a.status || 'Activo';
+        document.getElementById('fAgeCobertura').value = a.coverage || '';
+        document.getElementById('fAgeTiempo').value = a.avgDays || '';
+        document.getElementById('fAgePuntos').value = a.points || '';
+        openModal('modalNuevaAgencia');
+    };
+
+    window.deleteAgency = function(id) {
+        if(confirm('¿Seguro que deseas eliminar esta agencia?')) {
+            DB.agencies = DB.agencies.filter(x => x.id !== id);
+            renderAgencies();
+            if (typeof google !== 'undefined' && google.script && google.script.run) {
+                google.script.run.eliminarAgencia(id);
+            }
+            showToast('Agencia eliminada');
+        }
+    };
+
+    window.saveAgency = function() {
+        const id = document.getElementById('fAgeId').value;
+        const name = document.getElementById('fAgeNombre').value.trim();
+        if(!name) { showToast('El nombre de la agencia es obligatorio'); return; }
+
+        const fileInput = document.getElementById('fAgeLogo');
+        let logoUrl = '';
+        if(fileInput.files && fileInput.files[0]) {
+            logoUrl = URL.createObjectURL(fileInput.files[0]);
+        }
+
+        const ageData = {
+            id: id || 'AGE-' + Date.now(),
+            name: name,
+            location: document.getElementById('fAgeLocalidad').value,
+            status: document.getElementById('fAgeEstado').value,
+            coverage: document.getElementById('fAgeCobertura').value,
+            avgDays: document.getElementById('fAgeTiempo').value,
+            points: document.getElementById('fAgePuntos').value,
+            shipments: id ? (DB.agencies.find(x=>x.id===id)?.shipments || 0) : 0,
+            color: '#106FEB'
+        };
+
+        if(id) {
+            const index = DB.agencies.findIndex(x => x.id === id);
+            if(index !== -1) {
+                if(!logoUrl) ageData.logo = DB.agencies[index].logo;
+                else ageData.logo = logoUrl;
+                DB.agencies[index] = { ...DB.agencies[index], ...ageData };
+            }
+        } else {
+            if(logoUrl) ageData.logo = logoUrl;
+            DB.agencies.unshift(ageData);
+        }
+
+        logActivity('Logística', id ? `Agencia actualizada: ${name}` : `Nueva agencia: ${name}`, 'ph-buildings', '#106FEB', '#dbeafe');
+
+        if (typeof google !== 'undefined' && google.script && google.script.run) {
+            google.script.run
+                .withSuccessHandler(function(){ showToast(id ? 'Agencia actualizada en Sheets' : 'Agencia guardada en Sheets'); })
+                .withFailureHandler(function(err){ console.error(err); showToast('Error al guardar en Sheets'); })
+                .guardarAgencia(ageData);
+        }
+
+        renderAgencies();
+        closeModal('modalNuevaAgencia');
+        showToast(id ? 'Agencia actualizada' : 'Agencia guardada');
+    };
 
     /* ============================================================
        14. CONFIGURACIÓN — navegación interna
@@ -4200,7 +4518,7 @@
     function clearDataUI(){
       const emptyRow = '<tr><td colspan="10" style="text-align:center;padding:2rem;color:var(--text-muted);">No hay datos registrados.</td></tr>';
       
-      ['clientTableBody','salesHistoryBody','courierTableBody', 'platformListBody', 'providerListBody', 'catEstLowStockTable']
+      ['clientTableBody','salesHistoryBody','courierTableBody', 'platformListBody', 'providerListBody', 'catEstLowStockTable', 'agencyListBody']
         .forEach(id => { const node=document.getElementById(id); if(node) node.innerHTML=emptyRow; });
 
       ['providerGrid','agencyGrid','platformGrid','activityFeed','topProductsList','stockAlertList',
