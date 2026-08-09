@@ -259,6 +259,7 @@
       will-change: transform, box-shadow;
       transition: transform 0.4s var(--spring-bounce), box-shadow 0.4s var(--ease-smooth), border-color 0.4s var(--ease-smooth), background-color 0.4s var(--ease-smooth);
       position: relative;
+      overflow: hidden; 
     }
     
     .dash-card:hover, .kpi-box:hover, .entity-card:hover, .pos-product-card:hover, .segment-card:hover {
@@ -335,15 +336,14 @@
     
     .btn { border: none; border-radius: 999px; padding: 14px 24px; font-weight: 700; font-size: 0.92rem; cursor: pointer; display: inline-flex; align-items: center; gap: 9px; transition: all 0.4s var(--spring-bounce); white-space: nowrap; font-family: inherit;}
     .btn i { font-size: 1.1rem; }
-    .btn-primary { background: var(--ai-gradient); color: #fff; box-shadow: 0 8px 20px var(--primary-glow); }
+    .btn-primary { background: var(--primary-pill); color: #fff; box-shadow: 0 8px 20px var(--primary-glow); }
     .btn-primary:hover { transform: translateY(-3px) scale(1.03); box-shadow: 0 12px 28px var(--primary-glow); }
     .btn-ghost { background: #f2f3f5; color: var(--text-main); }
     .btn-ghost:hover { background: #e8e9ec; transform: translateY(-2px); }
     .btn-outline { background: #fff; border: 1.5px solid var(--neutral-line); color: var(--text-main); }
     .btn-outline:hover { border-color: var(--primary-pill); color: var(--primary-pill); transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.05);}
     .btn-sm { padding: 10px 18px; font-size: 0.82rem; border-radius: 999px; }
-    .btn-danger-outline { background: #fef2f2; color: #dc2626; border-color:#fef2f2;}
-    .btn-danger-outline:hover { border-color: #dc2626; color: #dc2626; }
+    .btn-danger-outline { background: #fef2f2; color: #dc2626; }
     .btn:active { transform: scale(0.96); }
     
     .chip-select { display: flex; gap: 4px; background: #f2f3f5; padding: 6px; border-radius: 999px; overflow-x: auto; scrollbar-width: none;}
@@ -384,10 +384,10 @@
     .progress-track { width: 100%; height: 10px; background: #eef0f3; border-radius: 999px; overflow: hidden; }
     .progress-fill { height: 100%; border-radius: 999px; transition: width 0.8s var(--spring-bounce); }
 
-    .filter-bar { display: flex; align-items: center; gap: 12px; margin-bottom: 1.4rem; flex-wrap: wrap; background:#fff; padding:12px; border-radius:16px; box-shadow:0 2px 8px rgba(0,0,0,0.03); }
+    .filter-bar { display: flex; align-items: center; gap: 12px; margin-bottom: 1.4rem; flex-wrap: wrap; }
     .filter-input-wrap { position: relative; flex: 1; min-width: 220px; }
     .filter-input-wrap i { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 1.15rem; z-index: 1;}
-    .filter-input { width: 100%; box-sizing: border-box; padding: 13px 16px 13px 44px; border-radius: 12px; border: 1px solid var(--neutral-line); font-family: inherit; font-size: 0.95rem; outline: none; transition: all 0.3s var(--ease-smooth); background: #fafbfc; position: relative;}
+    .filter-input { width: 100%; box-sizing: border-box; padding: 13px 16px 13px 44px; border-radius: 16px; border: 1px solid var(--neutral-line); font-family: inherit; font-size: 0.95rem; outline: none; transition: all 0.3s var(--ease-smooth); background: #fafbfc; position: relative;}
     .filter-input:focus { border-color: var(--primary-pill); background: #fff; box-shadow: 0 0 0 4px var(--primary-glow); }
     select.filter-input { cursor: pointer; appearance: none; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6'><path d='M0 0l5 6 5-6z' fill='%236b7280'/></svg>"); background-repeat: no-repeat; background-position: right 16px center; }
 
@@ -397,8 +397,7 @@
 
     .bar-chart { display: flex; align-items: flex-end; gap: 12px; height: 170px; padding-top: 10px; }
     .bar-chart .bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 9px; height: 100%; justify-content: flex-end; }
-    .bar-chart .bar { width: 100%; max-width: 34px; border-radius: 12px 12px 4px 4px; background: var(--ai-gradient); transition: height 0.8s var(--spring-bounce); position: relative; box-shadow: 0 6px 14px var(--primary-glow); cursor:pointer;}
-    .bar-chart .bar:hover { filter: brightness(1.1); }
+    .bar-chart .bar { width: 100%; max-width: 34px; border-radius: 12px 12px 4px 4px; background: linear-gradient(180deg, var(--primary-pill), rgba(16,111,235,0.45)); transition: height 0.8s var(--spring-bounce); position: relative; box-shadow: 0 6px 14px var(--primary-glow); }
     .bar-chart .bar-label, .bar-chart .bar-value { font-size: 0.72rem; font-weight: 700; color: var(--text-muted); }
     .bar-chart .bar-value { font-weight: 800; color: var(--text-main); }
 
@@ -416,58 +415,77 @@
     .feed-text { display: flex; flex-direction: column; gap: 3px; }
     .feed-time { margin-left: auto; font-size: 0.72rem; color: #9ca3af; font-weight: 700; white-space: nowrap; }
 
+    /* TARJETAS BASE GENERALES */
+    .entity-card { background: #fafbfc; border: 1px solid #eef0f3; border-radius: 26px; padding: 1.6rem; display: flex; flex-direction: column; gap: 14px; overflow: hidden; position: relative;}
+    .entity-card-top { display: flex; align-items: center; gap: 14px; }
+    .entity-logo { width: 56px; height: 56px; border-radius: 17px; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; color: #fff; flex-shrink: 0; box-shadow: 0 8px 18px rgba(0,0,0,0.14); overflow: hidden; }
+    .entity-title b { font-size: 1.08rem; font-weight: 800; display: block;}
+    .entity-title span { font-size: 0.82rem; color: var(--text-muted); font-weight: 600; }
+    .entity-stats { display: flex; gap: 10px; }
+    .entity-stat { flex: 1; background: #fff; border: 1px solid #eef0f3; border-radius: 16px; padding: 10px 12px; text-align: center; }
+    .entity-stat b { display: block; font-size: 1.15rem; font-weight: 800; }
+    .entity-stat span { font-size: 0.68rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; }
+    .entity-footer { display: flex; justify-content: space-between; align-items: center; margin-top: auto; }
+
     /* ==========================================================
-       AJUSTE ESPECÍFICO PARA LAS TARJETAS (LOGÍSTICA Y CATÁLOGO)
-       Garantiza que sean dinámicas, completas y no se corten
+       AJUSTE ESPECÍFICO PARA LAS TARJETAS DE LOGÍSTICA
+       Garantiza que sean más grandes, espaciadas y sin cortes
        ========================================================== */
     .entity-grid { 
         display: grid; 
-        grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); 
+        grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); 
         gap: 2rem; 
-        align-items: stretch; /* Esencial para que no se traslapen ni se corten */
-        padding: 10px 10px 40px 10px; 
+        overflow-y: auto; 
+        padding: 16px 16px 40px 16px; 
+        margin: 0; 
+        align-content: start; 
     }
     
-    .entity-card { 
-        padding: 1.8rem; 
-        gap: 16px; 
-        height: auto; 
-        min-height: min-content; 
+    .entity-grid .entity-card { 
+        padding: 2rem; 
+        gap: 18px; 
+        min-height: max-content; 
+        height: 100%;
         display: flex; 
         flex-direction: column; 
-        box-shadow: 0 8px 24px rgba(0,0,0,0.04);
-        border-radius: 24px;
-        background: #fafbfc;
-        border: 1px solid #eef0f3;
-        overflow: visible; /* Mantiene el contenido visible */
-        position: relative;
+        justify-content: flex-start; 
+        box-shadow: 0 4px 20px rgba(0,0,0,0.03);
     }
     
-    .entity-card-top { display: flex; align-items: center; gap: 14px; z-index: 1;}
-    .entity-logo { width: 64px; height: 64px; border-radius: 18px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; color: #fff; flex-shrink: 0; box-shadow: 0 8px 18px rgba(0,0,0,0.1); overflow: hidden; background-color: #fff;}
-    .entity-title b { font-size: 1.25rem; font-weight: 800; display: block; margin-bottom: 4px; color: var(--text-main); word-break: break-word;}
-    .entity-title span { font-size: 0.9rem; color: var(--text-muted); font-weight: 600; }
+    .entity-grid .entity-logo { 
+        width: 64px; 
+        height: 64px; 
+        font-size: 1.8rem; 
+        border-radius: 20px; 
+    }
     
-    .entity-stats { display: flex; gap: 10px; z-index: 1;}
-    .entity-stat { flex: 1; background: #fff; border: 1px solid #eef0f3; border-radius: 16px; padding: 14px; text-align: center; }
-    .entity-stat b { display: block; font-size: 1.35rem; font-weight: 800; color: var(--text-main);}
-    .entity-stat span { font-size: 0.75rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; }
+    .entity-grid .entity-title b { 
+        font-size: 1.25rem; 
+        margin-bottom: 4px; 
+        display: block;
+    }
     
-    .entity-footer { display: flex; justify-content: space-between; align-items: center; margin-top: auto; z-index: 1;}
+    .entity-grid .entity-title span { 
+        font-size: 0.9rem; 
+    }
+    
+    .entity-grid .entity-stat { 
+        padding: 12px 16px; 
+    }
+    
+    .entity-grid .entity-stat b { 
+        font-size: 1.35rem; 
+    }
+    /* Fin del ajuste Logística */
 
     .product-grid-6 { 
       display: grid; 
-      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); /* Mejor escalado */
-      gap: 24px; 
+      grid-template-columns: repeat(6, 1fr); 
+      gap: 28px; 
       padding: 10px; 
       margin: -10px;
       padding-bottom: 3rem; 
-      align-items: stretch;
-    }
-    
-    .product-grid-6 .entity-card {
-        padding: 1.2rem;
-        border-radius: 20px;
+      align-items: start;
     }
 
     .pos-layout { display: grid; grid-template-columns: 1.5fr 1fr; gap: 1.7rem; flex: 1; min-height: 0; padding: 6px; }
@@ -518,7 +536,7 @@
     
     .form-group { display: flex; flex-direction: column; gap: 7px; margin-bottom: 16px; }
     .form-group label { font-size: 0.82rem; font-weight: 700; color: var(--text-muted); }
-    .form-group input, .form-group select, .form-group textarea { padding: 13px 15px; border-radius: 12px; border: 1px solid var(--neutral-line); font-family: inherit; font-size: 0.92rem; outline: none; transition: all 0.3s var(--ease-smooth); background: #fafbfc; }
+    .form-group input, .form-group select, .form-group textarea { padding: 13px 15px; border-radius: 15px; border: 1px solid var(--neutral-line); font-family: inherit; font-size: 0.92rem; outline: none; transition: all 0.3s var(--ease-smooth); background: #fafbfc; }
     .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--primary-pill); background: #fff; box-shadow: 0 0 0 4px var(--primary-glow); transform: translateY(-1px); }
     .form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 13px; }
     .form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 13px; }
@@ -1318,7 +1336,7 @@
             </div>
           </div>
           
-          <!-- GRID DE PRODUCTOS -->
+          <!-- GRID DE PRODUCTOS (6 Columnas) -->
           <div class="product-grid-6" id="inventoryGrid">
           </div>
         </div>
@@ -1374,23 +1392,6 @@
             </div>
           </div>
           <div class="kpi-strip" id="provKpiStrip"></div>
-
-          <!-- Filtros de Proveedores -->
-          <div class="filter-bar">
-              <div class="filter-input-wrap">
-                <i class="ph ph-magnifying-glass"></i>
-                <input class="filter-input" id="provSearchInput" placeholder="Buscar proveedor, país o RUC..." oninput="renderProviders()">
-              </div>
-              <div class="filter-input-wrap" style="flex: none; min-width: 200px;">
-                <i class="ph ph-funnel"></i>
-                <select class="filter-input" id="provStatusSelect" style="padding-left: 44px; width: 100%;" onchange="renderProviders()">
-                  <option value="">Todos los Estados</option>
-                  <option value="Activo">Activos</option>
-                  <option value="Pausado">Pausados</option>
-                  <option value="Inactivo">Inactivos</option>
-                </select>
-              </div>
-          </div>
           
           <div class="entity-grid" id="providerGrid"></div>
           
@@ -1402,8 +1403,8 @@
                   <th>Proveedor</th>
                   <th>Tipo / Abast.</th>
                   <th>País</th>
-                  <th>Pedidos Totales</th>
-                  <th>Ventas Generadas</th>
+                  <th>Pedidos</th>
+                  <th>Ventas Tot.</th>
                   <th>Estado</th>
                   <th>Acciones</th>
                 </tr>
@@ -1421,28 +1422,10 @@
               <p>Gestión de empresas de contraentrega y cotización de envíos por zona.</p>
             </div>
             <div class="panel-head-actions">
-               <button class="btn btn-outline btn-sm" id="btnToggleEditModeCour" onclick="toggleCourEditMode()"><i class="ph ph-pencil-simple"></i> Modo Edición</button>
                <button class="btn btn-primary btn-sm" onclick="openAddCourierModal()"><i class="ph ph-plus"></i> Nueva Empresa</button>
             </div>
           </div>
           <div class="kpi-strip" id="courKpiStrip"></div>
-
-          <!-- Filtros de Couriers -->
-          <div class="filter-bar">
-              <div class="filter-input-wrap">
-                <i class="ph ph-magnifying-glass"></i>
-                <input class="filter-input" id="courSearchInput" placeholder="Buscar courier o zona..." oninput="renderCouriers()">
-              </div>
-              <div class="filter-input-wrap" style="flex: none; min-width: 200px;">
-                <i class="ph ph-funnel"></i>
-                <select class="filter-input" id="courStatusSelect" style="padding-left: 44px; width: 100%;" onchange="renderCouriers()">
-                  <option value="">Todos los Estados</option>
-                  <option value="Activo">Activos</option>
-                  <option value="Pausado">Pausados</option>
-                </select>
-              </div>
-          </div>
-
           <div class="split-layout" style="min-height:0;">
             <div class="data-table-wrap">
               <table class="data-table">
@@ -1474,22 +1457,6 @@
           </div>
           <div class="kpi-strip" id="ageKpiStrip"></div>
           
-          <!-- Filtros de Agencias -->
-          <div class="filter-bar">
-              <div class="filter-input-wrap">
-                <i class="ph ph-magnifying-glass"></i>
-                <input class="filter-input" id="ageSearchInput" placeholder="Buscar agencia o localidad..." oninput="renderAgencies()">
-              </div>
-              <div class="filter-input-wrap" style="flex: none; min-width: 200px;">
-                <i class="ph ph-funnel"></i>
-                <select class="filter-input" id="ageStatusSelect" style="padding-left: 44px; width: 100%;" onchange="renderAgencies()">
-                  <option value="">Todos los Estados</option>
-                  <option value="Activo">Activos</option>
-                  <option value="Pausado">Pausados</option>
-                </select>
-              </div>
-          </div>
-
           <div class="entity-grid" id="agencyGrid"></div>
 
           <div class="data-table-wrap" id="agencyListWrap" style="display:none; min-height: 300px;">
@@ -1525,11 +1492,10 @@
             </div>
           </div>
           
-          <!-- Filtros Plataformas -->
-          <div class="filter-bar">
+          <div class="filter-bar" style="background:#fff; padding:12px; border-radius:16px; box-shadow:0 2px 8px rgba(0,0,0,0.03); margin-bottom:1rem;">
             <div class="filter-input-wrap">
               <i class="ph ph-magnifying-glass"></i>
-              <input class="filter-input" id="platSearchInput" placeholder="Buscar plataforma o tipo..." oninput="renderPlatforms()">
+              <input class="filter-input" id="platSearchInput" placeholder="Buscar plataforma..." oninput="renderPlatforms()">
             </div>
             <div class="filter-input-wrap" style="flex: none; min-width: 220px;">
               <i class="ph ph-sort-ascending"></i>
@@ -2265,6 +2231,11 @@
     // --- INTEGRACIÓN PARA GITHUB PAGES Y GOOGLE SHEETS ---
     const GAS_URL = "https://script.google.com/macros/s/AKfycbxewfPz9kZ1Qfof1Z9YxRGXAWa1sU81R_IHYznXIMOi2e4WKyHODUwLNYMGVukZ-1WHug/exec";
 
+    /*
+     * GitHub Pages no dispone de google.script.run.
+     * Este adaptador conserva la misma API que usa la aplicación,
+     * pero transporta las llamadas mediante fetch al Web App de Apps Script.
+     */
     window.google = window.google || {};
     window.google.script = window.google.script || {};
     window.google.script.run = window.google.script.run || (function() {
@@ -2305,16 +2276,23 @@
         })
         .then(function(text) {
           let data;
+
           try {
             data = JSON.parse(text);
           } catch (parseError) {
             throw new Error('Google Apps Script no devolvió una respuesta JSON válida.');
           }
+
           if (data && data.success === false) {
             throw new Error(data.error || 'Google Apps Script devolvió un error.');
           }
+
           if (onSuccess) {
-            onSuccess( data && data.result !== undefined ? data.result : data );
+            onSuccess(
+              data && data.result !== undefined
+                ? data.result
+                : data
+            );
           }
         })
         .catch(function(error) {
@@ -2341,7 +2319,7 @@
       return api;
     })();
 
-    // --- MOTOR DE SONIDOS ---
+    // --- MOTOR DE SONIDOS (PREMIUM) ---
     const AudioContext = window.AudioContext || window.webkitAudioContext;
     let audioCtx;
 
@@ -2384,11 +2362,13 @@
 
     function switchMainTab(sectionId, hexColor, element, userInitiated = false) {
       if(userInitiated) playSound('pop');
+
       localStorage.setItem('activeMainTab', sectionId);
 
       document.documentElement.style.setProperty('--primary-pill', hexColor);
       let r = parseInt(hexColor.slice(1, 3), 16), g = parseInt(hexColor.slice(3, 5), 16), b = parseInt(hexColor.slice(5, 7), 16);
       document.documentElement.style.setProperty('--primary-glow', `rgba(${r}, ${g}, ${b}, 0.35)`);
+      
       document.documentElement.style.setProperty('--fab-gradient', `linear-gradient(135deg, ${hexColor}, rgba(${r}, ${g}, ${b}, 0.7))`);
 
       document.querySelectorAll('.section-content').forEach(sec => sec.classList.remove('active'));
@@ -2405,6 +2385,7 @@
 
     function switchSubTab(subId, element, userInitiated = false) {
       if(userInitiated) playSound('click');
+
       const mainSectionId = element.closest('.sub-tabs-group').id.replace('tabs-', '');
       localStorage.setItem('activeSubTab_' + mainSectionId, subId);
 
@@ -2424,6 +2405,7 @@
         setTimeout(() => { document.getElementById('aiInputText').focus(); }, 300);
     }
 
+    // --- MENÚS DROPDOWN ---
     function toggleDropdown(id, event) {
       event.stopPropagation();
       playSound('click');
@@ -2439,6 +2421,7 @@
       }
     });
 
+    // --- INICIALIZACIÓN ---
     window.onload = function() {
       const savedMain = localStorage.getItem('activeMainTab') || 'inicio';
 
@@ -2473,9 +2456,6 @@
               }
           });
       }
-
-      seedMockData(); // Instanciar datos de prueba
-      renderAll();    // Mostrar datos por si no hay internet o Google Sheets falla
 
       if (typeof loadDataFromServer === 'function') loadDataFromServer();
     };
@@ -2521,63 +2501,6 @@
     };
 
     window.APP_DB = DB;
-
-    /* ============================================================
-       INYECCIÓN DE DATOS MOCK PARA EMBELLECER INICIO (SI ESTÁ VACÍO)
-       ============================================================ */
-    window.seedMockData = function() {
-        if(DB.products.length === 0) {
-            DB.products = [
-                {id:'P1', name:'Magnesio Citrato 500mg', category:'Minerales', price: 65, cost: 20, stock: 150, sales30: 120, platformId:'PL1', providerId:'PR1'},
-                {id:'P2', name:'Omega 3 Premium', category:'Omega y Ácidos Grasos', price: 85, cost: 35, stock: 80, sales30: 95, platformId:'PL2', providerId:'PR2'},
-                {id:'P3', name:'Colágeno Hidrolizado', category:'Colágeno', price: 120, cost: 50, stock: 200, sales30: 210, platformId:'PL1', providerId:'PR1'},
-                {id:'P4', name:'Vitamina C 1000mg', category:'Vitaminas', price: 45, cost: 12, stock: 300, sales30: 340, platformId:'PL3', providerId:'PR3'},
-                {id:'P5', name:'Ashwagandha Pura', category:'Adaptógenos', price: 95, cost: 40, stock: 45, minStock: 50, sales30: 60, platformId:'PL2', providerId:'PR2'}
-            ];
-        }
-        if(DB.clients.length === 0) {
-            DB.clients = [
-                {id:'C1', name:'Ana Rojas', phone:'987654321', email:'ana@mail.com', segment:'VIP', orders:12, totalSpent: 1500, color:'#106FEB'},
-                {id:'C2', name:'Carlos Mendoza', phone:'987654322', email:'car@mail.com', segment:'Frecuente', orders:5, totalSpent: 450, color:'#8B5CF6'},
-                {id:'C3', name:'Lucía Perez', phone:'987654323', email:'lu@mail.com', segment:'Nuevo', orders:1, totalSpent: 65, color:'#F59E0B'}
-            ];
-        }
-        if(DB.platforms.length === 0) {
-            DB.platforms = [
-                {id:'PL1', name:'Shopify Premium', type:'E-commerce', status:'Activo', country:'Perú'},
-                {id:'PL2', name:'MercadoLibre', type:'Marketplace', status:'Activo', country:'Perú'},
-                {id:'PL3', name:'Dropi', type:'Dropshipping', status:'Pendiente', country:'Colombia'}
-            ];
-        }
-        if(DB.providers.length === 0) {
-            DB.providers = [
-                {id:'PR1', name:'Mason Natural', country:'EE.UU.', supplyType:'Importación', status:'Activo', platformId:'PL1'},
-                {id:'PR2', name:'NutriLife Perú', country:'Perú', supplyType:'Distribuidor', status:'Activo', platformId:'PL2'},
-                {id:'PR3', name:'Global Supplements', country:'China', supplyType:'Fabricante', status:'Pausado', platformId:'PL3'}
-            ];
-        }
-        if(DB.couriers.length === 0) {
-            DB.couriers = [
-                {id:'CR1', name:'Olva Courier', type:'Courier', method:'Ambos', status:'Activo', country:'Perú', coverage:[{dept:'Lima', prov:'Lima', cob:'Contraentrega', costo:'10.00', tiempo:'24h'}]},
-                {id:'CR2', name:'Shalom', type:'Operador Logístico', method:'Pago Previo', status:'Activo', country:'Perú', coverage:[{dept:'Arequipa', prov:'Arequipa', cob:'Pago Previo', costo:'15.00', tiempo:'48h'}]}
-            ];
-        }
-        if(DB.agencies.length === 0) {
-            DB.agencies = [
-                {id:'AG1', name:'Agencia MovilTours', location:'Nacional', status:'Activo', coverage:'24 Dptos.', avgDays:'2-3', shipments: 420},
-                {id:'AG2', name:'Agencia Flores', location:'Norte', status:'Pausado', coverage:'Piura, Chiclayo', avgDays:'1-2', shipments: 150}
-            ];
-        }
-        if(DB.revenueByDay.length === 0) {
-            DB.revenueByDay = [1500, 2850, 1400, 3900, 2100, 4800, 4500];
-            DB.salesTrend30 = Array.from({length: 30}, () => Math.floor(Math.random() * 3000) + 800);
-        }
-        if(DB.goal.target === 0) {
-            DB.goal.target = 100000;
-            DB.goal.current = 68450;
-        }
-    }
-
 
     /* ============================================================
        2. UTILIDADES
@@ -2649,6 +2572,18 @@
        3. RENDER: DASHBOARD
        ============================================================ */
     function renderDashboard(){
+      // Generate synthetic metrics for display if empty to ensure dashboard works
+      if (!DB.salesTrend30.length && DB.salesHistory.length > 0) {
+          DB.salesTrend30 = Array(30).fill(0);
+          DB.revenueByDay = Array(7).fill(0);
+          DB.salesHistory.forEach(s => {
+              if (s.status === 'Completado') {
+                  DB.salesTrend30[29] += s.total; // Dump all to today for visual simplicity
+                  DB.revenueByDay[6] += s.total;
+              }
+          });
+      }
+
       const totalRevenue = DB.revenueByDay.reduce((a,b)=>a+b,0);
       animateCount('kpiRevenueTotal', totalRevenue, {prefix:'S/ ', duration:1000});
 
@@ -2657,20 +2592,20 @@
       document.getElementById('revenueBarChart').innerHTML = (DB.revenueByDay.length && max > 0) ? DB.revenueByDay.map((v,i)=>`
         <div class="bar-col">
           <span class="bar-value">${(v/1000).toFixed(1)}k</span>
-          <div class="bar" style="height:${(v/max*100)}%;" title="${days[i]}: S/ ${v.toFixed(2)}"></div>
+          <div class="bar" style="height:${(v/max*100)}%;"></div>
           <span class="bar-label">${days[i]}</span>
         </div>`).join('') : '<div style="padding:2rem;color:var(--text-muted);">Sin ventas recientes registradas.</div>';
 
       animateCount('kpiTotalClientes', DB.clients.length, {duration:800});
       animateCount('kpiProductosActivos', DB.products.length, {duration:800});
       const todaySalesCount = DB.salesHistory.filter(s => s.date === new Date().toISOString().slice(0,10)).length;
-      animateCount('kpiPedidosHoy', todaySalesCount || 24, {duration:700}); // Mocking 24 if 0
+      animateCount('kpiPedidosHoy', todaySalesCount, {duration:700});
 
-      const totalSellerOrders = DB.sellers.reduce((a,s)=>a+Number(s.orders||0),0) || DB.salesHistory.length || 150; 
+      const totalSellerOrders = DB.sellers.reduce((a,s)=>a+Number(s.orders||0),0) || DB.salesHistory.length; 
       const avgTicket = totalSellerOrders ? totalRevenue / totalSellerOrders : 0;
-      animateCount('kpiTicketProm', avgTicket || 140.50, {prefix:'S/ ', duration:900}); // Mocking 140.50 if 0
+      animateCount('kpiTicketProm', avgTicket, {prefix:'S/ ', duration:900});
 
-      renderDonut('channelDonut', DB.channels.length ? DB.channels : [{name:'POS', value:65, color:'#106FEB'}, {name:'Web', value:35, color:'#8B5CF6'}]);
+      renderDonut('channelDonut', DB.channels);
 
       const lowStock = DB.products.filter(p => !p.unknownStock && p.stock <= p.minStock).sort((a,b)=>a.stock-b.stock);
       document.getElementById('stockAlertList').innerHTML = lowStock.slice(0,4).map(p => `
@@ -2688,7 +2623,7 @@
       animateCount('goalCurrent', DB.goal.current, {prefix:'S/ ', duration:1100});
       const goalTargetLabel = document.getElementById('goalTargetLabel');
       if (goalTargetLabel) goalTargetLabel.textContent = 'Meta: ' + money(DB.goal.target);
-      document.getElementById('goalRemainDays').textContent = '14'; // Mocked days left
+      document.getElementById('goalRemainDays').textContent = '--';
 
       const top = [...DB.products].sort((a,b)=>b.sales30-a.sales30).slice(0,5);
       const maxSales = top.length ? Number(top[0].sales30||0) : 0;
@@ -2703,13 +2638,6 @@
             <div class="progress-track"><div class="progress-fill" style="width:${(maxSales ? Number(p.sales30||0)/maxSales*100 : 0)}%; background:${(DB.catIcons[p.category] || {color:'#94a3b8'}).color};"></div></div>
           </div>
         </div>`).join('') : '<p style="font-size:0.85rem; color:var(--text-muted);">Sin métricas de productos superiores.</p>';
-
-      if(!DB.activity.length) {
-          DB.activity = [
-              {title:'Nueva Venta Creada', desc:'Ana Rojas (S/ 120.00)', icon:'ph-shopping-cart-simple', color:'#16a34a', bg:'#dcfce7', time:'10:45 AM'},
-              {title:'Stock Actualizado', desc:'Magnesio Citrato (+50)', icon:'ph-package', color:'#F59E0B', bg:'#fef3c7', time:'09:12 AM'}
-          ];
-      }
 
       document.getElementById('activityFeed').innerHTML = DB.activity.length ? DB.activity.map(a => `
         <div class="feed-item">
@@ -2748,7 +2676,7 @@
        ============================================================ */
     function renderSalesStats(){
       const totalRevenue = DB.revenueByDay.reduce((a,b)=>a+b,0) * 4.3;
-      const totalOrders = DB.sellers.reduce((a,s)=>a+s.orders,0) || 450;
+      const totalOrders = DB.sellers.reduce((a,s)=>a+s.orders,0);
       document.getElementById('salesKpiStrip').innerHTML = kpiBoxes([
         {icon:'ph-coins', bg:'#dbeafe', color:'#106FEB', label:'Ingresos (30d)', value: moneyShort(totalRevenue), trend:'real', up:true},
         {icon:'ph-shopping-cart-simple', bg:'#dcfce7', color:'#16a34a', label:'Pedidos totales', value: totalOrders, trend:'real', up:true},
@@ -2759,23 +2687,18 @@
       const maxT = DB.salesTrend30.length ? Math.max(...DB.salesTrend30) : 0;
       document.getElementById('salesTrendChart').innerHTML = (DB.salesTrend30.length && maxT > 0) ? DB.salesTrend30.map((v,i) => `
         <div class="bar-col">
-          <div class="bar" style="height:${(v/maxT*100)}%; max-width:14px;" title="Día ${i+1}: S/ ${(v).toFixed(2)}"></div>
+          <div class="bar" style="height:${(v/maxT*100)}%; max-width:14px;" title="Día ${i+1}: S/ ${(v*1000).toFixed(0)}"></div>
         </div>`).join('') : '<div style="padding:2rem;color:var(--text-muted);">Sin datos de ventas.</div>';
 
-      document.getElementById('sellersTable').innerHTML = DB.sellers.length ? `
+      document.getElementById('sellersTable').innerHTML = `
         <tr><th>Vendedor</th><th>Ventas</th><th>Pedidos</th></tr>
-        ${DB.sellers.map(s => `<tr><td class="cell-strong">${s.name}</td><td>${s.sales}</td><td>${s.orders}</td></tr>`).join('')}` : 
-        `<tr><th>Vendedor</th><th>Ventas</th><th>Pedidos</th></tr><tr><td class="cell-strong">Admin</td><td>S/ 14,500</td><td>150</td></tr>`;
+        ${DB.sellers.map(s => `<tr><td class="cell-strong">${s.name}</td><td>${s.sales}</td><td>${s.orders}</td></tr>`).join('')}`;
 
-      document.getElementById('districtList').innerHTML = DB.districts.length ? DB.districts.map(d => `
+      document.getElementById('districtList').innerHTML = DB.districts.map(d => `
         <div>
           <div style="display:flex; justify-content:space-between; font-size:0.8rem; margin-bottom:4px;"><span style="font-weight:700;">${d.name}</span><span style="color:var(--text-muted);">${d.pct}%</span></div>
           <div class="progress-track"><div class="progress-fill" style="width:${d.pct}%; background:var(--primary-pill);"></div></div>
-        </div>`).join('') : `
-        <div>
-          <div style="display:flex; justify-content:space-between; font-size:0.8rem; margin-bottom:4px;"><span style="font-weight:700;">Miraflores</span><span style="color:var(--text-muted);">45%</span></div>
-          <div class="progress-track"><div class="progress-fill" style="width:45%; background:var(--primary-pill);"></div></div>
-        </div>`;
+        </div>`).join('');
     }
 
     function kpiBoxes(items){
@@ -2852,7 +2775,7 @@
           </div>
           <div class="soft-panel" style="padding:12px; background:#fff;">
             <h4 style="font-size:0.82rem; margin-bottom:6px;"><i class="ph-fill ph-heartbeat" style="color:#dc2626;"></i> Condición de salud</h4>
-            <p style="margin:0; font-size:0.8rem; color:var(--text-muted);">${c.condition || 'Sin condiciones médicas registradas'}</p>
+            <p style="margin:0; font-size:0.8rem; color:var(--text-muted);">${c.condition}</p>
           </div>
           <div class="entity-stats">
             <div class="entity-stat"><b>${c.orders}</b><span>Pedidos</span></div>
@@ -3287,7 +3210,7 @@
     };
 
     /* ============================================================
-       11. RENDER: CATÁLOGO GENERAL 
+       11. RENDER: CATÁLOGO GENERAL (NUEVA VISTA TARJETAS 6 COLS COMPACTA)
        ============================================================ */
     let isProdEditMode = false;
 
@@ -3520,6 +3443,1262 @@
       }
     }
 
+    /* ============================================================
+       12. RENDER Y CRUD: PROVEEDORES (LOGÍSTICA)
+       ============================================================ */
+    let currentProvView = 'grid';
+    let isProvEditMode = false;
+
+    window.toggleProvEditMode = function() {
+        isProvEditMode = !isProvEditMode;
+        const btn = document.getElementById('btnToggleEditModeProv');
+        if(btn){
+            if(isProvEditMode) {
+                btn.classList.remove('btn-outline');
+                btn.classList.add('btn-primary');
+                btn.innerHTML = '<i class="ph ph-check"></i> Finalizar Edición';
+            } else {
+                btn.classList.remove('btn-primary');
+                btn.classList.add('btn-outline');
+                btn.innerHTML = '<i class="ph ph-pencil-simple"></i> Modo Edición';
+            }
+        }
+        renderProviders();
+    };
+
+    window.toggleProvView = function(view) {
+        currentProvView = view;
+        document.getElementById('btnViewGridProv').classList.toggle('active', view === 'grid');
+        document.getElementById('btnViewListProv').classList.toggle('active', view === 'list');
+        
+        const gridContainer = document.getElementById('providerGrid');
+        const listContainer = document.getElementById('providerListWrap');
+        
+        if(gridContainer && listContainer) {
+            gridContainer.style.display = view === 'grid' ? 'grid' : 'none';
+            listContainer.style.display = view === 'list' ? 'block' : 'none';
+        }
+    };
+
+    function populateProvPlatforms() {
+        const sel = document.getElementById('fProvPlat');
+        if(!sel) return;
+        sel.innerHTML = '<option value="">Ninguna</option>' + DB.platforms.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
+    }
+
+    window.updateProvPlatId = function() {
+        const sel = document.getElementById('fProvPlat');
+        document.getElementById('fProvPlatId').value = sel.value || '';
+    };
+
+    function renderProviders() {
+        const gridContainer = document.getElementById('providerGrid');
+        const listBody = document.getElementById('providerListBody');
+        if(!gridContainer || !listBody) return;
+
+        document.getElementById('provKpiStrip').innerHTML = kpiBoxes([
+            {icon:'ph-handshake', bg:'#dbeafe', color:'#106FEB', label:'Proveedores activos', value: DB.providers.filter(p=>p.status==='Activo').length, trend:'red', up:true},
+            {icon:'ph-star', bg:'#fef3c7', color:'#b45309', label:'Rating promedio', value: (DB.providers.length ? DB.providers.reduce((a,p)=>a+(p.rating||5),0)/DB.providers.length : 0).toFixed(1), trend:'calidad', up:true},
+            {icon:'ph-package', bg:'#dcfce7', color:'#16a34a', label:'SKU suministrados', value: DB.providers.reduce((a,p)=>a+(p.productsCount||0),0), trend:'catálogo', up:true},
+            {icon:'ph-map-pin', bg:'#ede9fe', color:'#7c3aed', label:'Países', value: new Set(DB.providers.map(p=>p.country)).size, trend:'origen', up:true}
+        ]);
+
+        // Enriquecer proveedores con métricas de ventas basadas en los productos
+        let enrichedProviders = DB.providers.map(p => {
+            const provProds = DB.products.filter(prod => prod.providerId === p.id);
+            const totalOrders = provProds.reduce((sum, prod) => sum + Number(prod.sales30 || 0), 0) * 2; // Factor simulado
+            const totalSalesValue = provProds.reduce((sum, prod) => sum + (Number(prod.sales30 || 0) * Number(prod.price || 0)), 0) * 3; // Factor simulado
+            return { ...p, totalOrders, totalSalesValue };
+        });
+
+        if (!enrichedProviders.length) {
+            gridContainer.innerHTML = '<div style="padding:2rem;text-align:center;color:var(--text-muted);grid-column:1/-1;">No hay proveedores registrados.</div>';
+            listBody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:2rem; color:var(--text-muted);">No hay proveedores registrados.</td></tr>';
+            return;
+        }
+
+        const statusCls = {'Activo':'badge-ok', 'Pausado':'badge-warn', 'Bloqueado':'badge-danger', 'Inactivo':'badge-neutral'};
+
+        gridContainer.innerHTML = enrichedProviders.map(p => {
+            const bgStyle = p.logo ? `background-image:url('${p.logo}'); background-size:cover; background-position:center; background-color:transparent;` : `background:${p.color || '#8B5CF6'};`;
+            
+            const editActions = isProvEditMode ? `
+                <div style="display:flex; gap:6px; margin-top:10px; border-top:1px solid #eef0f3; padding-top:12px;">
+                    <button class="btn btn-outline btn-sm" style="flex:1; justify-content:center;" onclick="editProv('${p.id}')"><i class="ph ph-pencil-simple"></i> Editar</button>
+                    <button class="btn btn-outline btn-sm btn-danger-outline" style="flex:0 0 40px; justify-content:center; padding:0;" onclick="deleteProv('${p.id}')"><i class="ph ph-trash"></i></button>
+                </div>
+            ` : '';
+
+            return `
+            <div class="entity-card">
+              <i class="ph-fill ph-handshake bg-watermark"></i>
+              <div class="entity-card-top">
+                <div class="entity-logo" style="${bgStyle}">
+                  ${!p.logo ? `<i class="ph-fill ph-handshake"></i>` : ''}
+                </div>
+                <div class="entity-title"><b>${p.name}</b><span>${p.category || p.providerType || 'Proveedor'}</span></div>
+              </div>
+              
+              <div class="entity-stats" style="margin-top:10px;">
+                <div class="entity-stat"><b>${p.totalOrders}</b><span>Pedidos</span></div>
+                <div class="entity-stat"><b>${moneyShort(p.totalSalesValue)}</b><span>Ventas (30d)</span></div>
+              </div>
+
+              <div class="entity-stats" style="flex-direction:column; gap:5px; align-items:flex-start; margin-top:10px;">
+                <div style="font-size:0.85rem; color:var(--text-muted);"><i class="ph-fill ph-map-pin"></i> ${p.country || 'No especificado'} ${p.city ? `(${p.city})` : ''}</div>
+                <div style="font-size:0.85rem; color:var(--text-muted);"><i class="ph-fill ph-truck"></i> ${p.supplyType || 'Dropshipping'}</div>
+              </div>
+
+              <div class="entity-footer" style="margin-top:auto; padding-top:12px; flex-direction:column; align-items:stretch; gap:10px;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                  <span class="badge ${statusCls[p.status] || 'badge-neutral'}">${p.status || 'Activo'}</span>
+                </div>
+                ${editActions}
+              </div>
+            </div>`
+        }).join('');
+
+        listBody.innerHTML = enrichedProviders.map(p => {
+            const bgStyle = p.logo ? `background-image:url('${p.logo}'); background-size:cover; background-position:center; background-color:transparent;` : `background:${p.color || '#8B5CF6'};`;
+            
+            const editActions = isProvEditMode ? `
+                <div style="display:flex; gap:6px;">
+                  <button class="btn btn-outline btn-sm" onclick="editProv('${p.id}')" title="Editar"><i class="ph ph-pencil-simple"></i></button>
+                  <button class="btn btn-outline btn-sm btn-danger-outline" onclick="deleteProv('${p.id}')" title="Eliminar"><i class="ph ph-trash"></i></button>
+                </div>
+            ` : '';
+
+            return `
+            <tr>
+              <td>
+                <div class="avatar-fallback" style="${bgStyle} width:42px; height:42px; border-radius:12px; box-shadow:0 2px 5px rgba(0,0,0,0.1);">
+                  ${!p.logo ? `<i class="ph-fill ph-handshake"></i>` : ''}
+                </div>
+              </td>
+              <td><b>${p.name}</b><div style="font-size:0.75rem; color:var(--text-muted);">${p.ruc || ''}</div></td>
+              <td class="cell-muted">${p.providerType || '—'} / ${p.supplyType || '—'}</td>
+              <td class="cell-muted">${p.country || '—'}</td>
+              <td class="cell-strong">${p.totalOrders}</td>
+              <td class="cell-strong" style="color:var(--primary-pill);">${money(p.totalSalesValue)}</td>
+              <td><span class="badge ${statusCls[p.status] || 'badge-neutral'}">${p.status || '—'}</span></td>
+              <td>${editActions}</td>
+            </tr>`
+        }).join('');
+    }
+
+    window.openAddProvModal = function() {
+        populateProvPlatforms();
+        document.getElementById('provModalTitle').textContent = 'Agregar Proveedor';
+        document.getElementById('fProvId').value = '';
+        document.getElementById('fProvLogo').value = ''; 
+        document.getElementById('fProvNombre').value = '';
+        document.getElementById('fProvPlat').value = '';
+        document.getElementById('fProvPlatId').value = '';
+        document.getElementById('fProvCod').value = '';
+        document.getElementById('fProvRuc').value = '';
+        document.getElementById('fProvRazon').value = '';
+        document.getElementById('fProvTipo').value = 'Fabricante';
+        document.getElementById('fProvAbast').value = 'Dropshipping';
+        document.getElementById('fProvEstado').value = 'Activo';
+        document.getElementById('fProvPais').value = 'Perú';
+        document.getElementById('fProvRegion').value = '';
+        document.getElementById('fProvCiudad').value = '';
+        document.getElementById('fProvDistrito').value = '';
+        document.getElementById('fProvDir').value = '';
+        document.getElementById('fProvContacto').value = '';
+        document.getElementById('fProvCorreo').value = '';
+        document.getElementById('fProvFecha').value = '';
+        document.getElementById('fProvCat').value = '';
+        document.getElementById('fProvAlmacenes').value = '';
+        document.getElementById('fProvNotas').value = '';
+        openModal('modalNuevoProveedor');
+    };
+
+    window.editProv = function(id) {
+        populateProvPlatforms();
+        const p = DB.providers.find(x => x.id === id);
+        if(!p) return;
+        document.getElementById('provModalTitle').textContent = 'Editar Proveedor';
+        document.getElementById('fProvId').value = p.id;
+        document.getElementById('fProvLogo').value = '';
+        document.getElementById('fProvNombre').value = p.name || '';
+        document.getElementById('fProvPlat').value = p.platformId || '';
+        document.getElementById('fProvPlatId').value = p.platformId || '';
+        document.getElementById('fProvCod').value = p.platformCode || '';
+        document.getElementById('fProvRuc').value = p.ruc || '';
+        document.getElementById('fProvRazon').value = p.legalName || '';
+        document.getElementById('fProvTipo').value = p.providerType || 'Fabricante';
+        document.getElementById('fProvAbast').value = p.supplyType || 'Dropshipping';
+        document.getElementById('fProvEstado').value = p.status || 'Activo';
+        document.getElementById('fProvPais').value = p.country || 'Perú';
+        document.getElementById('fProvRegion').value = p.region || '';
+        document.getElementById('fProvCiudad').value = p.city || '';
+        document.getElementById('fProvDistrito').value = p.district || '';
+        document.getElementById('fProvDir').value = p.address || '';
+        document.getElementById('fProvContacto').value = p.contact || '';
+        document.getElementById('fProvCorreo').value = p.email || '';
+        document.getElementById('fProvFecha').value = p.joinDate || '';
+        document.getElementById('fProvCat').value = p.category || '';
+        document.getElementById('fProvAlmacenes').value = p.warehouses || '';
+        document.getElementById('fProvNotas').value = p.notes || '';
+        openModal('modalNuevoProveedor');
+    };
+
+    window.deleteProv = function(id) {
+        if(confirm('¿Seguro que deseas eliminar este proveedor permanentemente?')) {
+            DB.providers = DB.providers.filter(x => x.id !== id);
+            renderProviders();
+            if (typeof google !== 'undefined' && google.script && google.script.run) {
+                google.script.run.eliminarProveedor(id);
+            }
+            showToast('Proveedor eliminado');
+        }
+    };
+
+    window.saveProv = function() {
+        const id = document.getElementById('fProvId').value;
+        const name = document.getElementById('fProvNombre').value.trim();
+        if(!name) { showToast('El nombre del proveedor es obligatorio'); return; }
+
+        const fileInput = document.getElementById('fProvLogo');
+        let logoUrl = '';
+        if(fileInput.files && fileInput.files[0]) {
+            logoUrl = URL.createObjectURL(fileInput.files[0]);
+        }
+
+        const provData = {
+            id: id || 'PROV-' + Date.now(),
+            name: name,
+            platformId: document.getElementById('fProvPlat').value,
+            platformCode: document.getElementById('fProvCod').value,
+            ruc: document.getElementById('fProvRuc').value,
+            legalName: document.getElementById('fProvRazon').value,
+            providerType: document.getElementById('fProvTipo').value,
+            supplyType: document.getElementById('fProvAbast').value,
+            status: document.getElementById('fProvEstado').value,
+            country: document.getElementById('fProvPais').value,
+            region: document.getElementById('fProvRegion').value,
+            city: document.getElementById('fProvCiudad').value,
+            district: document.getElementById('fProvDistrito').value,
+            address: document.getElementById('fProvDir').value,
+            contact: document.getElementById('fProvContacto').value,
+            email: document.getElementById('fProvCorreo').value,
+            joinDate: document.getElementById('fProvFecha').value,
+            category: document.getElementById('fProvCat').value,
+            warehouses: document.getElementById('fProvAlmacenes').value,
+            notes: document.getElementById('fProvNotas').value,
+            color: '#8B5CF6',
+            rating: 5,
+            productsCount: 0
+        };
+
+        if(id) {
+            const index = DB.providers.findIndex(x => x.id === id);
+            if(index !== -1) {
+                if(!logoUrl) provData.logo = DB.providers[index].logo;
+                else provData.logo = logoUrl;
+                
+                provData.rating = DB.providers[index].rating || 5;
+                provData.productsCount = DB.providers[index].productsCount || 0;
+                
+                DB.providers[index] = { ...DB.providers[index], ...provData };
+            }
+        } else {
+            if(logoUrl) provData.logo = logoUrl;
+            DB.providers.unshift(provData);
+        }
+        
+        logActivity('Proveedores', id ? `Proveedor actualizado: ${name}` : `Nuevo proveedor: ${name}`, 'ph-handshake', '#8B5CF6', '#ede9fe');
+
+        if (typeof google !== 'undefined' && google.script && google.script.run) {
+            google.script.run
+                .withSuccessHandler(function(){ showToast(id ? 'Proveedor actualizado en Sheets' : 'Proveedor guardado en Sheets'); })
+                .withFailureHandler(function(err){ console.error(err); showToast('Error al guardar en Sheets'); })
+                .guardarProveedor(provData);
+        }
+
+        closeModal('modalNuevoProveedor');
+        showToast(id ? 'Proveedor actualizado' : 'Proveedor guardado');
+        renderProviders();
+    };
+
+    /* ============================================================
+       12b. RENDER Y CRUD: PLATAFORMAS (LOGÍSTICA) - AVANZADO
+       ============================================================ */
+    let currentPlatView = 'grid';
+    let isPlatEditMode = false;
+
+    window.togglePlatEditMode = function() {
+        isPlatEditMode = !isPlatEditMode;
+        const btn = document.getElementById('btnToggleEditModePlat');
+        if(btn){
+            if(isPlatEditMode) {
+                btn.classList.remove('btn-outline');
+                btn.classList.add('btn-primary');
+                btn.innerHTML = '<i class="ph ph-check"></i> Finalizar Edición';
+            } else {
+                btn.classList.remove('btn-primary');
+                btn.classList.add('btn-outline');
+                btn.innerHTML = '<i class="ph ph-pencil-simple"></i> Modo Edición';
+            }
+        }
+        renderPlatforms();
+    };
+
+    window.togglePlatformView = function(view) {
+      currentPlatView = view;
+      document.getElementById('btnViewGridPlat').classList.toggle('active', view === 'grid');
+      document.getElementById('btnViewListPlat').classList.toggle('active', view === 'list');
+      
+      const gridContainer = document.getElementById('platformGrid');
+      const listContainer = document.getElementById('platformListWrap');
+      
+      if(gridContainer && listContainer) {
+        gridContainer.style.display = view === 'grid' ? 'grid' : 'none';
+        listContainer.style.display = view === 'list' ? 'block' : 'none';
+      }
+    };
+
+    function renderPlatforms(){
+      const gridContainer = document.getElementById('platformGrid');
+      const listBody = document.getElementById('platformListBody');
+      const search = (document.getElementById('platSearchInput')?.value || '').toLowerCase();
+      const sort = document.getElementById('platSortSelect')?.value || '';
+      
+      if(!gridContainer || !listBody) return;
+
+      // Calcular datos extra (Ventas generales, pedidos y proveedores)
+      let enrichedPlatforms = DB.platforms.map(p => {
+          const platProvs = DB.providers.filter(prov => prov.platformId === p.id);
+          const provCount = platProvs.length;
+          
+          const provIds = platProvs.map(prov => prov.id);
+          const platProds = DB.products.filter(prod => provIds.includes(prod.providerId) || prod.platformId === p.id);
+          
+          const totalSalesValue = platProds.reduce((sum, prod) => sum + (Number(prod.sales30 || 0) * Number(prod.price || 0)), 0) * 3; // Simulación Histórica
+          const totalOrders = platProds.reduce((sum, prod) => sum + Number(prod.sales30 || 0), 0) * 2; // Simulación
+          
+          return { ...p, provCount, totalSalesValue, totalOrders };
+      });
+
+      // Filtrado por buscador
+      if(search){
+          enrichedPlatforms = enrichedPlatforms.filter(p => p.name.toLowerCase().includes(search) || (p.type||'').toLowerCase().includes(search));
+      }
+
+      // Ordenamiento
+      if(sort === 'sales-desc') {
+          enrichedPlatforms.sort((a,b) => b.totalSalesValue - a.totalSalesValue);
+      } else if (sort === 'sales-count-desc') {
+          enrichedPlatforms.sort((a,b) => b.totalOrders - a.totalOrders);
+      } else if (sort === 'prov-desc') {
+          enrichedPlatforms.sort((a,b) => b.provCount - a.provCount);
+      }
+
+      if (!enrichedPlatforms.length) {
+        gridContainer.innerHTML = '<div style="padding:2rem;text-align:center;color:var(--text-muted);grid-column:1/-1;">No se encontraron plataformas.</div>';
+        listBody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:2rem; color:var(--text-muted);">No hay plataformas registradas.</td></tr>';
+        return;
+      }
+
+      const statusCls = {'Activo':'badge-ok', 'Pendiente':'badge-warn', 'Inactivo':'badge-danger'};
+
+      // 1. Render Vista Tarjetas con Letras grandes (Sin recortes)
+      gridContainer.innerHTML = enrichedPlatforms.map(p => {
+        const bgStyle = p.logo ? `background-image:url('${p.logo}'); background-size:cover; background-position:center; background-color:transparent;` : `background:${p.color || '#106FEB'};`;
+        
+        const editActions = isPlatEditMode ? `
+            <div style="display:flex; gap:6px; margin-top:10px; padding-top:12px; border-top:1px solid #eef0f3;">
+              <button class="btn btn-outline btn-sm" style="flex:1; justify-content:center;" onclick="editPlatform('${p.id}')"><i class="ph ph-pencil-simple"></i> Editar</button>
+              <button class="btn btn-outline btn-sm btn-danger-outline" style="flex:0 0 40px; justify-content:center; padding:0;" onclick="deletePlatform('${p.id}')"><i class="ph ph-trash"></i></button>
+            </div>
+        ` : '';
+
+        return `
+        <div class="entity-card" style="font-size:1.05rem;">
+          <i class="ph-fill ph-app-window bg-watermark"></i>
+          <div class="entity-card-top">
+            <div class="entity-logo" style="${bgStyle} width:64px; height:64px; font-size:1.8rem; border-radius:18px;">
+              ${!p.logo ? `<i class="ph-fill ph-app-window"></i>` : ''}
+            </div>
+            <div class="entity-title"><b style="font-size:1.3rem;">${p.name}</b><span style="font-size:0.9rem;">${p.type || 'Plataforma'}</span></div>
+          </div>
+          
+          <div class="entity-stats" style="margin-top:14px;">
+            <div class="entity-stat" style="padding:14px;">
+                <b style="font-size:1.4rem;">${p.provCount}</b>
+                <span style="font-size:0.75rem;">Proveedores</span>
+            </div>
+            <div class="entity-stat" style="padding:14px;">
+                <b style="font-size:1.4rem;">${moneyShort(p.totalSalesValue)}</b>
+                <span style="font-size:0.75rem;">Ventas (General)</span>
+            </div>
+          </div>
+
+          <div class="entity-stats" style="flex-direction:column; gap:8px; align-items:flex-start; margin-top:12px; background:#f8fafc; padding:12px; border-radius:16px; border:1px solid #eef0f3;">
+            <div style="font-size:0.9rem; color:var(--text-muted);"><i class="ph-fill ph-map-pin"></i> <b>País:</b> ${p.country || 'No especificado'}</div>
+            <div style="font-size:0.9rem; color:var(--text-muted);"><i class="ph-fill ph-link"></i> <b>URL:</b> ${p.url ? `<a href="${p.url}" target="_blank" style="color:var(--primary-pill); text-decoration:none;">${p.url}</a>` : 'Sin URL'}</div>
+            <div style="font-size:0.9rem; color:var(--text-muted);"><i class="ph-fill ph-phone"></i> <b>Contacto:</b> ${p.contact || 'No especificado'}</div>
+          </div>
+          
+          <div class="entity-footer" style="margin-top:auto; padding-top:14px; flex-direction:column; gap:10px; align-items:stretch;">
+            <div style="display:flex; justify-content:space-between; width:100%; align-items:center;">
+                <span class="badge ${statusCls[p.status] || 'badge-neutral'}" style="font-size:0.85rem; padding:6px 12px;">${p.status || 'Activo'}</span>
+                <button class="btn btn-primary btn-sm" onclick="openPlatformDetails('${p.id}')"><i class="ph-fill ph-eye"></i> Ver Detalles</button>
+            </div>
+            ${editActions}
+          </div>
+        </div>`
+      }).join('');
+
+      // 2. Render Vista Lista
+      listBody.innerHTML = enrichedPlatforms.map(p => {
+        const bgStyle = p.logo ? `background-image:url('${p.logo}'); background-size:cover; background-position:center; background-color:transparent;` : `background:${p.color || '#106FEB'};`;
+        
+        const editActions = isPlatEditMode ? `
+            <button class="btn btn-outline btn-sm" onclick="editPlatform('${p.id}')" title="Editar"><i class="ph ph-pencil-simple"></i></button>
+            <button class="btn btn-outline btn-sm btn-danger-outline" onclick="deletePlatform('${p.id}')" title="Eliminar"><i class="ph ph-trash"></i></button>
+        ` : '';
+
+        return `
+        <tr>
+          <td>
+            <div class="avatar-fallback" style="${bgStyle} width:48px; height:48px; border-radius:14px; box-shadow:0 2px 5px rgba(0,0,0,0.1); font-size:1.3rem;">
+              ${!p.logo ? `<i class="ph-fill ph-app-window"></i>` : ''}
+            </div>
+          </td>
+          <td><b style="font-size:1.05rem;">${p.name}</b><div style="font-size:0.8rem; color:var(--text-muted);">${p.url || 'Sin URL'}</div></td>
+          <td class="cell-strong" style="font-size:1.05rem;">${p.provCount}</td>
+          <td class="cell-strong" style="font-size:1.05rem; color:var(--primary-pill);">${money(p.totalSalesValue)}</td>
+          <td><span class="badge ${statusCls[p.status] || 'badge-neutral'}">${p.status || '—'}</span></td>
+          <td>
+            <div style="display:flex; gap:8px;">
+              <button class="btn btn-primary btn-sm" onclick="openPlatformDetails('${p.id}')"><i class="ph-fill ph-eye"></i> Detalles</button>
+              ${editActions}
+            </div>
+          </td>
+        </tr>`
+      }).join('');
+    }
+
+    // Modal de Detalles de Plataforma con filtro de ventas
+    let currentPlatDetailId = null;
+    window.openPlatformDetails = function(id) {
+        currentPlatDetailId = id;
+        const p = DB.platforms.find(x => x.id === id);
+        if(!p) return;
+        
+        document.getElementById('platDetTitle').textContent = 'Detalles de ' + p.name;
+        
+        const content = document.getElementById('platDetContent');
+        content.innerHTML = `
+            <div style="background:#f8fafc; padding:20px; border-radius:18px; border:1px solid #eef0f3; margin-bottom:20px;">
+                <h4 style="margin:0 0 10px 0; font-size:1.1rem; color:var(--text-main);"><i class="ph-fill ph-notebook" style="color:var(--primary-pill);"></i> Notas y Acuerdos</h4>
+                <p style="margin:0; font-size:0.95rem; color:var(--text-muted); line-height:1.6; white-space:pre-wrap;">${p.notes || 'No se han guardado notas para esta plataforma.'}</p>
+            </div>
+            <div style="display:flex; flex-wrap:wrap; gap:15px; margin-bottom:20px;">
+                <div style="flex:1; min-width:140px; background:#fff; border:1px solid #eef0f3; padding:15px; border-radius:16px;">
+                    <span style="font-size:0.8rem; color:var(--text-muted); font-weight:700;">País Operación</span>
+                    <div style="font-size:1.1rem; font-weight:800; color:var(--text-main); margin-top:4px;">${p.country || 'N/A'}</div>
+                </div>
+                <div style="flex:1; min-width:140px; background:#fff; border:1px solid #eef0f3; padding:15px; border-radius:16px;">
+                    <span style="font-size:0.8rem; color:var(--text-muted); font-weight:700;">Fecha Alta</span>
+                    <div style="font-size:1.1rem; font-weight:800; color:var(--text-main); margin-top:4px;">${p.date ? fmtDate(p.date) : 'N/A'}</div>
+                </div>
+            </div>
+        `;
+        
+        const today = new Date().toISOString().slice(0,10);
+        const lastMonth = new Date();
+        lastMonth.setDate(lastMonth.getDate() - 30);
+        document.getElementById('platDetStart').value = lastMonth.toISOString().slice(0,10);
+        document.getElementById('platDetEnd').value = today;
+        
+        calculatePlatSales();
+        openModal('modalDetallesPlataforma');
+    };
+
+    window.calculatePlatSales = function() {
+        if(!currentPlatDetailId) return;
+        const startStr = document.getElementById('platDetStart').value;
+        const endStr = document.getElementById('platDetEnd').value;
+        
+        let salesVal = 0;
+        let salesCount = 0;
+
+        if(startStr && endStr) {
+            const date1 = new Date(startStr);
+            const date2 = new Date(endStr);
+            const diffTime = Math.abs(date2 - date1);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+            
+            const randomFactor = (currentPlatDetailId.charCodeAt(0) % 5) + 1;
+            salesCount = Math.floor(diffDays * randomFactor * 0.4);
+            salesVal = salesCount * 85.50; 
+        }
+        
+        document.getElementById('platDetSalesTotal').textContent = money(salesVal);
+        document.getElementById('platDetSalesCount').textContent = salesCount;
+        playSound('pop');
+    };
+
+    window.openAddPlatformModal = function() {
+      document.getElementById('platModalTitle').textContent = 'Agregar Plataforma';
+      document.getElementById('fPlatId').value = '';
+      document.getElementById('fPlatLogo').value = ''; 
+      document.getElementById('fPlatNombre').value = '';
+      document.getElementById('fPlatTipo').value = 'Dropshipping';
+      document.getElementById('fPlatEstado').value = 'Activo';
+      document.getElementById('fPlatPais').value = '';
+      document.getElementById('fPlatUrl').value = '';
+      document.getElementById('fPlatContacto').value = '';
+      document.getElementById('fPlatFecha').value = '';
+      document.getElementById('fPlatNotas').value = '';
+      openModal('modalNuevaPlataforma');
+    };
+
+    window.editPlatform = function(id) {
+      const p = DB.platforms.find(x => x.id === id);
+      if(!p) return;
+      document.getElementById('platModalTitle').textContent = 'Editar Plataforma';
+      document.getElementById('fPlatId').value = p.id;
+      document.getElementById('fPlatLogo').value = '';
+      document.getElementById('fPlatNombre').value = p.name || '';
+      document.getElementById('fPlatTipo').value = p.type || 'Dropshipping';
+      document.getElementById('fPlatEstado').value = p.status || 'Activo';
+      document.getElementById('fPlatPais').value = p.country || '';
+      document.getElementById('fPlatUrl').value = p.url || '';
+      document.getElementById('fPlatContacto').value = p.contact || '';
+      document.getElementById('fPlatFecha').value = p.date || '';
+      document.getElementById('fPlatNotas').value = p.notes || '';
+      openModal('modalNuevaPlataforma');
+    };
+
+    window.deletePlatform = function(id) {
+      if(confirm('¿Seguro que deseas eliminar esta plataforma permanentemente?')) {
+        DB.platforms = DB.platforms.filter(x => x.id !== id);
+        renderPlatforms();
+        
+        if (typeof google !== 'undefined' && google.script && google.script.run) {
+          google.script.run.eliminarPlataforma(id);
+        }
+        showToast('Plataforma eliminada');
+      }
+    };
+
+    window.savePlatform = function() {
+      const id = document.getElementById('fPlatId').value;
+      const name = document.getElementById('fPlatNombre').value.trim();
+      
+      if(!name) { 
+        showToast('El nombre de la plataforma es obligatorio'); 
+        return; 
+      }
+
+      const fileInput = document.getElementById('fPlatLogo');
+      let logoUrl = '';
+      if(fileInput.files && fileInput.files[0]) {
+         logoUrl = URL.createObjectURL(fileInput.files[0]);
+      }
+
+      const platData = {
+        id: id || 'PLAT-' + Date.now(),
+        name: name,
+        type: document.getElementById('fPlatTipo').value,
+        status: document.getElementById('fPlatEstado').value,
+        country: document.getElementById('fPlatPais').value,
+        url: document.getElementById('fPlatUrl').value,
+        contact: document.getElementById('fPlatContacto').value,
+        date: document.getElementById('fPlatFecha').value,
+        notes: document.getElementById('fPlatNotas').value,
+        color: '#106FEB' 
+      };
+
+      if(id) {
+        const index = DB.platforms.findIndex(x => x.id === id);
+        if(index !== -1) {
+          if(!logoUrl) platData.logo = DB.platforms[index].logo;
+          else platData.logo = logoUrl;
+          DB.platforms[index] = { ...DB.platforms[index], ...platData };
+        }
+      } else {
+        if(logoUrl) platData.logo = logoUrl;
+        DB.platforms.unshift(platData); 
+      }
+
+      logActivity('Plataformas', id ? `Plataforma actualizada: ${name}` : `Nueva plataforma: ${name}`, 'ph-app-window', '#106FEB', '#dbeafe');
+
+      if (typeof google !== 'undefined' && google.script && google.script.run) {
+          google.script.run
+              .withSuccessHandler(function(){ showToast(id ? 'Plataforma actualizada en Sheets' : 'Plataforma guardada en Sheets'); })
+              .withFailureHandler(function(err){ console.error(err); showToast('Error al guardar en Sheets'); })
+              .guardarPlataforma(platData);
+      }
+
+      renderPlatforms();
+      closeModal('modalNuevaPlataforma');
+      showToast(id ? 'Plataforma actualizada exitosamente' : 'Plataforma guardada exitosamente');
+    };
+
+    /* ============================================================
+       13. RENDER Y CRUD: COURIERS
+       ============================================================ */
+    
+    window.addCoverageRow = function(dept='', prov='', cob='Contraentrega', costo='', tiempo='') {
+      const tbody = document.getElementById('courierCoverageBody');
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>
+          <select class="filter-input input-dept" style="min-width:130px; padding:8px;">
+            <option value="Lima" ${dept==='Lima'?'selected':''}>Lima</option>
+            <option value="Callao" ${dept==='Callao'?'selected':''}>Callao</option>
+            <option value="Arequipa" ${dept==='Arequipa'?'selected':''}>Arequipa</option>
+            <option value="Cusco" ${dept==='Cusco'?'selected':''}>Cusco</option>
+            <option value="La Libertad" ${dept==='La Libertad'?'selected':''}>La Libertad</option>
+            <option value="Piura" ${dept==='Piura'?'selected':''}>Piura</option>
+            <option value="Nacional" ${dept==='Nacional'?'selected':''}>Nacional</option>
+            <option value="Otra" ${dept==='Otra'?'selected':''}>Otra</option>
+          </select>
+        </td>
+        <td><input type="text" class="filter-input input-prov" placeholder="Ej. Trujillo / Distrito" value="${prov}" style="padding:8px; width:100%;"></td>
+        <td>
+          <select class="filter-input input-cob" style="padding:8px; min-width: 130px;">
+            <option ${cob==='Contraentrega'?'selected':''}>Contraentrega</option>
+            <option ${cob==='Pago Previo'?'selected':''}>Pago Previo</option>
+          </select>
+        </td>
+        <td><input type="number" class="filter-input input-costo" placeholder="0.00" value="${costo}" style="padding:8px; width:80px;"></td>
+        <td><input type="text" class="filter-input input-tiempo" placeholder="Ej. 24-48h" value="${tiempo}" style="padding:8px; width:100px;"></td>
+        <td><button class="btn btn-outline btn-sm btn-danger-outline" onclick="this.closest('tr').remove()"><i class="ph ph-trash"></i></button></td>
+      `;
+      tbody.appendChild(tr);
+    };
+
+    window.openAddCourierModal = function() {
+        document.getElementById('courierModalTitle').textContent = 'Agregar Empresa Courier';
+        document.getElementById('fCourierId').value = '';
+        document.getElementById('fCourierLogo').value = '';
+        document.getElementById('fCourierNombre').value = '';
+        document.getElementById('fCourierTipo').value = 'Courier';
+        document.getElementById('fCourierEstado').value = 'Activo';
+        document.getElementById('fCourierMetodo').value = 'Contraentrega';
+        document.getElementById('fCourierPais').value = 'Perú';
+        document.getElementById('fCourierDir').value = '';
+        document.getElementById('fCourierTel').value = '';
+        document.getElementById('fCourierWsp').value = '';
+        document.getElementById('courierCoverageBody').innerHTML = ''; 
+        openModal('modalNuevoCourier');
+    };
+
+    window.editCourier = function(id) {
+        const c = DB.couriers.find(x => x.id === id);
+        if(!c) return;
+        document.getElementById('courierModalTitle').textContent = 'Editar Empresa Courier';
+        document.getElementById('fCourierId').value = c.id;
+        document.getElementById('fCourierLogo').value = '';
+        document.getElementById('fCourierNombre').value = c.name || '';
+        document.getElementById('fCourierTipo').value = c.type || 'Courier';
+        document.getElementById('fCourierEstado').value = c.status || 'Activo';
+        document.getElementById('fCourierMetodo').value = c.method || 'Contraentrega';
+        document.getElementById('fCourierPais').value = c.country || 'Perú';
+        document.getElementById('fCourierDir').value = c.address || '';
+        document.getElementById('fCourierTel').value = c.phone || '';
+        document.getElementById('fCourierWsp').value = c.whatsapp || '';
+        
+        document.getElementById('courierCoverageBody').innerHTML = '';
+        if(c.coverage && c.coverage.length > 0) {
+            c.coverage.forEach(z => {
+                addCoverageRow(z.dept, z.prov, z.cob, z.costo, z.tiempo);
+            });
+        }
+        openModal('modalNuevoCourier');
+    };
+
+    window.deleteCourier = function(id) {
+        if(confirm('¿Seguro que deseas eliminar este courier permanentemente?')) {
+            DB.couriers = DB.couriers.filter(x => x.id !== id);
+            renderCouriers();
+            showToast('Courier eliminado');
+        }
+    };
+
+    window.saveCourier = function() {
+        const id = document.getElementById('fCourierId').value;
+        const name = document.getElementById('fCourierNombre').value.trim();
+        if(!name) { showToast('El nombre del courier es obligatorio'); return; }
+
+        const fileInput = document.getElementById('fCourierLogo');
+        let logoUrl = '';
+        if(fileInput.files && fileInput.files[0]) {
+            logoUrl = URL.createObjectURL(fileInput.files[0]);
+        }
+
+        const coverageRows = document.querySelectorAll('#courierCoverageBody tr');
+        let coverageData = [];
+        coverageRows.forEach(tr => {
+            coverageData.push({
+                dept: tr.querySelector('.input-dept').value,
+                prov: tr.querySelector('.input-prov').value,
+                cob: tr.querySelector('.input-cob').value,
+                costo: parseFloat(tr.querySelector('.input-costo').value || 0).toFixed(2),
+                tiempo: tr.querySelector('.input-tiempo').value
+            });
+        });
+
+        const courierData = {
+            id: id || 'COUR-' + Date.now(),
+            name: name,
+            type: document.getElementById('fCourierTipo').value,
+            status: document.getElementById('fCourierEstado').value,
+            method: document.getElementById('fCourierMetodo').value,
+            country: document.getElementById('fCourierPais').value,
+            address: document.getElementById('fCourierDir').value,
+            phone: document.getElementById('fCourierTel').value,
+            whatsapp: document.getElementById('fCourierWsp').value,
+            coverage: coverageData,
+            deliveries: 0,
+            rating: 5,
+            zone: coverageData.length > 0 ? coverageData[0].dept : 'Nacional' 
+        };
+
+        if(id) {
+            const index = DB.couriers.findIndex(x => x.id === id);
+            if(index !== -1) {
+                if(!logoUrl) courierData.logo = DB.couriers[index].logo;
+                else courierData.logo = logoUrl;
+                
+                courierData.deliveries = DB.couriers[index].deliveries || 0;
+                courierData.rating = DB.couriers[index].rating || 5;
+                
+                DB.couriers[index] = { ...DB.couriers[index], ...courierData };
+            }
+        } else {
+            if(logoUrl) courierData.logo = logoUrl;
+            DB.couriers.unshift(courierData);
+        }
+
+        logActivity('Logística', id ? `Courier actualizado: ${name}` : `Nuevo courier: ${name}`, 'ph-truck', '#F43F5E', '#fee2e2');
+
+        if (typeof google !== 'undefined' && google.script && google.script.run) {
+            google.script.run
+                .withSuccessHandler(function(){ showToast(id ? 'Courier actualizado en Sheets' : 'Courier guardado en Sheets'); })
+                .withFailureHandler(function(err){ console.error(err); showToast('Error al guardar en Sheets'); })
+                .guardarCourier(courierData);
+        }
+
+        renderCouriers();
+        closeModal('modalNuevoCourier');
+        showToast(id ? 'Courier actualizado' : 'Courier guardado');
+    };
+
+    function renderCouriers(){
+      document.getElementById('courKpiStrip').innerHTML = kpiBoxes([
+        {icon:'ph-motorcycle', bg:'#dbeafe', color:'#106FEB', label:'Empresas activas', value: DB.couriers.filter(c=>c.status==='Activo').length, trend:'flota', up:true},
+        {icon:'ph-package', bg:'#dcfce7', color:'#16a34a', label:'Zonas Cubiertas', value: DB.couriers.reduce((a,c)=>a+(c.coverage ? c.coverage.length : 0),0), trend:'cobertura', up:true},
+        {icon:'ph-star', bg:'#fef3c7', color:'#b45309', label:'Rating promedio', value: (DB.couriers.length ? DB.couriers.reduce((a,c)=>a+(c.rating||5),0)/DB.couriers.length : 0).toFixed(1), trend:'satisfacción', up:true},
+        {icon:'ph-map-pin', bg:'#ede9fe', color:'#7c3aed', label:'Couriers totales', value: DB.couriers.length, trend:'nacional', up:true}
+      ]);
+
+      const stCls = {'Activo':'badge-ok', 'Pausado':'badge-warn', 'Bloqueado':'badge-danger', 'Inactivo':'badge-neutral'};
+      
+      document.getElementById('courierTableBody').innerHTML = DB.couriers.map(c => {
+         const bgStyle = c.logo ? `background-image:url('${c.logo}'); background-size:cover; background-position:center; background-color:transparent;` : `background:#106FEB;`;
+         const zonesCount = c.coverage ? c.coverage.length : 0;
+         return `
+        <tr>
+          <td><div class="avatar-fallback" style="${bgStyle} width:42px; height:42px; border-radius:12px; box-shadow:0 2px 5px rgba(0,0,0,0.1);">${!c.logo ? '<i class="ph-fill ph-truck"></i>' : ''}</div></td>
+          <td><b>${c.name}</b><div style="font-size:0.75rem; color:var(--text-muted);">${c.phone || ''}</div></td>
+          <td class="cell-muted">${c.type || 'Courier'}</td>
+          <td class="cell-muted">${c.method || 'Contraentrega'}</td>
+          <td><b>${zonesCount}</b> zonas</td>
+          <td><span class="badge ${stCls[c.status]||'badge-neutral'}">${c.status||'Activo'}</span></td>
+          <td>
+            <div style="display:flex; gap:6px;">
+              <button class="btn btn-outline btn-sm" onclick="editCourier('${c.id}')" title="Editar"><i class="ph ph-pencil-simple"></i></button>
+              <button class="btn btn-outline btn-sm btn-danger-outline" onclick="deleteCourier('${c.id}')" title="Eliminar"><i class="ph ph-trash"></i></button>
+            </div>
+          </td>
+        </tr>`;
+      }).join('') || `<tr><td colspan="7" style="text-align:center; padding:2rem; color:var(--text-muted);">No hay empresas registradas.</td></tr>`;
+
+      let allZones = [];
+      DB.couriers.forEach(c => {
+         if(c.coverage) {
+             c.coverage.forEach(z => allZones.push({courier: c.name, ...z}));
+         }
+      });
+
+      document.getElementById('courierZones').innerHTML = allZones.slice(0, 15).map(z => `
+        <div class="mini-history-row" style="align-items:flex-start; flex-direction:column; gap:4px;">
+          <div style="display:flex; justify-content:space-between; width:100%;">
+            <span style="font-weight:700; font-size:0.82rem;">${z.dept} - ${z.prov}</span>
+            <span style="color:var(--primary-pill); font-weight:800; font-size:0.82rem;">S/ ${z.costo}</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; width:100%; font-size:0.72rem; color:var(--text-muted);">
+            <span><i class="ph-fill ph-truck"></i> ${z.courier} · ${z.cob}</span>
+            <span><i class="ph ph-clock"></i> ${z.tiempo}</span>
+          </div>
+        </div>`).join('') || '<div style="padding:1rem; text-align:center; color:var(--text-muted); font-size:0.8rem;">No hay zonas de cobertura registradas.</div>';
+    }
+
+
+    /* ============================================================
+       13b. RENDER Y CRUD: AGENCIAS (NUEVO)
+       ============================================================ */
+    let currentAgeView = 'grid';
+    let isAgeEditMode = false;
+
+    window.toggleAgeEditMode = function() {
+        isAgeEditMode = !isAgeEditMode;
+        const btn = document.getElementById('btnToggleEditModeAge');
+        if(btn){
+            if(isAgeEditMode) {
+                btn.classList.remove('btn-outline');
+                btn.classList.add('btn-primary');
+                btn.innerHTML = '<i class="ph ph-check"></i> Finalizar Edición';
+            } else {
+                btn.classList.remove('btn-primary');
+                btn.classList.add('btn-outline');
+                btn.innerHTML = '<i class="ph ph-pencil-simple"></i> Modo Edición';
+            }
+        }
+        renderAgencies();
+    };
+
+    window.toggleAgeView = function(view) {
+        currentAgeView = view;
+        document.getElementById('btnViewGridAge').classList.toggle('active', view === 'grid');
+        document.getElementById('btnViewListAge').classList.toggle('active', view === 'list');
+        
+        const gridContainer = document.getElementById('agencyGrid');
+        const listContainer = document.getElementById('agencyListWrap');
+        
+        if(gridContainer && listContainer) {
+            gridContainer.style.display = view === 'grid' ? 'grid' : 'none';
+            listContainer.style.display = view === 'list' ? 'block' : 'none';
+        }
+    };
+
+    function renderAgencies(){
+        const gridContainer = document.getElementById('agencyGrid');
+        const listBody = document.getElementById('agencyListBody');
+        if(!gridContainer || !listBody) return;
+
+        document.getElementById('ageKpiStrip').innerHTML = kpiBoxes([
+            {icon:'ph-buildings', bg:'#dbeafe', color:'#106FEB', label:'Agencias activas', value: DB.agencies.filter(a=>a.status==='Activo').length, trend:'red', up:true},
+            {icon:'ph-package', bg:'#dcfce7', color:'#16a34a', label:'Envíos del mes', value: DB.agencies.reduce((a,x)=>a+(x.shipments||0),0), trend:'real', up:true},
+            {icon:'ph-clock', bg:'#fef3c7', color:'#b45309', label:'Tiempo prom. entrega', value: '2-5 días', trend:'nacional', up:true},
+            {icon:'ph-map-trifold', bg:'#ede9fe', color:'#7c3aed', label:'Cobertura', value: '24 dptos.', trend:'Perú', up:true}
+        ]);
+
+        if (!DB.agencies || !DB.agencies.length) {
+            gridContainer.innerHTML = '<div style="padding:2rem;text-align:center;color:var(--text-muted);grid-column:1/-1;">No hay agencias registradas.</div>';
+            listBody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:2rem; color:var(--text-muted);">No hay agencias registradas.</td></tr>';
+            return;
+        }
+
+        const statusCls = {'Activo':'badge-ok', 'Pausado':'badge-warn', 'Inactivo':'badge-danger'};
+
+        // Tarjetas
+        gridContainer.innerHTML = DB.agencies.map(a => {
+            const bgStyle = a.logo ? `background-image:url('${a.logo}'); background-size:cover; background-position:center; background-color:transparent;` : `background:${a.color || '#106FEB'};`;
+            const editActions = isAgeEditMode ? `
+                <div style="display:flex; gap:6px; margin-top:10px; border-top:1px solid #eef0f3; padding-top:12px;">
+                    <button class="btn btn-outline btn-sm" style="flex:1; justify-content:center;" onclick="editAgency('${a.id}')"><i class="ph ph-pencil-simple"></i> Editar</button>
+                    <button class="btn btn-outline btn-sm btn-danger-outline" style="flex:0 0 40px; justify-content:center; padding:0;" onclick="deleteAgency('${a.id}')"><i class="ph ph-trash"></i></button>
+                </div>
+            ` : '';
+
+            return `
+            <div class="entity-card">
+              <i class="ph-fill ph-buildings bg-watermark"></i>
+              <div class="entity-card-top">
+                <div class="entity-logo" style="${bgStyle}">
+                  ${!a.logo ? `<i class="ph-fill ph-buildings"></i>` : ''}
+                </div>
+                <div class="entity-title"><b>${a.name}</b><span>${a.location || 'Nacional'}</span></div>
+              </div>
+              <div class="entity-stats">
+                <div class="entity-stat"><b>${a.shipments || 0}</b><span>Envíos/mes</span></div>
+                <div class="entity-stat"><b>${a.avgDays || '2-5'}</b><span>Días</span></div>
+              </div>
+              
+              <div class="entity-stats" style="flex-direction:column; gap:5px; align-items:flex-start; margin-top:10px; background:#f8fafc; padding:10px; border-radius:12px; border:1px solid #eef0f3;">
+                <div style="font-size:0.8rem; color:var(--text-main);"><b>Cobertura:</b> ${a.coverage || 'N/A'}</div>
+                <div style="font-size:0.8rem; color:var(--text-muted); max-height:40px; overflow:hidden; text-overflow:ellipsis; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;"><b>Puntos:</b> ${a.points || 'No especificados'}</div>
+              </div>
+
+              <div class="entity-footer" style="margin-top:auto; padding-top:12px; flex-direction:column; align-items:stretch; gap:10px;">
+                <span class="badge ${statusCls[a.status] || 'badge-neutral'}">${a.status || 'Activo'}</span>
+                ${editActions}
+              </div>
+            </div>`
+        }).join('');
+
+        // Lista
+        listBody.innerHTML = DB.agencies.map(a => {
+            const bgStyle = a.logo ? `background-image:url('${a.logo}'); background-size:cover; background-position:center; background-color:transparent;` : `background:${a.color || '#106FEB'};`;
+            const editActions = isAgeEditMode ? `
+                <div style="display:flex; gap:6px;">
+                  <button class="btn btn-outline btn-sm" onclick="editAgency('${a.id}')" title="Editar"><i class="ph ph-pencil-simple"></i></button>
+                  <button class="btn btn-outline btn-sm btn-danger-outline" onclick="deleteAgency('${a.id}')" title="Eliminar"><i class="ph ph-trash"></i></button>
+                </div>
+            ` : '';
+
+            return `
+            <tr>
+              <td>
+                <div style="display:flex; align-items:center;">
+                  <div class="avatar-fallback" style="${bgStyle} width:42px; height:42px; border-radius:12px; box-shadow:0 2px 5px rgba(0,0,0,0.1);">
+                    ${!a.logo ? `<i class="ph-fill ph-buildings"></i>` : ''}
+                  </div>
+                  <b style="margin-left:10px;">${a.name}</b>
+                </div>
+              </td>
+              <td class="cell-muted">${a.location || '—'}</td>
+              <td class="cell-muted" style="max-width:200px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${a.points || '—'}</td>
+              <td class="cell-strong">${a.shipments || 0}</td>
+              <td><span class="badge ${statusCls[a.status] || 'badge-neutral'}">${a.status || '—'}</span></td>
+              <td>${editActions}</td>
+            </tr>`
+        }).join('');
+    }
+
+    window.openAddAgencyModal = function() {
+        document.getElementById('ageModalTitle').textContent = 'Agregar Agencia';
+        document.getElementById('fAgeId').value = '';
+        document.getElementById('fAgeLogo').value = '';
+        document.getElementById('fAgeNombre').value = '';
+        document.getElementById('fAgeLocalidad').value = 'Perú';
+        document.getElementById('fAgeEstado').value = 'Activo';
+        document.getElementById('fAgeCobertura').value = '';
+        document.getElementById('fAgeTiempo').value = '';
+        document.getElementById('fAgePuntos').value = '';
+        openModal('modalNuevaAgencia');
+    };
+
+    window.editAgency = function(id) {
+        const a = DB.agencies.find(x => x.id === id);
+        if(!a) return;
+        document.getElementById('ageModalTitle').textContent = 'Editar Agencia';
+        document.getElementById('fAgeId').value = a.id;
+        document.getElementById('fAgeLogo').value = '';
+        document.getElementById('fAgeNombre').value = a.name || '';
+        document.getElementById('fAgeLocalidad').value = a.location || 'Perú';
+        document.getElementById('fAgeEstado').value = a.status || 'Activo';
+        document.getElementById('fAgeCobertura').value = a.coverage || '';
+        document.getElementById('fAgeTiempo').value = a.avgDays || '';
+        document.getElementById('fAgePuntos').value = a.points || '';
+        openModal('modalNuevaAgencia');
+    };
+
+    window.deleteAgency = function(id) {
+        if(confirm('¿Seguro que deseas eliminar esta agencia?')) {
+            DB.agencies = DB.agencies.filter(x => x.id !== id);
+            renderAgencies();
+            if (typeof google !== 'undefined' && google.script && google.script.run) {
+                google.script.run.eliminarAgencia(id);
+            }
+            showToast('Agencia eliminada');
+        }
+    };
+
+    window.saveAgency = function() {
+        const id = document.getElementById('fAgeId').value;
+        const name = document.getElementById('fAgeNombre').value.trim();
+        if(!name) { showToast('El nombre de la agencia es obligatorio'); return; }
+
+        const fileInput = document.getElementById('fAgeLogo');
+        let logoUrl = '';
+        if(fileInput.files && fileInput.files[0]) {
+            logoUrl = URL.createObjectURL(fileInput.files[0]);
+        }
+
+        const ageData = {
+            id: id || 'AGE-' + Date.now(),
+            name: name,
+            location: document.getElementById('fAgeLocalidad').value,
+            status: document.getElementById('fAgeEstado').value,
+            coverage: document.getElementById('fAgeCobertura').value,
+            avgDays: document.getElementById('fAgeTiempo').value,
+            points: document.getElementById('fAgePuntos').value,
+            shipments: id ? (DB.agencies.find(x=>x.id===id)?.shipments || 0) : 0,
+            color: '#106FEB'
+        };
+
+        if(id) {
+            const index = DB.agencies.findIndex(x => x.id === id);
+            if(index !== -1) {
+                if(!logoUrl) ageData.logo = DB.agencies[index].logo;
+                else ageData.logo = logoUrl;
+                DB.agencies[index] = { ...DB.agencies[index], ...ageData };
+            }
+        } else {
+            if(logoUrl) ageData.logo = logoUrl;
+            DB.agencies.unshift(ageData);
+        }
+
+        logActivity('Logística', id ? `Agencia actualizada: ${name}` : `Nueva agencia: ${name}`, 'ph-buildings', '#106FEB', '#dbeafe');
+
+        if (typeof google !== 'undefined' && google.script && google.script.run) {
+            google.script.run
+                .withSuccessHandler(function(){ showToast(id ? 'Agencia actualizada en Sheets' : 'Agencia guardada en Sheets'); })
+                .withFailureHandler(function(err){ console.error(err); showToast('Error al guardar en Sheets'); })
+                .guardarAgencia(ageData);
+        }
+
+        renderAgencies();
+        closeModal('modalNuevaAgencia');
+        showToast(id ? 'Agencia actualizada' : 'Agencia guardada');
+    };
+
+    /* ============================================================
+       14. CONFIGURACIÓN — navegación interna
+       ============================================================ */
+    window.switchSettingsPane = function(paneId, element){
+      playSound('click');
+      document.querySelectorAll('.settings-nav-item').forEach(n=>n.classList.remove('active'));
+      element.classList.add('active');
+      document.querySelectorAll('.settings-pane').forEach(p=>p.classList.remove('active'));
+      document.getElementById(paneId).classList.add('active');
+    };
+
+    /* ============================================================
+       15. REVENUE RANGE CHIP (Dashboard)
+       ============================================================ */
+    document.addEventListener('click', function(e){
+      const chip = e.target.closest('#revRangeChip button');
+      if (!chip) return;
+      document.querySelectorAll('#revRangeChip button').forEach(b=>b.classList.remove('active'));
+      chip.classList.add('active');
+      playSound('click');
+    });
+
+    /* ============================================================
+       GOOGLE SHEETS / APPS SCRIPT — FUENTE REAL DE DATOS
+       ============================================================ */
+    function normalizeArray(value){
+      return Array.isArray(value) ? value : [];
+    }
+
+    function normalizeServerData(data){
+      const source = data && typeof data === 'object' ? data : {};
+      DB.products = normalizeArray(source.products);
+      DB.clients = normalizeArray(source.clients);
+      DB.providers = normalizeArray(source.providers);
+      DB.couriers = normalizeArray(source.couriers);
+      DB.agencies = normalizeArray(source.agencies);
+      DB.platforms = normalizeArray(source.platforms);
+      DB.channels = normalizeArray(source.channels);
+      DB.sellers = normalizeArray(source.sellers);
+      DB.districts = normalizeArray(source.districts);
+      DB.quotes = normalizeArray(source.quotes);
+      
+      DB.activity = normalizeArray(source.activity);
+      DB.revenueByDay = normalizeArray(source.revenueByDay);
+      DB.salesTrend30 = normalizeArray(source.salesTrend30);
+      DB.salesHistory = normalizeArray(source.salesHistory);
+      salesHistoryData = DB.salesHistory;
+
+      if (Array.isArray(source.quoteStatuses) && source.quoteStatuses.length) {
+        DB.quoteStatuses = source.quoteStatuses;
+      }
+      DB.goal = source.goal && typeof source.goal === 'object'
+        ? {target:Number(source.goal.target)||0, current:Number(source.goal.current)||0}
+        : {target:0,current:0};
+
+      const categoriesFromProducts = DB.products.map(p => p.category).filter(Boolean);
+      DB.categories = Array.isArray(source.categories) && source.categories.length
+        ? source.categories
+        : [...new Set(categoriesFromProducts)];
+
+      return DB;
+    }
+
+    function clearDataUI(){
+      const emptyRow = '<tr><td colspan="10" style="text-align:center;padding:2rem;color:var(--text-muted);">No hay datos registrados.</td></tr>';
+      
+      ['clientTableBody','salesHistoryBody','courierTableBody', 'platformListBody', 'providerListBody', 'catEstLowStockTable', 'agencyListBody']
+        .forEach(id => { const node=document.getElementById(id); if(node) node.innerHTML=emptyRow; });
+
+      ['providerGrid','agencyGrid','platformGrid','activityFeed','topProductsList','stockAlertList',
+       'courierZones','districtList','segmentRecs','segmentGrid','posProductGrid','inventoryGrid']
+        .forEach(id => { const node=document.getElementById(id); if(node) node.innerHTML='<div style="padding:2rem;text-align:center;color:var(--text-muted);grid-column:1/-1;">No hay datos registrados.</div>'; });
+    }
+
+    function loadDataFromServer(){
+      if (typeof window.google === 'undefined' || !window.google.script || !window.google.script.run) {
+        clearDataUI();
+        showToast('La conexión con Google Sheets no está disponible.');
+        return;
+      }
+      document.body.classList.add('data-loading');
+      window.google.script.run
+        .withSuccessHandler(function(data){
+          try {
+            normalizeServerData(data);
+            try { renderAll(); } catch (renderError) { console.error('Error en renderAll:', renderError); }
+            loadSettingsFromServer(data);
+            document.body.classList.remove('data-loading');
+            showToast('Datos cargados desde Google Sheets');
+          } catch (error) {
+            console.error('Error procesando datos recibidos:', error);
+            document.body.classList.remove('data-loading');
+            clearDataUI();
+            showToast('Hubo un error al mostrar los datos.');
+          }
+        })
+        .withFailureHandler(function(error){
+          console.error('Error de Apps Script:', error);
+          document.body.classList.remove('data-loading');
+          clearDataUI();
+          showToast('No se pudieron cargar los datos.');
+        })
+        .obtenerDatosERP();
+    }
+
+    function loadSettingsFromServer(data){
+      const source = data && typeof data === 'object' ? data : {};
+      const company = source.company || source.empresa || {};
+      const fields = {
+        empresaRazonSocial: company.razonSocial || company.razon_social || '',
+        empresaRuc: company.ruc || '',
+        empresaRubro: company.rubro || '',
+        empresaDireccion: company.direccion || company.direccionFiscal || ''
+      };
+      Object.keys(fields).forEach(id => {
+        const node=document.getElementById(id);
+        if(node) node.value=fields[id];
+      });
+
+      const currentUser = Array.isArray(source.currentUser) ? source.currentUser[0] : (source.currentUser || source.user || null);
+      if (currentUser && typeof currentUser === 'object') {
+        const name = currentUser.name || currentUser.NombreCompleto || currentUser.nombre || 'Usuario';
+        const role = currentUser.role || currentUser.Rol || currentUser.rol || 'Sin rol';
+        const profileName = document.getElementById('profileName');
+        const profileRole = document.getElementById('profileRole');
+        const profileUsername = document.getElementById('profileUsername');
+        if (profileName) profileName.textContent = name;
+        if (profileRole) profileRole.textContent = role;
+        if (profileUsername) profileUsername.textContent = '@' + (currentUser.username || currentUser.Usuario || 'usuario');
+      }
+      const companyNode = document.getElementById('profileCompany');
+      if (companyNode) companyNode.textContent = company.razonSocial || company.razon_social || company.nombreComercial || 'Empresa no configurada';
+
+      const rolesNode=document.getElementById('rolesSettingsList');
+      if(rolesNode && Array.isArray(source.users)){
+        rolesNode.innerHTML=source.users.length
+          ? source.users.map(u => `
+              <div class="role-pill-row">
+                <div class="avatar-fallback" style="background:var(--primary-pill);">${initials(u.name || u.NombreCompleto || 'U')}</div>
+                <div style="flex:1;">
+                  <b style="display:block;font-size:0.88rem;">${u.name || u.NombreCompleto || 'Usuario'}</b>
+                  <span style="font-size:0.75rem;color:var(--text-muted);">${u.role || u.Rol || 'Sin rol'}</span>
+                </div>
+                <span class="badge badge-blue">${u.status || u.Estado || 'Activo'}</span>
+              </div>
+            `).join('')
+          : '<div class="soft-panel"><p style="margin:0;font-size:0.85rem;color:var(--text-muted);">No hay usuarios registrados.</p></div>';
+      }
+    }
+
+    window.loadDataFromServer=loadDataFromServer;
+    window.refreshERPData=loadDataFromServer;
+
+    /* ============================================================
+       CORRECCIÓN DE FUNCIONES DE RENDERIZADO FALTANTES
+       ============================================================ */
+
+    function populatePosClientSelect(){
+      const sel = document.getElementById('fClienteCot');
+      if (!sel) return;
+
+      const currentValue = sel.value || '';
+      sel.innerHTML = '<option value="">Seleccionar cliente...</option>' +
+        DB.clients.map(c => `<option value="${c.name}">${c.name}</option>`).join('');
+
+      if (currentValue && DB.clients.some(c => c.name === currentValue)) {
+        sel.value = currentValue;
+      }
+    }
+
+    function renderProductStats(){
+      const kpi = document.getElementById('prodKpiStrip');
+      if (kpi) {
+        const totalProducts = DB.products.length;
+        const totalStock = DB.products.reduce((sum, p) => {
+          return sum + (p.unknownStock ? 0 : Number(p.stock || 0));
+        }, 0);
+        const categories = new Set(DB.products.map(p => p.category).filter(Boolean)).size;
+        const inventoryValue = DB.products.reduce((sum, p) => {
+          return sum + Number(p.cost || 0) * (p.unknownStock ? 0 : Number(p.stock || 0));
+        }, 0);
+
+        kpi.innerHTML = kpiBoxes([
+          {icon:'ph-package', bg:'#dbeafe', color:'#106FEB', label:'Productos activos', value:totalProducts, trend:'catálogo', up:true},
+          {icon:'ph-stack', bg:'#fef3c7', color:'#b45309', label:'Stock disponible', value:totalStock, trend:'unidades', up:true},
+          {icon:'ph-folders', bg:'#ede9fe', color:'#7c3aed', label:'Categorías', value:categories, trend:'clasificadas', up:true},
+          {icon:'ph-currency-circle-dollar', bg:'#dcfce7', color:'#16a34a', label:'Valor de inventario', value:moneyShort(inventoryValue), trend:'costo', up:true}
+        ]);
+      }
+
+      const categoryTarget = document.getElementById('categoryDonut');
+      if (categoryTarget) {
+        const categoryTotals = {};
+        DB.products.forEach(p => {
+          const category = p.category || 'Sin categoría';
+          categoryTotals[category] = (categoryTotals[category] || 0) + Number(p.sales30 || 0);
+        });
+
+        const palette = ['#106FEB','#8B5CF6','#10B981','#F59E0B','#F43F5E','#0EA5E9','#EC4899'];
+        const donutItems = Object.entries(categoryTotals)
+          .filter(([, value]) => value > 0)
+          .map(([name, value], index) => ({
+            name,
+            value,
+            color: (DB.catIcons[name] && DB.catIcons[name].color) || palette[index % palette.length]
+          }));
+
+        if (donutItems.length) {
+          const total = donutItems.reduce((sum, item) => sum + item.value, 0);
+          renderDonut(
+            'categoryDonut',
+            donutItems.map(item => ({
+              ...item,
+              value: Math.round((item.value / total) * 100)
+            }))
+          );
+        } else {
+          categoryTarget.innerHTML = '<div style="padding:1rem;color:var(--text-muted);font-size:0.85rem;">Sin datos de rotación registrados.</div>';
+        }
+      }
+
+      const abc = document.getElementById('abcTable');
+      if (abc) {
+        const ranked = [...DB.products]
+          .sort((a, b) => Number(b.sales30 || 0) - Number(a.sales30 || 0))
+          .filter(p => Number(p.sales30 || 0) > 0);
+
+        const totalSales = ranked.reduce((sum, p) => sum + Number(p.sales30 || 0), 0);
+        let cumulative = 0;
+
+        abc.innerHTML = ranked.length
+          ? `<tr><th>Producto</th><th>Ventas</th><th>Clase</th></tr>` +
+            ranked.map(p => {
+              cumulative += Number(p.sales30 || 0);
+              const ratio = totalSales ? cumulative / totalSales : 1;
+              const cls = ratio <= 0.80 ? 'A' : (ratio <= 0.95 ? 'B' : 'C');
+              const badge = cls === 'A' ? 'badge-ok' : (cls === 'B' ? 'badge-warn' : 'badge-neutral');
+              return `<tr>
+                <td class="cell-strong">${p.name}</td>
+                <td>${Number(p.sales30 || 0)} uds.</td>
+                <td><span class="badge ${badge}">${cls}</span></td>
+              </tr>`;
+            }).join('')
+          : '<tr><td colspan="3" style="text-align:center;padding:1.5rem;color:var(--text-muted);">Sin datos de rotación registrados.</td></tr>';
+      }
+    }
+
     function renderCatStats() {
       const kpi = document.getElementById('catEstKpiStrip');
       if (kpi) {
@@ -3582,7 +4761,6 @@
        16. INIT GLOBAL
        ============================================================ */
     window.renderAll = function(){
-      seedMockData(); // Poblamos con datos iniciales si está vacío para mejor apariencia
       populateCategoryFilter();
       populatePosClientSelect();
 
