@@ -43,7 +43,11 @@
     }
 
     html { height: 100%; width: 100%; }
-    
+
+    /* Normaliza el modelo de cajas para evitar desbordamientos en GitHub Pages */
+    *, *::before, *::after { box-sizing: border-box; }
+    img, svg, video, canvas { max-width: 100%; }
+
     @media (min-width: 1025px) { html { zoom: 0.90; } }
 
     body {
@@ -484,6 +488,9 @@
     .toast-msg { position: fixed; bottom: 34px; left: 50%; transform: translateX(-50%) translateY(30px); background: #111827; color: #fff; padding: 16px 26px; border-radius: 18px; font-size: 0.9rem; font-weight: 650; display: flex; align-items: center; gap: 11px; box-shadow: 0 14px 34px rgba(0,0,0,0.28); z-index: 4000; opacity: 0; pointer-events: none; transition: all 0.5s var(--spring-bounce); will-change: transform, opacity; }
     .toast-msg.active { opacity: 1; transform: translateX(-50%) translateY(0); }
 
+    .data-loading { cursor: progress; }
+    .data-loading .folder-body { opacity: 0.72; transition: opacity 0.2s ease; }
+
     .scroll-y { overflow-y: auto; }
     .scroll-y::-webkit-scrollbar { width: 5px; }
     .scroll-y::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 10px; }
@@ -527,10 +534,25 @@
       .product-grid-6 { grid-template-columns: repeat(3, 1fr); }
     }
 
+    @media (max-width: 1100px) {
+      .top-global-pill { padding: 0 12px; }
+      .brand-container { gap: 9px; }
+      .brand-text { font-size: 1.15rem; }
+      .brand-text span { font-size: 1.3rem; }
+      .modern-search:hover, .modern-search:focus-within { width: 210px; }
+      .profile-text { display: none; }
+      .profile-trigger { padding-right: 6px; }
+      .global-sub-tabs-container { max-width: 42%; }
+    }
+
     @media (max-width: 992px) {
       .pos-layout { grid-template-columns: 1fr; }
       .folder-body { padding: 2rem; }
       .dash-grid-layout { grid-template-columns: 1fr; }
+      .top-global-pill { height: 68px; }
+      .global-sub-tabs-container { max-width: 38%; }
+      .sub-tab { padding-left: 10px; padding-right: 10px; }
+      .sub-tab.active { padding-left: 14px; padding-right: 14px; }
     }
 
     @media (max-width: 800px) {
@@ -538,10 +560,10 @@
     }
 
     @media (max-width: 768px) {
-      body { flex-direction: column; overflow: auto; }
-      main { padding: 135px 12px 90px 12px; margin-left: 0; overflow: visible; height: auto; display: block; flex: none;}
+      body { flex-direction: column; overflow-x: hidden; overflow-y: auto; }
+      main { padding: 135px 12px 90px 12px; margin-left: 0; overflow: visible; width: 100%; max-width: 100%; height: auto; display: block; flex: none;}
       
-      .folder-body { padding: 1.2rem; border-radius: 20px; overflow-y: visible; display: block;}
+      .folder-body { padding: 1.2rem; border-radius: 20px; overflow-y: visible; overflow-x: hidden; display: block; width: 100%; max-width: 100%;}
       .section-content.active { display: block; height: auto; }
       .sub-content.active { display: flex; height: auto; }
 
@@ -597,6 +619,14 @@
       .btn { padding: 12px 18px; font-size: 0.9rem; }
       .dash-card { padding: 1.2rem; }
       .soft-panel { padding: 1.2rem; }
+    }
+
+    @media (max-width: 600px) {
+      .panel-head { align-items: stretch; }
+      .panel-head-actions { width: 100%; }
+      .panel-head-actions .btn { flex: 1 1 auto; justify-content: center; }
+      .data-table-wrap { max-width: 100%; }
+      .modal-box { width: 100%; max-width: calc(100vw - 20px); padding: 1.2rem; border-radius: 24px; }
     }
 
     @media (max-width: 480px) {
@@ -1893,49 +1923,99 @@
     // --- INTEGRACIÓN PARA GITHUB PAGES Y GOOGLE SHEETS ---
     const GAS_URL = "https://script.google.com/macros/s/AKfycbxewfPz9kZ1Qfof1Z9YxRGXAWa1sU81R_IHYznXIMOi2e4WKyHODUwLNYMGVukZ-1WHug/exec";
 
+    /*
+     * GitHub Pages no dispone de google.script.run.
+     * Este adaptador conserva la misma API que usa la aplicación,
+     * pero transporta las llamadas mediante fetch al Web App de Apps Script.
+     */
     window.google = window.google || {};
-    window.google.script = window.google.script || {
-      run: {
-        withSuccessHandler: function(callback) {
-          this._onSuccess = callback;
-          return this;
-        },
-        withFailureHandler: function(callback) {
-          this._onFail = callback;
-          return this;
-        },
-        _execute: function(action, args) {
-          const onSuccess = this._onSuccess;
-          const onFail = this._onFail;
-          this._onSuccess = null;
-          this._onFail = null;
+    window.google.script = window.google.script || {};
+    window.google.script.run = window.google.script.run || (function() {
+      const api = {};
 
-          fetch(GAS_URL, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'text/plain;charset=utf-8' 
-            },
-            body: JSON.stringify({ action: action, parameters: args })
+      api.withSuccessHandler = function(callback) {
+        api._onSuccess = typeof callback === 'function' ? callback : null;
+        return api;
+      };
+
+      api.withFailureHandler = function(callback) {
+        api._onFail = typeof callback === 'function' ? callback : null;
+        return api;
+      };
+
+      api._execute = function(action, args) {
+        const onSuccess = api._onSuccess;
+        const onFail = api._onFail;
+
+        api._onSuccess = null;
+        api._onFail = null;
+
+        fetch(GAS_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'text/plain;charset=utf-8'
+          },
+          body: JSON.stringify({
+            action: action,
+            parameters: Array.isArray(args) ? args : []
           })
-          .then(response => response.json())
-          .then(data => {
-            if (data.error && onFail) {
-              onFail(data.error);
-            } else if (onSuccess) {
-              onSuccess(data.result !== undefined ? data.result : data);
-            }
-          })
-          .catch(error => {
-            console.error("Error de conexión con Sheets:", error);
-            if (onFail) onFail(error);
-          });
-        },
-        obtenerDatosERP: function() { this._execute('obtenerDatosERP', []); },
-        crearCliente: function(data) { this._execute('crearCliente', [data]); },
-        processSaleBackend: function(saleData, cartItems) { this._execute('processSaleBackend', [saleData, cartItems]); },
-        saveQuote: function(quoteData) { this._execute('saveQuote', [quoteData]); }
-      }
-    };
+        })
+        .then(function(response) {
+          if (!response.ok) {
+            throw new Error('HTTP ' + response.status + ' al conectar con Google Apps Script.');
+          }
+          return response.text();
+        })
+        .then(function(text) {
+          let data;
+
+          try {
+            data = JSON.parse(text);
+          } catch (parseError) {
+            throw new Error('Google Apps Script no devolvió una respuesta JSON válida.');
+          }
+
+          if (data && data.success === false) {
+            throw new Error(data.error || 'Google Apps Script devolvió un error.');
+          }
+
+          if (onSuccess) {
+            onSuccess(
+              data && data.result !== undefined
+                ? data.result
+                : data
+            );
+          }
+        })
+        .catch(function(error) {
+          console.error('Error de conexión con Google Sheets:', error);
+          if (onFail) onFail(error);
+        });
+
+        return api;
+      };
+
+      api.obtenerDatosERP = function() {
+        return api._execute('obtenerDatosERP', []);
+      };
+
+      api.crearCliente = function(data) {
+        return api._execute('crearCliente', [data || {}]);
+      };
+
+      api.processSaleBackend = function(saleData, cartItems) {
+        return api._execute('processSaleBackend', [
+          saleData || {},
+          Array.isArray(cartItems) ? cartItems : []
+        ]);
+      };
+
+      api.saveQuote = function(quoteData) {
+        return api._execute('saveQuote', [quoteData || {}]);
+      };
+
+      return api;
+    })();
 
     // --- MOTOR DE SONIDOS (PREMIUM) ---
     const AudioContext = window.AudioContext || window.webkitAudioContext;
