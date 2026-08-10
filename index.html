@@ -28,6 +28,7 @@
       /* Ajuste para animaciones ultra fluidas en monitores 120hz+ */
       --ease-smooth: cubic-bezier(0.16, 1, 0.3, 1);
       --spring-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+      --ease-fluid: cubic-bezier(0.25, 1, 0.5, 1); /* Nueva curva para animaciones más fluidas y suaves */
 
       /* Gradiente IA */
       --ai-gradient: linear-gradient(135deg, #106FEB, #8B5CF6);
@@ -155,20 +156,21 @@
     }
     .global-sub-tabs-container::-webkit-scrollbar { display: none; }
     .sub-tabs-group { display: none; gap: 6px; background: rgba(0,0,0,0.02); padding: 6px; border-radius: 40px; border: 1px solid rgba(0,0,0,0.04); }
-    .sub-tabs-group.active { display: flex; animation: popInGroup 0.5s var(--spring-bounce) forwards; }
     
-    @keyframes popInGroup { 0% { opacity: 0; transform: scale(0.92); } 100% { opacity: 1; transform: scale(1); } }
+    /* Animación más suave y fluida para los grupos de sub-pestañas */
+    .sub-tabs-group.active { display: flex; animation: fadeSlideGroup 0.6s var(--ease-fluid) forwards; }
+    @keyframes fadeSlideGroup { 0% { opacity: 0; transform: translateY(-6px); } 100% { opacity: 1; transform: translateY(0); } }
 
     .sub-tab {
       background: transparent; border: none; padding: 10px 16px; border-radius: 30px;
       color: var(--text-muted); display: flex; align-items: center; justify-content: center;
-      cursor: pointer; transition: all 0.4s var(--ease-smooth); white-space: nowrap;
+      cursor: pointer; transition: all 0.5s var(--ease-fluid); white-space: nowrap;
       will-change: transform, background-color, color;
     }
     .sub-tab-icon { font-size: 1.25rem; }
     .sub-tab-text {
       max-width: 0; opacity: 0; overflow: hidden; white-space: nowrap;
-      transition: max-width 0.4s var(--ease-smooth), opacity 0.4s var(--ease-smooth), margin-left 0.4s var(--ease-smooth);
+      transition: max-width 0.5s var(--ease-fluid), opacity 0.5s var(--ease-fluid), margin-left 0.5s var(--ease-fluid);
       font-family: 'Google Sans', Roboto, sans-serif; font-weight: 700; font-size: 0.95rem; margin-left: 0;
     }
     .sub-tab:hover .sub-tab-text, .sub-tab.active .sub-tab-text { max-width: 200px; opacity: 1; margin-left: 8px; }
@@ -1396,7 +1398,6 @@
               <button class="btn btn-primary btn-sm" onclick="openAddProvModal()"><i class="ph ph-plus"></i> Nuevo proveedor</button>
             </div>
           </div>
-          <div class="kpi-strip" id="provKpiStrip"></div>
           
           <div class="entity-grid" id="providerGrid"></div>
           
@@ -1430,7 +1431,6 @@
                <button class="btn btn-primary btn-sm" onclick="openAddCourierModal()"><i class="ph ph-plus"></i> Nueva Empresa</button>
             </div>
           </div>
-          <div class="kpi-strip" id="courKpiStrip"></div>
           <div class="split-layout" style="min-height:0;">
             <div class="data-table-wrap">
               <table class="data-table">
@@ -1460,7 +1460,6 @@
               <button class="btn btn-primary btn-sm" onclick="openAddAgencyModal()"><i class="ph ph-plus"></i> Agregar Agencia</button>
             </div>
           </div>
-          <div class="kpi-strip" id="ageKpiStrip"></div>
           
           <div class="entity-grid" id="agencyGrid"></div>
 
@@ -1992,6 +1991,39 @@
         </div>
       </div>
 
+    </div>
+  </div>
+
+  <!-- MODAL: DETALLES PROVEEDOR -->
+  <div class="modal-overlay" id="modalDetallesProveedor">
+    <div class="modal-box">
+      <div class="modal-head">
+        <h3 id="provDetTitle">Detalles del Proveedor</h3>
+        <button class="modal-close" onclick="closeModal('modalDetallesProveedor')"><i class="ph ph-x"></i></button>
+      </div>
+      <div id="provDetContent"></div>
+    </div>
+  </div>
+
+  <!-- MODAL: DETALLES COURIER -->
+  <div class="modal-overlay" id="modalDetallesCourier">
+    <div class="modal-box">
+      <div class="modal-head">
+        <h3 id="courierDetTitle">Detalles de Empresa Courier</h3>
+        <button class="modal-close" onclick="closeModal('modalDetallesCourier')"><i class="ph ph-x"></i></button>
+      </div>
+      <div id="courierDetContent"></div>
+    </div>
+  </div>
+
+  <!-- MODAL: DETALLES AGENCIA -->
+  <div class="modal-overlay" id="modalDetallesAgencia">
+    <div class="modal-box">
+      <div class="modal-head">
+        <h3 id="agencyDetTitle">Detalles de Agencia</h3>
+        <button class="modal-close" onclick="closeModal('modalDetallesAgencia')"><i class="ph ph-x"></i></button>
+      </div>
+      <div id="agencyDetContent"></div>
     </div>
   </div>
 
@@ -3501,18 +3533,12 @@
         const listBody = document.getElementById('providerListBody');
         if(!gridContainer || !listBody) return;
 
-        document.getElementById('provKpiStrip').innerHTML = kpiBoxes([
-            {icon:'ph-handshake', bg:'#dbeafe', color:'#106FEB', label:'Proveedores activos', value: DB.providers.filter(p=>p.status==='Activo').length, trend:'red', up:true},
-            {icon:'ph-star', bg:'#fef3c7', color:'#b45309', label:'Rating promedio', value: (DB.providers.length ? DB.providers.reduce((a,p)=>a+(p.rating||5),0)/DB.providers.length : 0).toFixed(1), trend:'calidad', up:true},
-            {icon:'ph-package', bg:'#dcfce7', color:'#16a34a', label:'SKU suministrados', value: DB.providers.reduce((a,p)=>a+(p.productsCount||0),0), trend:'catálogo', up:true},
-            {icon:'ph-map-pin', bg:'#ede9fe', color:'#7c3aed', label:'Países', value: new Set(DB.providers.map(p=>p.country)).size, trend:'origen', up:true}
-        ]);
+        // Se eliminó la generación de Widgets KPI superiores como se solicitó para dejar vista limpia
 
-        // Enriquecer proveedores con métricas de ventas basadas en los productos
         let enrichedProviders = DB.providers.map(p => {
             const provProds = DB.products.filter(prod => prod.providerId === p.id);
-            const totalOrders = provProds.reduce((sum, prod) => sum + Number(prod.sales30 || 0), 0) * 2; // Factor simulado
-            const totalSalesValue = provProds.reduce((sum, prod) => sum + (Number(prod.sales30 || 0) * Number(prod.price || 0)), 0) * 3; // Factor simulado
+            const totalOrders = provProds.reduce((sum, prod) => sum + Number(prod.sales30 || 0), 0) * 2; 
+            const totalSalesValue = provProds.reduce((sum, prod) => sum + (Number(prod.sales30 || 0) * Number(prod.price || 0)), 0) * 3; 
             return { ...p, totalOrders, totalSalesValue };
         });
 
@@ -3557,6 +3583,7 @@
               <div class="entity-footer" style="margin-top:auto; padding-top:12px; flex-direction:column; align-items:stretch; gap:10px;">
                 <div style="display:flex; justify-content:space-between; align-items:center;">
                   <span class="badge ${statusCls[p.status] || 'badge-neutral'}">${p.status || 'Activo'}</span>
+                  <button class="btn btn-primary btn-sm" onclick="openProvDetails('${p.id}')"><i class="ph-fill ph-eye"></i> Detalles</button>
                 </div>
                 ${editActions}
               </div>
@@ -3586,10 +3613,58 @@
               <td class="cell-strong">${p.totalOrders}</td>
               <td class="cell-strong" style="color:var(--primary-pill);">${money(p.totalSalesValue)}</td>
               <td><span class="badge ${statusCls[p.status] || 'badge-neutral'}">${p.status || '—'}</span></td>
-              <td>${editActions}</td>
+              <td>
+                <div style="display:flex; gap:8px;">
+                  <button class="btn btn-primary btn-sm" onclick="openProvDetails('${p.id}')"><i class="ph-fill ph-eye"></i> Detalles</button>
+                  ${editActions}
+                </div>
+              </td>
             </tr>`
         }).join('');
     }
+
+    window.openProvDetails = function(id) {
+        const p = DB.providers.find(x => x.id === id);
+        if(!p) return;
+        
+        document.getElementById('provDetTitle').textContent = 'Detalles de ' + p.name;
+        document.getElementById('provDetContent').innerHTML = `
+            <div style="display:flex; gap:15px; align-items:center; margin-bottom: 20px;">
+                <div style="width: 80px; height: 80px; border-radius: 20px; background: ${p.logo ? `url('${p.logo}') center/cover` : p.color || '#8B5CF6'}; display:flex; align-items:center; justify-content:center; color:#fff; font-size:2rem; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+                    ${!p.logo ? '<i class="ph-fill ph-handshake"></i>' : ''}
+                </div>
+                <div>
+                    <h4 style="margin:0 0 5px 0; font-size:1.4rem;">${p.name}</h4>
+                    <span class="badge ${p.status==='Activo'?'badge-ok':'badge-neutral'}">${p.status || 'Activo'}</span>
+                    <span style="font-size:0.9rem; color:var(--text-muted); margin-left:10px;"><i class="ph-fill ph-map-pin"></i> ${p.country || 'N/A'}</span>
+                </div>
+            </div>
+            
+            <div class="form-row-2" style="margin-bottom: 15px;">
+                <div class="soft-panel" style="padding:15px;">
+                    <span style="font-size:0.8rem; color:var(--text-muted);">Tipo / Abastecimiento</span>
+                    <div style="font-weight:700;">${p.providerType || 'N/A'} / ${p.supplyType || 'N/A'}</div>
+                </div>
+                <div class="soft-panel" style="padding:15px;">
+                    <span style="font-size:0.8rem; color:var(--text-muted);">Información de Contacto</span>
+                    <div style="font-weight:700;">${p.contact || 'N/A'}</div>
+                    <div style="font-size:0.85rem; color:var(--primary-pill);">${p.email || 'Sin correo registrado'}</div>
+                </div>
+            </div>
+            
+            <div class="soft-panel" style="padding:15px; margin-bottom:15px;">
+                <span style="font-size:0.8rem; color:var(--text-muted);">Ubicación y Almacenes</span>
+                <p style="margin:5px 0; font-weight:700; font-size:0.95rem;">${p.address || 'Sin dirección'} - ${p.city || ''} ${p.region || ''}</p>
+                <div style="font-weight:500; font-size:0.85rem; white-space:pre-wrap; margin-top:8px;">${p.warehouses || 'Almacenes no especificados.'}</div>
+            </div>
+            
+            <div class="soft-panel" style="padding:15px; background:#f8fafc;">
+                <span style="font-size:0.8rem; color:var(--text-muted);">Notas Adicionales</span>
+                <p style="margin:5px 0 0 0; white-space:pre-wrap; font-size:0.9rem;">${p.notes || 'Sin notas registradas.'}</p>
+            </div>
+        `;
+        openModal('modalDetallesProveedor');
+    };
 
     window.openAddProvModal = function() {
         populateProvPlatforms();
@@ -3728,7 +3803,7 @@
     };
 
     /* ============================================================
-       12b. RENDER Y CRUD: PLATAFORMAS (LOGÍSTICA) - AVANZADO
+       12b. RENDER Y CRUD: PLATAFORMAS (LOGÍSTICA)
        ============================================================ */
     let currentPlatView = 'grid';
     let isPlatEditMode = false;
@@ -3772,26 +3847,22 @@
       
       if(!gridContainer || !listBody) return;
 
-      // Calcular datos extra (Ventas generales, pedidos y proveedores)
       let enrichedPlatforms = DB.platforms.map(p => {
           const platProvs = DB.providers.filter(prov => prov.platformId === p.id);
           const provCount = platProvs.length;
-          
           const provIds = platProvs.map(prov => prov.id);
           const platProds = DB.products.filter(prod => provIds.includes(prod.providerId) || prod.platformId === p.id);
           
-          const totalSalesValue = platProds.reduce((sum, prod) => sum + (Number(prod.sales30 || 0) * Number(prod.price || 0)), 0) * 3; // Simulación Histórica
-          const totalOrders = platProds.reduce((sum, prod) => sum + Number(prod.sales30 || 0), 0) * 2; // Simulación
+          const totalSalesValue = platProds.reduce((sum, prod) => sum + (Number(prod.sales30 || 0) * Number(prod.price || 0)), 0) * 3;
+          const totalOrders = platProds.reduce((sum, prod) => sum + Number(prod.sales30 || 0), 0) * 2;
           
           return { ...p, provCount, totalSalesValue, totalOrders };
       });
 
-      // Filtrado por buscador
       if(search){
           enrichedPlatforms = enrichedPlatforms.filter(p => p.name.toLowerCase().includes(search) || (p.type||'').toLowerCase().includes(search));
       }
 
-      // Ordenamiento
       if(sort === 'sales-desc') {
           enrichedPlatforms.sort((a,b) => b.totalSalesValue - a.totalSalesValue);
       } else if (sort === 'sales-count-desc') {
@@ -3808,7 +3879,6 @@
 
       const statusCls = {'Activo':'badge-ok', 'Pendiente':'badge-warn', 'Inactivo':'badge-danger'};
 
-      // 1. Render Vista Tarjetas con Letras grandes (Sin recortes)
       gridContainer.innerHTML = enrichedPlatforms.map(p => {
         const bgStyle = p.logo ? `background-image:url('${p.logo}'); background-size:cover; background-position:center; background-color:transparent;` : `background:${p.color || '#106FEB'};`;
         
@@ -3856,7 +3926,6 @@
         </div>`
       }).join('');
 
-      // 2. Render Vista Lista
       listBody.innerHTML = enrichedPlatforms.map(p => {
         const bgStyle = p.logo ? `background-image:url('${p.logo}'); background-size:cover; background-position:center; background-color:transparent;` : `background:${p.color || '#106FEB'};`;
         
@@ -3886,7 +3955,6 @@
       }).join('');
     }
 
-    // Modal de Detalles de Plataforma con filtro de ventas
     let currentPlatDetailId = null;
     window.openPlatformDetails = function(id) {
         currentPlatDetailId = id;
@@ -3983,7 +4051,6 @@
       if(confirm('¿Seguro que deseas eliminar esta plataforma permanentemente?')) {
         DB.platforms = DB.platforms.filter(x => x.id !== id);
         renderPlatforms();
-        
         if (typeof google !== 'undefined' && google.script && google.script.run) {
           google.script.run.eliminarPlataforma(id);
         }
@@ -3995,10 +4062,7 @@
       const id = document.getElementById('fPlatId').value;
       const name = document.getElementById('fPlatNombre').value.trim();
       
-      if(!name) { 
-        showToast('El nombre de la plataforma es obligatorio'); 
-        return; 
-      }
+      if(!name) { showToast('El nombre de la plataforma es obligatorio'); return; }
 
       const fileInput = document.getElementById('fPlatLogo');
       let logoUrl = '';
@@ -4048,7 +4112,6 @@
     /* ============================================================
        13. RENDER Y CRUD: COURIERS
        ============================================================ */
-    
     window.addCoverageRow = function(dept='', prov='', cob='Contraentrega', costo='', tiempo='') {
       const tbody = document.getElementById('courierCoverageBody');
       const tr = document.createElement('tr');
@@ -4196,14 +4259,58 @@
         showToast(id ? 'Courier actualizado' : 'Courier guardado');
     };
 
-    function renderCouriers(){
-      document.getElementById('courKpiStrip').innerHTML = kpiBoxes([
-        {icon:'ph-motorcycle', bg:'#dbeafe', color:'#106FEB', label:'Empresas activas', value: DB.couriers.filter(c=>c.status==='Activo').length, trend:'flota', up:true},
-        {icon:'ph-package', bg:'#dcfce7', color:'#16a34a', label:'Zonas Cubiertas', value: DB.couriers.reduce((a,c)=>a+(c.coverage ? c.coverage.length : 0),0), trend:'cobertura', up:true},
-        {icon:'ph-star', bg:'#fef3c7', color:'#b45309', label:'Rating promedio', value: (DB.couriers.length ? DB.couriers.reduce((a,c)=>a+(c.rating||5),0)/DB.couriers.length : 0).toFixed(1), trend:'satisfacción', up:true},
-        {icon:'ph-map-pin', bg:'#ede9fe', color:'#7c3aed', label:'Couriers totales', value: DB.couriers.length, trend:'nacional', up:true}
-      ]);
+    window.openCourierDetails = function(id) {
+        const c = DB.couriers.find(x => x.id === id);
+        if(!c) return;
+        
+        document.getElementById('courierDetTitle').textContent = 'Detalles de Empresa: ' + c.name;
+        
+        let covHtml = '<div style="font-size:0.85rem; color:var(--text-muted); text-align:center;">Sin zonas de cobertura</div>';
+        if (c.coverage && c.coverage.length) {
+            covHtml = `<table class="mini-table" style="width:100%; border:1px solid var(--neutral-line); border-radius:8px;">
+                <thead style="background:#f8fafc;"><tr><th>Dept.</th><th>Provincia</th><th>Costo</th><th>Tiempo</th></tr></thead>
+                <tbody>` + 
+                c.coverage.map(z => `<tr><td>${z.dept}</td><td>${z.prov}</td><td class="cell-strong" style="color:var(--primary-pill);">S/ ${z.costo}</td><td>${z.tiempo}</td></tr>`).join('') +
+                `</tbody></table>`;
+        }
 
+        document.getElementById('courierDetContent').innerHTML = `
+            <div style="display:flex; gap:15px; align-items:center; margin-bottom: 20px;">
+                <div style="width: 80px; height: 80px; border-radius: 20px; background: ${c.logo ? `url('${c.logo}') center/cover` : c.color || '#106FEB'}; display:flex; align-items:center; justify-content:center; color:#fff; font-size:2rem; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+                    ${!c.logo ? '<i class="ph-fill ph-truck"></i>' : ''}
+                </div>
+                <div>
+                    <h4 style="margin:0 0 5px 0; font-size:1.4rem;">${c.name}</h4>
+                    <span class="badge ${c.status==='Activo'?'badge-ok':'badge-neutral'}">${c.status || 'Activo'}</span>
+                    <span style="font-size:0.9rem; color:var(--text-muted); margin-left:10px;"><i class="ph-fill ph-motorcycle"></i> ${c.type || 'Courier'}</span>
+                </div>
+            </div>
+            
+            <div class="form-row-2" style="margin-bottom: 15px;">
+                <div class="soft-panel" style="padding:15px;">
+                    <span style="font-size:0.8rem; color:var(--text-muted);">Información de Contacto</span>
+                    <div style="font-weight:700;"><i class="ph-fill ph-phone"></i> ${c.phone || 'N/A'}</div>
+                    <div style="font-weight:700; color:#16a34a;"><i class="ph-fill ph-whatsapp-logo"></i> ${c.whatsapp || 'N/A'}</div>
+                </div>
+                <div class="soft-panel" style="padding:15px;">
+                    <span style="font-size:0.8rem; color:var(--text-muted);">Sede Principal</span>
+                    <div style="font-weight:700;">${c.country || 'Perú'}</div>
+                    <div style="font-size:0.85rem; color:var(--text-main);">${c.address || 'Sin dirección'}</div>
+                </div>
+            </div>
+
+            <div class="soft-panel" style="padding:15px;">
+                <span style="font-size:0.8rem; color:var(--text-muted); display:block; margin-bottom:10px;">Zonas y Tarifario Activo</span>
+                <div style="max-height: 250px; overflow-y:auto;">
+                    ${covHtml}
+                </div>
+            </div>
+        `;
+        openModal('modalDetallesCourier');
+    };
+
+    function renderCouriers(){
+      // Se eliminó la generación de Widgets KPI superiores de Courriers
       const stCls = {'Activo':'badge-ok', 'Pausado':'badge-warn', 'Bloqueado':'badge-danger', 'Inactivo':'badge-neutral'};
       
       document.getElementById('courierTableBody').innerHTML = DB.couriers.map(c => {
@@ -4219,6 +4326,7 @@
           <td><span class="badge ${stCls[c.status]||'badge-neutral'}">${c.status||'Activo'}</span></td>
           <td>
             <div style="display:flex; gap:6px;">
+              <button class="btn btn-primary btn-sm" onclick="openCourierDetails('${c.id}')" title="Detalles"><i class="ph-fill ph-eye"></i></button>
               <button class="btn btn-outline btn-sm" onclick="editCourier('${c.id}')" title="Editar"><i class="ph ph-pencil-simple"></i></button>
               <button class="btn btn-outline btn-sm btn-danger-outline" onclick="deleteCourier('${c.id}')" title="Eliminar"><i class="ph ph-trash"></i></button>
             </div>
@@ -4284,17 +4392,48 @@
         }
     };
 
+    window.openAgencyDetails = function(id) {
+        const a = DB.agencies.find(x => x.id === id);
+        if(!a) return;
+        
+        document.getElementById('agencyDetTitle').textContent = 'Detalles de la Agencia: ' + a.name;
+        document.getElementById('agencyDetContent').innerHTML = `
+            <div style="display:flex; gap:15px; align-items:center; margin-bottom: 20px;">
+                <div style="width: 80px; height: 80px; border-radius: 20px; background: ${a.logo ? `url('${a.logo}') center/cover` : a.color || '#106FEB'}; display:flex; align-items:center; justify-content:center; color:#fff; font-size:2rem; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+                    ${!a.logo ? '<i class="ph-fill ph-buildings"></i>' : ''}
+                </div>
+                <div>
+                    <h4 style="margin:0 0 5px 0; font-size:1.4rem;">${a.name}</h4>
+                    <span class="badge ${a.status==='Activo'?'badge-ok':'badge-neutral'}">${a.status || 'Activo'}</span>
+                    <span style="font-size:0.9rem; color:var(--text-muted); margin-left:10px;"><i class="ph-fill ph-map-pin"></i> ${a.location || 'Nacional'}</span>
+                </div>
+            </div>
+            
+            <div class="form-row-2" style="margin-bottom: 15px;">
+                <div class="soft-panel" style="padding:15px;">
+                    <span style="font-size:0.8rem; color:var(--text-muted);">Cobertura (Departamentos)</span>
+                    <div style="font-weight:700;">${a.coverage || 'No especificada'}</div>
+                </div>
+                <div class="soft-panel" style="padding:15px;">
+                    <span style="font-size:0.8rem; color:var(--text-muted);">Tiempo Promedio (Días)</span>
+                    <div style="font-weight:700;"><i class="ph-fill ph-clock"></i> ${a.avgDays || 'N/A'}</div>
+                </div>
+            </div>
+            
+            <div class="soft-panel" style="padding:15px; background:#f8fafc;">
+                <span style="font-size:0.8rem; color:var(--text-muted); display:block; margin-bottom:6px;">Puntos de Entrega (Oficinas clave)</span>
+                <div style="font-weight:500; font-size:0.9rem; white-space:pre-wrap; line-height:1.5;">${a.points || 'Sin oficinas descritas.'}</div>
+            </div>
+        `;
+        openModal('modalDetallesAgencia');
+    };
+
     function renderAgencies(){
         const gridContainer = document.getElementById('agencyGrid');
         const listBody = document.getElementById('agencyListBody');
         if(!gridContainer || !listBody) return;
 
-        document.getElementById('ageKpiStrip').innerHTML = kpiBoxes([
-            {icon:'ph-buildings', bg:'#dbeafe', color:'#106FEB', label:'Agencias activas', value: DB.agencies.filter(a=>a.status==='Activo').length, trend:'red', up:true},
-            {icon:'ph-package', bg:'#dcfce7', color:'#16a34a', label:'Envíos del mes', value: DB.agencies.reduce((a,x)=>a+(x.shipments||0),0), trend:'real', up:true},
-            {icon:'ph-clock', bg:'#fef3c7', color:'#b45309', label:'Tiempo prom. entrega', value: '2-5 días', trend:'nacional', up:true},
-            {icon:'ph-map-trifold', bg:'#ede9fe', color:'#7c3aed', label:'Cobertura', value: '24 dptos.', trend:'Perú', up:true}
-        ]);
+        // Se eliminó la generación de Widgets KPI superiores de Agencias
 
         if (!DB.agencies || !DB.agencies.length) {
             gridContainer.innerHTML = '<div style="padding:2rem;text-align:center;color:var(--text-muted);grid-column:1/-1;">No hay agencias registradas.</div>';
@@ -4334,7 +4473,10 @@
               </div>
 
               <div class="entity-footer" style="margin-top:auto; padding-top:12px; flex-direction:column; align-items:stretch; gap:10px;">
-                <span class="badge ${statusCls[a.status] || 'badge-neutral'}">${a.status || 'Activo'}</span>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                  <span class="badge ${statusCls[a.status] || 'badge-neutral'}">${a.status || 'Activo'}</span>
+                  <button class="btn btn-primary btn-sm" onclick="openAgencyDetails('${a.id}')"><i class="ph-fill ph-eye"></i> Detalles</button>
+                </div>
                 ${editActions}
               </div>
             </div>`
@@ -4364,7 +4506,12 @@
               <td class="cell-muted" style="max-width:200px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${a.points || '—'}</td>
               <td class="cell-strong">${a.shipments || 0}</td>
               <td><span class="badge ${statusCls[a.status] || 'badge-neutral'}">${a.status || '—'}</span></td>
-              <td>${editActions}</td>
+              <td>
+                <div style="display:flex; gap:8px;">
+                  <button class="btn btn-primary btn-sm" onclick="openAgencyDetails('${a.id}')"><i class="ph-fill ph-eye"></i> Detalles</button>
+                  ${editActions}
+                </div>
+              </td>
             </tr>`
         }).join('');
     }
