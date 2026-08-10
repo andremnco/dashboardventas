@@ -669,6 +669,323 @@
       .entity-grid { grid-template-columns: 1fr; }
       .panel-head-text h3 { font-size: 1.5rem; }
     }
+
+
+/* ============================================================
+   PERFORMANCE / FLUID UI PATCH
+   Mantiene todas las funciones y estructura existentes.
+   Optimiza únicamente composición, transiciones y animaciones.
+   ============================================================ */
+
+:root {
+  --ui-fast: 120ms;
+  --ui-normal: 180ms;
+  --ui-slow: 240ms;
+  --ui-ease: cubic-bezier(.2,.8,.2,1);
+}
+
+/* Evita crear capas de composición innecesarias */
+.sidebar,
+.brand-icon-wrapper,
+.nav-icon,
+.sub-tab,
+.modern-search,
+.ai-trigger,
+.action-circle-btn,
+.profile-trigger,
+.fab-container,
+.fab-btn,
+.soft-panel,
+.dash-card,
+.entity-card,
+.kpi-box,
+.pos-product-card,
+.segment-card,
+.btn,
+.settings-nav-item,
+.toggle-switch .knob,
+.modal-close {
+  will-change: auto;
+}
+
+/* Solo elementos que realmente necesitan composición anticipada */
+.modal-box,
+.toast-msg,
+.action-dropdown,
+.nav-link::before,
+.nav-link::after {
+  will-change: transform, opacity;
+}
+
+/* El blur de fondo es costoso y no aporta funcionalidad */
+.sidebar,
+.top-global-pill,
+.modal-overlay {
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+
+/* Transiciones específicas: evita transition: all */
+.nav-link {
+  transition: background-color var(--ui-fast) ease, color var(--ui-fast) ease;
+}
+
+.nav-icon {
+  transition: transform var(--ui-fast) var(--ui-ease), color var(--ui-fast) ease;
+}
+
+.nav-link::before,
+.nav-link::after {
+  transition: transform var(--ui-fast) var(--ui-ease), opacity var(--ui-fast) ease;
+}
+
+.top-global-pill {
+  transition: box-shadow var(--ui-normal) ease, background-color var(--ui-normal) ease;
+}
+
+.brand-icon-wrapper {
+  transition: transform var(--ui-normal) var(--ui-ease), box-shadow var(--ui-normal) ease, background-color var(--ui-normal) ease, color var(--ui-normal) ease;
+}
+
+.brand-text {
+  transition: transform var(--ui-normal) var(--ui-ease);
+}
+
+.brand-text span {
+  transition: color var(--ui-normal) ease, text-shadow var(--ui-normal) ease;
+}
+
+/* La animación permanente del logo consume trabajo incluso estando quieto */
+.brand-icon-wrapper,
+.brand-text span {
+  animation: none !important;
+}
+
+.sub-tabs-group.active {
+  animation: uiTabsIn var(--ui-normal) var(--ui-ease) both;
+}
+
+@keyframes uiTabsIn {
+  from { opacity: 0; transform: translate3d(0,-4px,0); }
+  to { opacity: 1; transform: translate3d(0,0,0); }
+}
+
+.sub-tab {
+  transition: background-color var(--ui-fast) ease, color var(--ui-fast) ease, transform var(--ui-fast) var(--ui-ease), padding var(--ui-fast) var(--ui-ease);
+}
+
+.sub-tab-text {
+  transition: max-width var(--ui-normal) var(--ui-ease), opacity var(--ui-fast) ease, margin-left var(--ui-normal) var(--ui-ease);
+}
+
+.modern-search {
+  transition: width var(--ui-normal) var(--ui-ease), background-color var(--ui-fast) ease, border-color var(--ui-fast) ease, box-shadow var(--ui-fast) ease;
+  will-change: auto;
+}
+
+.modern-search input {
+  transition: opacity var(--ui-fast) ease, transform var(--ui-fast) var(--ui-ease);
+}
+
+.ai-trigger,
+.action-circle-btn,
+.profile-trigger,
+.fab-btn {
+  transition: transform var(--ui-fast) var(--ui-ease), box-shadow var(--ui-fast) ease, color var(--ui-fast) ease, border-color var(--ui-fast) ease, background-color var(--ui-fast) ease;
+}
+
+.action-dropdown {
+  transition: transform var(--ui-normal) var(--ui-ease), opacity var(--ui-fast) ease;
+}
+
+.dropdown-item {
+  transition: background-color var(--ui-fast) ease, color var(--ui-fast) ease;
+}
+
+/* Tarjetas: solo transformaciones ligeras y composición eficiente */
+.soft-panel,
+.dash-card,
+.entity-card,
+.kpi-box,
+.pos-product-card,
+.segment-card,
+.btn {
+  transition: transform var(--ui-normal) var(--ui-ease), border-color var(--ui-fast) ease, background-color var(--ui-fast) ease;
+}
+
+.dash-card:hover,
+.kpi-box:hover,
+.entity-card:hover,
+.pos-product-card:hover,
+.segment-card:hover {
+  transform: translate3d(0,-2px,0);
+  border-color: rgba(16,111,235,.35);
+  box-shadow: none;
+  z-index: 2;
+}
+
+/* Evita animar decoraciones grandes */
+.bg-watermark,
+.soft-panel:hover .bg-watermark,
+.dash-card:hover .bg-watermark,
+.entity-card:hover .bg-watermark,
+.kpi-box:hover .bg-watermark,
+.pos-product-card:hover .bg-watermark,
+.segment-card:hover .bg-watermark {
+  transition: none !important;
+}
+
+/* Navegación de páginas más corta */
+main {
+  transition: none;
+}
+
+.section-content.active {
+  animation: uiPageIn var(--ui-normal) var(--ui-ease) both;
+}
+
+.sub-content.active {
+  animation: uiPageIn var(--ui-normal) var(--ui-ease) both;
+}
+
+@keyframes uiPageIn {
+  from { opacity: 0; transform: translate3d(0,6px,0); }
+  to { opacity: 1; transform: translate3d(0,0,0); }
+}
+
+.folder-body {
+  transition: opacity var(--ui-fast) ease;
+}
+
+/* Botones */
+.btn {
+  transition: transform var(--ui-fast) var(--ui-ease), box-shadow var(--ui-fast) ease, background-color var(--ui-fast) ease, border-color var(--ui-fast) ease, color var(--ui-fast) ease;
+}
+
+.btn-primary:hover {
+  transform: translate3d(0,-1px,0);
+  box-shadow: 0 8px 20px var(--primary-glow);
+}
+
+.btn-ghost:hover,
+.btn-outline:hover {
+  transform: translate3d(0,-1px,0);
+}
+
+.btn:active {
+  transform: scale(.985);
+}
+
+.chip-select button {
+  transition: background-color var(--ui-fast) ease, color var(--ui-fast) ease, transform var(--ui-fast) var(--ui-ease), box-shadow var(--ui-fast) ease;
+  will-change: auto;
+}
+
+/* Inputs */
+.filter-input,
+.form-group input,
+.form-group select,
+.form-group textarea {
+  transition: border-color var(--ui-fast) ease, background-color var(--ui-fast) ease, box-shadow var(--ui-fast) ease;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  transform: none;
+}
+
+/* Tablas y listas */
+table.data-table tbody tr,
+.feed-item {
+  transition: background-color var(--ui-fast) ease;
+}
+
+/* Gráficos: duración corta sin spring exagerado */
+.progress-fill,
+.bar-chart .bar,
+#goalRing {
+  transition: width var(--ui-slow) var(--ui-ease), height var(--ui-slow) var(--ui-ease), stroke-dashoffset var(--ui-slow) var(--ui-ease);
+}
+
+/* Entrada de tarjetas: una sola animación corta, sin cascada de delays */
+.kpi-strip .kpi-box,
+.dash-row-3 .dash-card,
+.dash-row-2 .dash-card,
+.segment-grid .segment-card,
+.entity-grid .entity-card {
+  animation: uiCardIn var(--ui-normal) var(--ui-ease) both !important;
+  animation-delay: 0ms !important;
+}
+
+@keyframes uiCardIn {
+  from { opacity: 0; transform: translate3d(0,6px,0); }
+  to { opacity: 1; transform: translate3d(0,0,0); }
+}
+
+.ai-message {
+  animation: uiPageIn var(--ui-normal) var(--ui-ease) both;
+}
+
+.settings-nav-item {
+  transition: transform var(--ui-fast) var(--ui-ease), background-color var(--ui-fast) ease, color var(--ui-fast) ease;
+}
+
+.toggle-switch {
+  transition: background-color var(--ui-fast) ease;
+}
+
+.toggle-switch .knob {
+  transition: transform var(--ui-fast) var(--ui-ease);
+}
+
+.modal-overlay {
+  transition: opacity var(--ui-normal) ease;
+}
+
+.modal-box {
+  transition: transform var(--ui-normal) var(--ui-ease), opacity var(--ui-normal) ease;
+}
+
+.modal-close {
+  transition: transform var(--ui-fast) var(--ui-ease), background-color var(--ui-fast) ease, color var(--ui-fast) ease;
+}
+
+.toast-msg {
+  transition: transform var(--ui-normal) var(--ui-ease), opacity var(--ui-fast) ease;
+}
+
+/* Reduce coste de pintura de elementos fuera del viewport en listas largas.
+   No cambia datos ni comportamiento; solo permite al navegador omitir pintura innecesaria. */
+.entity-grid > .entity-card,
+.pos-product-grid > .pos-product-card,
+.feed-list > .feed-item {
+  content-visibility: auto;
+  contain-intrinsic-size: 120px;
+}
+
+/* Mantener scroll táctil fluido */
+.folder-body,
+.scroll-y,
+.entity-grid,
+.pos-product-grid,
+.ai-chat-messages,
+.feed-list,
+.data-table-wrap {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+/* Respeta las preferencias de movimiento del sistema */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
   </style>
 </head>
 <body>
