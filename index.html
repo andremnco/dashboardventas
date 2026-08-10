@@ -49,7 +49,7 @@
     *, *::before, *::after { box-sizing: border-box; }
     img, svg, video, canvas { max-width: 100%; }
 
-    @media (min-width: 1025px) { html { zoom: 1; } }
+    @media (min-width: 1025px) { html { zoom: 0.85; } }
 
     body {
       margin: 0; padding: 0; font-family: 'Google Sans', Roboto, sans-serif;
@@ -536,7 +536,6 @@
     .modal-overlay.active { opacity: 1; pointer-events: auto; }
     .modal-box { background: #fff; border-radius: 32px; width: 700px; max-width: 95vw; max-height: 86vh; overflow-y: auto; padding: 2.1rem; box-shadow: 0 30px 80px rgba(0,0,0,0.25); transform: scale(0.92) translateY(20px); transition: all 0.5s var(--spring-bounce); will-change: transform, opacity; }
     .modal-box.modal-large { width: 900px; }
-    .modal-box.modal-xl { width: 1400px; max-width: 96vw; max-height: 94vh; padding: 2.5rem; }
     .modal-overlay.active .modal-box { transform: scale(1) translateY(0); }
     .modal-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.4rem; }
     .modal-close { width: 38px; height: 38px; border-radius: 50%; background: #f3f4f6; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: var(--text-muted); transition: all 0.3s var(--spring-bounce); will-change: transform; }
@@ -571,13 +570,6 @@
     @keyframes riseIn { 0% { opacity: 0; transform: translateY(24px) scale(0.95); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
     
     #goalRing { transition: stroke-dashoffset 1.2s var(--spring-bounce); }
-
-    /* LÍNEA DE TIEMPO (TIMELINE) */
-    .timeline-container { border-left: 2px solid #eef0f3; margin-left: 10px; padding-left: 15px; display: flex; flex-direction: column; gap: 14px; margin-top: 10px;}
-    .timeline-item { position: relative; }
-    .timeline-item::before { content: ''; position: absolute; left: -21.5px; top: 3px; width: 11px; height: 11px; border-radius: 50%; background: var(--primary-pill); border: 2px solid #fff; box-shadow: 0 0 0 2px var(--primary-pill); }
-    .timeline-date { font-size: 0.75rem; color: var(--text-muted); font-weight: 700; margin-bottom: 2px; }
-    .timeline-content { font-size: 0.88rem; color: var(--text-main); line-height: 1.4;}
 
     /* ============================================================
        MEDIA QUERIES PARA RESPONSIVE (MÓVIL, TABLET Y ESCRITORIO)
@@ -1906,20 +1898,8 @@
           <input type="file" id="fPlatLogo" accept="image/*">
         </div>
         <div class="form-group">
-          <label>Nombre Comercial de la Plataforma *</label>
+          <label>Nombre de la Plataforma *</label>
           <input type="text" id="fPlatNombre" placeholder="Ej. Shopify">
-        </div>
-      </div>
-      
-      <!-- NUEVOS CAMPOS: RUC Y RAZÓN SOCIAL -->
-      <div class="form-row-2">
-        <div class="form-group">
-          <label>RUC (Opcional)</label>
-          <input type="text" id="fPlatRuc" placeholder="Ej. 20000000001">
-        </div>
-        <div class="form-group">
-          <label>Razón Social (Opcional)</label>
-          <input type="text" id="fPlatRazon" placeholder="Ej. Shopify Inc.">
         </div>
       </div>
       
@@ -1961,7 +1941,7 @@
       
       <div class="form-row-2">
         <div class="form-group"><label>Contacto</label><input type="text" id="fPlatContacto" placeholder="Nombre, email o teléfono"></div>
-        <div class="form-group"><label>Fecha de Ingreso</label><input type="date" id="fPlatFecha"></div>
+        <div class="form-group"><label>Fecha de incorporación</label><input type="date" id="fPlatFecha"></div>
       </div>
       
       <div class="form-group">
@@ -1973,24 +1953,52 @@
     </div>
   </div>
 
-  <!-- MODAL: DETALLES PLATAFORMA (MODIFICADO - FULL SCREEN) -->
+  <!-- MODAL: DETALLES PLATAFORMA -->
   <div class="modal-overlay" id="modalDetallesPlataforma">
-    <div class="modal-box modal-xl">
+    <div class="modal-box">
       <div class="modal-head">
-        <h3 id="platDetTitle" style="font-size:1.8rem; margin:0;">Detalles de la Plataforma</h3>
+        <h3 id="platDetTitle">Detalles de la Plataforma</h3>
         <button class="modal-close" onclick="closeModal('modalDetallesPlataforma')"><i class="ph ph-x"></i></button>
       </div>
 
       <div id="platDetContent"></div>
+
+      <div class="soft-panel" style="margin-top:20px;">
+        <h4 style="margin-bottom:12px;"><i class="ph-fill ph-calendar-blank"></i> Consultar Ventas por Fecha</h4>
+        <div class="form-row-3" style="align-items: flex-end;">
+          <div class="form-group">
+            <label>Fecha Inicio</label>
+            <input type="date" id="platDetStart">
+          </div>
+          <div class="form-group">
+            <label>Fecha Fin</label>
+            <input type="date" id="platDetEnd">
+          </div>
+          <div class="form-group">
+            <button class="btn btn-primary" style="width:100%; justify-content:center;" onclick="calculatePlatSales()">Filtrar Ventas</button>
+          </div>
+        </div>
+
+        <div style="margin-top:20px; padding:15px; background:#fff; border:1px solid #eef0f3; border-radius:16px; display:flex; justify-content:space-around; text-align:center;">
+           <div>
+             <div style="font-size:0.85rem; color:var(--text-muted); font-weight:700;">Ventas Generadas</div>
+             <div id="platDetSalesTotal" style="font-size:1.8rem; font-weight:800; color:var(--primary-pill);">S/ 0.00</div>
+           </div>
+           <div>
+             <div style="font-size:0.85rem; color:var(--text-muted); font-weight:700;">N° de Pedidos</div>
+             <div id="platDetSalesCount" style="font-size:1.8rem; font-weight:800; color:var(--text-main);">0</div>
+           </div>
+        </div>
+      </div>
 
     </div>
   </div>
 
   <!-- MODAL: DETALLES PROVEEDOR -->
   <div class="modal-overlay" id="modalDetallesProveedor">
-    <div class="modal-box modal-xl">
+    <div class="modal-box">
       <div class="modal-head">
-        <h3 id="provDetTitle" style="font-size:1.8rem; margin:0;">Detalles del Proveedor</h3>
+        <h3 id="provDetTitle">Detalles del Proveedor</h3>
         <button class="modal-close" onclick="closeModal('modalDetallesProveedor')"><i class="ph ph-x"></i></button>
       </div>
       <div id="provDetContent"></div>
@@ -1999,9 +2007,9 @@
 
   <!-- MODAL: DETALLES COURIER -->
   <div class="modal-overlay" id="modalDetallesCourier">
-    <div class="modal-box modal-xl">
+    <div class="modal-box">
       <div class="modal-head">
-        <h3 id="courierDetTitle" style="font-size:1.8rem; margin:0;">Detalles de Empresa Courier</h3>
+        <h3 id="courierDetTitle">Detalles de Empresa Courier</h3>
         <button class="modal-close" onclick="closeModal('modalDetallesCourier')"><i class="ph ph-x"></i></button>
       </div>
       <div id="courierDetContent"></div>
@@ -2010,9 +2018,9 @@
 
   <!-- MODAL: DETALLES AGENCIA -->
   <div class="modal-overlay" id="modalDetallesAgencia">
-    <div class="modal-box modal-xl">
+    <div class="modal-box">
       <div class="modal-head">
-        <h3 id="agencyDetTitle" style="font-size:1.8rem; margin:0;">Detalles de Agencia</h3>
+        <h3 id="agencyDetTitle">Detalles de Agencia</h3>
         <button class="modal-close" onclick="closeModal('modalDetallesAgencia')"><i class="ph ph-x"></i></button>
       </div>
       <div id="agencyDetContent"></div>
@@ -2594,7 +2602,7 @@
       const time = new Date().toLocaleTimeString('es-PE', {hour: '2-digit', minute:'2-digit'});
       DB.activity.unshift({ title, desc, icon, color, bg, time });
       if(DB.activity.length > 20) DB.activity.pop();
-      renderDashboard(); 
+      renderDashboard(); // Update view
     };
 
     /* ============================================================
@@ -2607,7 +2615,7 @@
           DB.revenueByDay = Array(7).fill(0);
           DB.salesHistory.forEach(s => {
               if (s.status === 'Completado') {
-                  DB.salesTrend30[29] += s.total; 
+                  DB.salesTrend30[29] += s.total; // Dump all to today for visual simplicity
                   DB.revenueByDay[6] += s.total;
               }
           });
@@ -3239,7 +3247,7 @@
     };
 
     /* ============================================================
-       11. RENDER: CATÁLOGO GENERAL 
+       11. RENDER: CATÁLOGO GENERAL (NUEVA VISTA TARJETAS 6 COLS COMPACTA)
        ============================================================ */
     let isProdEditMode = false;
 
@@ -3426,9 +3434,9 @@
               const provName = provObj ? provObj.name : 'Sin proveedor';
               
               const imgRender = p.image 
-                  ? `<div style="width: 100%; aspect-ratio: 1/1; background-image: url('${p.image}'); background-size: cover; background-position: center; border-radius: 14px; margin-bottom: 8px; background-color: #ffffff; border: 1px solid var(--neutral-line); position: relative;"></div>` 
+                  ? `<div style="width: 100%; aspect-ratio: 1/1; background-image: url('${p.image}'); background-size: cover; background-position: center; border-radius: 14px; margin-bottom: 8px; background-color: #ffffff; border: 1px solid var(--neutral-line); position: relative;">` 
                   : `<div style="width: 100%; aspect-ratio: 1/1; background: ${meta.color}15; display:flex; align-items:center; justify-content:center; color: ${meta.color}; font-size: 4rem; border-radius: 14px; margin-bottom: 8px; position: relative; border: 1px solid var(--neutral-line);">
-                        <i class="ph-fill ${meta.icon}"></i></div>`;
+                        <i class="ph-fill ${meta.icon}"></i>`;
               
               const actionButtons = isProdEditMode ? `
                  <div style="display:flex; gap:6px; margin-top:10px; border-top:1px solid var(--neutral-line); padding-top:10px;">
@@ -3439,7 +3447,8 @@
               return `
               <div class="entity-card" style="padding: 1rem; cursor:default; display:flex; flex-direction:column; gap:4px; height: 100%; box-shadow: 0 4px 15px rgba(0,0,0,0.04); border-radius: 20px;">
                  ${imgRender}
-                 <span class="badge" style="position: absolute; top: 10px; left: 10px; background: rgba(255,255,255,0.95); backdrop-filter: blur(4px); box-shadow:0 4px 10px rgba(0,0,0,0.1); font-size:0.75rem; padding: 4px 10px;">${p.category}</span>
+                    <span class="badge" style="position: absolute; top: 10px; left: 10px; background: rgba(255,255,255,0.95); backdrop-filter: blur(4px); box-shadow:0 4px 10px rgba(0,0,0,0.1); font-size:0.75rem; padding: 4px 10px;">${p.category}</span>
+                 </div>
                  
                  <div style="display:flex; flex-direction:column; gap:2px; flex:1;">
                     <b style="font-size:1.05rem; line-height:1.2; color:var(--text-main); display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;">${p.name}</b>
@@ -3523,6 +3532,8 @@
         const gridContainer = document.getElementById('providerGrid');
         const listBody = document.getElementById('providerListBody');
         if(!gridContainer || !listBody) return;
+
+        // Se eliminó la generación de Widgets KPI superiores como se solicitó para dejar vista limpia
 
         let enrichedProviders = DB.providers.map(p => {
             const provProds = DB.products.filter(prod => prod.providerId === p.id);
@@ -3792,7 +3803,7 @@
     };
 
     /* ============================================================
-       12b. RENDER Y CRUD: PLATAFORMAS (LOGÍSTICA) - AVANZADO
+       12b. RENDER Y CRUD: PLATAFORMAS (LOGÍSTICA)
        ============================================================ */
     let currentPlatView = 'grid';
     let isPlatEditMode = false;
@@ -3842,8 +3853,8 @@
           const provIds = platProvs.map(prov => prov.id);
           const platProds = DB.products.filter(prod => provIds.includes(prod.providerId) || prod.platformId === p.id);
           
-          const totalSalesValue = platProds.reduce((sum, prod) => sum + (Number(prod.sales30 || 0) * Number(prod.price || 0)), 0) * 3; 
-          const totalOrders = platProds.reduce((sum, prod) => sum + Number(prod.sales30 || 0), 0) * 2; 
+          const totalSalesValue = platProds.reduce((sum, prod) => sum + (Number(prod.sales30 || 0) * Number(prod.price || 0)), 0) * 3;
+          const totalOrders = platProds.reduce((sum, prod) => sum + Number(prod.sales30 || 0), 0) * 2;
           
           return { ...p, provCount, totalSalesValue, totalOrders };
       });
@@ -3950,151 +3961,22 @@
         const p = DB.platforms.find(x => x.id === id);
         if(!p) return;
         
-        document.getElementById('platDetTitle').textContent = 'Detalles de la Plataforma: ' + p.name;
+        document.getElementById('platDetTitle').textContent = 'Detalles de ' + p.name;
         
-        // Calcular Relaciones
-        const platProvs = DB.providers.filter(prov => prov.platformId === id);
-        const provIds = platProvs.map(prov => prov.id);
-        const platProds = DB.products.filter(prod => provIds.includes(prod.providerId) || prod.platformId === id);
-        
-        // Historial / Línea de tiempo
-        let platActivities = DB.activity.filter(a => a.desc.includes(p.name) || a.title.includes(p.name));
-        if(platActivities.length === 0) {
-            platActivities.push({time: p.date ? fmtDate(p.date) : 'Reciente', title: 'Creación de plataforma', desc: `Se registró a ${p.name} en el ecosistema logístico.`});
-        }
-        
-        const timelineHtml = platActivities.map(act => `
-            <div class="timeline-item">
-                <div class="timeline-date">${act.time}</div>
-                <div class="timeline-content"><b>${act.title}</b><br><span style="color:var(--text-muted);">${act.desc}</span></div>
-            </div>
-        `).join('');
-
         const content = document.getElementById('platDetContent');
         content.innerHTML = `
-            <div style="display:flex; gap:20px; flex-wrap:wrap; margin-bottom: 25px;">
-                <!-- Header Card Info Principal -->
-                <div style="flex: 1; min-width: 300px; display:flex; gap:15px; align-items:center; background:#f8fafc; padding:20px; border-radius:16px; border:1px solid #eef0f3;">
-                    <div style="width: 90px; height: 90px; border-radius: 20px; background: ${p.logo ? `url('${p.logo}') center/cover` : p.color || '#106FEB'}; display:flex; align-items:center; justify-content:center; color:#fff; font-size:2.5rem; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
-                        ${!p.logo ? '<i class="ph-fill ph-app-window"></i>' : ''}
-                    </div>
-                    <div>
-                        <h4 style="margin:0 0 5px 0; font-size:1.6rem; color:var(--text-main);">${p.name}</h4>
-                        <div style="font-size:0.9rem; color:var(--text-muted); margin-bottom:8px;">${p.razon || 'Razón social no especificada'} ${p.ruc ? `| RUC: ${p.ruc}` : ''}</div>
-                        <span class="badge ${p.status==='Activo'?'badge-ok':(p.status==='Pendiente'?'badge-warn':'badge-danger')}">${p.status || 'Activo'}</span>
-                        <span class="badge badge-info"><i class="ph-fill ph-buildings"></i> ${p.type || 'Plataforma'}</span>
-                    </div>
-                </div>
-                
-                <!-- Extra Stats -->
-                <div style="flex: 1; min-width: 300px; background:#fff; padding:20px; border-radius:16px; border:1px solid #eef0f3; display:grid; grid-template-columns: 1fr 1fr; gap:15px;">
-                    <div>
-                        <span style="font-size:0.8rem; color:var(--text-muted); font-weight:700;">Fecha de Ingreso</span>
-                        <div style="font-size:1.05rem; font-weight:700; color:var(--text-main); margin-top:4px;">${p.date ? fmtDate(p.date) : 'N/A'}</div>
-                    </div>
-                    <div>
-                        <span style="font-size:0.8rem; color:var(--text-muted); font-weight:700;">País</span>
-                        <div style="font-size:1.05rem; font-weight:700; color:var(--text-main); margin-top:4px;"><i class="ph-fill ph-map-pin"></i> ${p.country || 'N/A'}</div>
-                    </div>
-                    <div style="grid-column: 1 / -1;">
-                        <span style="font-size:0.8rem; color:var(--text-muted); font-weight:700;">Contacto y Web</span>
-                        <div style="font-size:0.95rem; font-weight:500; color:var(--text-main); margin-top:4px;"><i class="ph-fill ph-phone"></i> ${p.contact || 'Sin contacto'} | <a href="${p.url}" target="_blank" style="color:var(--primary-pill); text-decoration:none;">${p.url || 'Sin URL'}</a></div>
-                    </div>
-                </div>
+            <div style="background:#f8fafc; padding:20px; border-radius:18px; border:1px solid #eef0f3; margin-bottom:20px;">
+                <h4 style="margin:0 0 10px 0; font-size:1.1rem; color:var(--text-main);"><i class="ph-fill ph-notebook" style="color:var(--primary-pill);"></i> Notas y Acuerdos</h4>
+                <p style="margin:0; font-size:0.95rem; color:var(--text-muted); line-height:1.6; white-space:pre-wrap;">${p.notes || 'No se han guardado notas para esta plataforma.'}</p>
             </div>
-
-            <!-- Listas Relacionadas (Proveedores y Productos) -->
-            <div class="split-layout" style="margin-bottom: 25px; grid-template-columns: 1fr 1fr;">
-                <div class="soft-panel" style="padding:0; overflow:hidden;">
-                    <div style="padding:15px; border-bottom:1px solid var(--neutral-line); background:#f8fafc;">
-                        <h4 style="margin:0; font-size:1rem;"><i class="ph-fill ph-handshake" style="color:var(--primary-pill);"></i> Proveedores Asociados (${platProvs.length})</h4>
-                    </div>
-                    <div style="max-height:220px; overflow-y:auto; padding:10px;">
-                        ${platProvs.length ? platProvs.map(prov => `
-                            <div class="mini-history-row" style="margin-bottom:6px; background:#fff; border-radius:10px; cursor:pointer;" onclick="openProvDetails('${prov.id}')" title="Ver proveedor">
-                                <div style="display:flex; align-items:center; gap:10px;">
-                                    <div style="width:34px; height:34px; border-radius:8px; background:${prov.logo?`url('${prov.logo}') center/cover`:'#8B5CF6'}; display:flex; align-items:center; justify-content:center; color:#fff; font-size:1rem;">
-                                        ${!prov.logo ? '<i class="ph-fill ph-handshake"></i>' : ''}
-                                    </div>
-                                    <div>
-                                        <div style="font-weight:700; font-size:0.85rem;">${prov.name}</div>
-                                        <div style="font-size:0.75rem; color:var(--text-muted);">${prov.ruc || 'Sin RUC'} | ${prov.country || 'Perú'}</div>
-                                    </div>
-                                </div>
-                                <span class="badge ${prov.status==='Activo'?'badge-ok':'badge-neutral'}">${prov.status}</span>
-                            </div>
-                        `).join('') : '<div style="padding:15px; color:var(--text-muted); font-size:0.85rem; text-align:center;">No hay proveedores vinculados a esta plataforma.</div>'}
-                    </div>
+            <div style="display:flex; flex-wrap:wrap; gap:15px; margin-bottom:20px;">
+                <div style="flex:1; min-width:140px; background:#fff; border:1px solid #eef0f3; padding:15px; border-radius:16px;">
+                    <span style="font-size:0.8rem; color:var(--text-muted); font-weight:700;">País Operación</span>
+                    <div style="font-size:1.1rem; font-weight:800; color:var(--text-main); margin-top:4px;">${p.country || 'N/A'}</div>
                 </div>
-
-                <div class="soft-panel" style="padding:0; overflow:hidden;">
-                    <div style="padding:15px; border-bottom:1px solid var(--neutral-line); background:#f8fafc;">
-                        <h4 style="margin:0; font-size:1rem;"><i class="ph-fill ph-package" style="color:var(--primary-pill);"></i> Productos Asociados (${platProds.length})</h4>
-                    </div>
-                    <div style="max-height:220px; overflow-y:auto; padding:10px;">
-                        ${platProds.length ? platProds.map(prod => `
-                            <div class="mini-history-row" style="margin-bottom:6px; background:#fff; border-radius:10px; cursor:pointer;" onclick="openProductModal('${prod.id}')" title="Editar producto">
-                                <div style="display:flex; align-items:center; gap:10px;">
-                                    <div style="width:34px; height:34px; border-radius:8px; background:${prod.image?`url('${prod.image}') center/cover`:'#64748B'}; display:flex; align-items:center; justify-content:center; color:#fff; font-size:1rem;">
-                                        ${!prod.image ? '<i class="ph-fill ph-package"></i>' : ''}
-                                    </div>
-                                    <div>
-                                        <div style="font-weight:700; font-size:0.85rem; max-width:160px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${prod.name}</div>
-                                        <div style="font-size:0.75rem; color:var(--text-muted);">${prod.category}</div>
-                                    </div>
-                                </div>
-                                <div style="font-weight:800; color:var(--text-main); font-size:0.9rem;">${money(prod.price)}</div>
-                            </div>
-                        `).join('') : '<div style="padding:15px; color:var(--text-muted); font-size:0.85rem; text-align:center;">No hay productos vinculados.</div>'}
-                    </div>
-                </div>
-            </div>
-
-            <div class="split-layout" style="margin-bottom: 0; grid-template-columns: 1.5fr 1fr;">
-                <div class="soft-panel" style="padding:20px;">
-                    <h4 style="margin:0 0 15px 0; font-size:1.1rem;"><i class="ph-fill ph-chart-line-up" style="color:var(--primary-pill);"></i> Consultar Ventas por Fecha</h4>
-                    <div class="form-row-3" style="align-items: flex-end;">
-                        <div class="form-group" style="margin-bottom:0;">
-                            <label>Fecha Inicio</label>
-                            <input type="date" id="platDetStart">
-                        </div>
-                        <div class="form-group" style="margin-bottom:0;">
-                            <label>Fecha Fin</label>
-                            <input type="date" id="platDetEnd">
-                        </div>
-                        <div class="form-group" style="margin-bottom:0;">
-                            <button class="btn btn-primary" style="width:100%; justify-content:center; height:44px;" onclick="calculatePlatSales()">Filtrar Ventas</button>
-                        </div>
-                    </div>
-
-                    <div style="margin-top:20px; padding:20px; background:#fff; border:1px solid #eef0f3; border-radius:16px; display:flex; justify-content:space-around; text-align:center;">
-                        <div>
-                            <div style="font-size:0.9rem; color:var(--text-muted); font-weight:700;">Ventas Generadas</div>
-                            <div id="platDetSalesTotal" style="font-size:2rem; font-weight:800; color:var(--primary-pill);">S/ 0.00</div>
-                        </div>
-                        <div style="width:1px; background:#eef0f3;"></div>
-                        <div>
-                            <div style="font-size:0.9rem; color:var(--text-muted); font-weight:700;">N° de Pedidos</div>
-                            <div id="platDetSalesCount" style="font-size:2rem; font-weight:800; color:var(--text-main);">0</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="soft-panel" style="padding:20px; display:flex; flex-direction:column; gap:15px;">
-                    <div>
-                        <h4 style="margin:0 0 10px 0; font-size:1.1rem;"><i class="ph-fill ph-clock-counter-clockwise" style="color:var(--primary-pill);"></i> Historial de Actividad</h4>
-                        <div class="timeline-container scroll-y" style="max-height:140px; padding-right:10px;">
-                            ${timelineHtml}
-                        </div>
-                    </div>
-                    <hr style="border:0; border-top:1px dashed var(--neutral-line); margin:0;">
-                    <div style="flex:1; display:flex; flex-direction:column;">
-                        <h4 style="margin:0 0 10px 0; font-size:1.1rem; display:flex; justify-content:space-between; align-items:center;">
-                            <span><i class="ph-fill ph-notebook" style="color:var(--primary-pill);"></i> Notas Internas</span>
-                            <button class="btn btn-outline btn-sm" style="padding:4px 12px; font-size:0.75rem;" onclick="savePlatNotes('${p.id}')">Guardar</button>
-                        </h4>
-                        <textarea id="platDetNotesArea" style="flex:1; min-height:80px; width:100%; border:1px solid var(--neutral-line); border-radius:12px; padding:10px; font-family:inherit; font-size:0.9rem; outline:none; resize:none; background:#f8fafc;">${p.notes || ''}</textarea>
-                    </div>
+                <div style="flex:1; min-width:140px; background:#fff; border:1px solid #eef0f3; padding:15px; border-radius:16px;">
+                    <span style="font-size:0.8rem; color:var(--text-muted); font-weight:700;">Fecha Alta</span>
+                    <div style="font-size:1.1rem; font-weight:800; color:var(--text-main); margin-top:4px;">${p.date ? fmtDate(p.date) : 'N/A'}</div>
                 </div>
             </div>
         `;
@@ -4107,20 +3989,6 @@
         
         calculatePlatSales();
         openModal('modalDetallesPlataforma');
-    };
-
-    window.savePlatNotes = function(id) {
-        const p = DB.platforms.find(x => x.id === id);
-        if(p) {
-            p.notes = document.getElementById('platDetNotesArea').value;
-            showToast('Notas guardadas correctamente');
-            logActivity('Plataformas', `Notas actualizadas en ${p.name}`, 'ph-notebook', '#106FEB', '#dbeafe');
-            
-            // Persistir en Sheets si está disponible
-            if (typeof google !== 'undefined' && google.script && google.script.run) {
-                google.script.run.guardarPlataforma(p);
-            }
-        }
     };
 
     window.calculatePlatSales = function() {
@@ -4152,8 +4020,6 @@
       document.getElementById('fPlatId').value = '';
       document.getElementById('fPlatLogo').value = ''; 
       document.getElementById('fPlatNombre').value = '';
-      document.getElementById('fPlatRuc').value = '';
-      document.getElementById('fPlatRazon').value = '';
       document.getElementById('fPlatTipo').value = 'Dropshipping';
       document.getElementById('fPlatEstado').value = 'Activo';
       document.getElementById('fPlatPais').value = '';
@@ -4171,8 +4037,6 @@
       document.getElementById('fPlatId').value = p.id;
       document.getElementById('fPlatLogo').value = '';
       document.getElementById('fPlatNombre').value = p.name || '';
-      document.getElementById('fPlatRuc').value = p.ruc || '';
-      document.getElementById('fPlatRazon').value = p.razon || '';
       document.getElementById('fPlatTipo').value = p.type || 'Dropshipping';
       document.getElementById('fPlatEstado').value = p.status || 'Activo';
       document.getElementById('fPlatPais').value = p.country || '';
@@ -4209,8 +4073,6 @@
       const platData = {
         id: id || 'PLAT-' + Date.now(),
         name: name,
-        ruc: document.getElementById('fPlatRuc').value,
-        razon: document.getElementById('fPlatRazon').value,
         type: document.getElementById('fPlatTipo').value,
         status: document.getElementById('fPlatEstado').value,
         country: document.getElementById('fPlatPais').value,
@@ -4448,6 +4310,7 @@
     };
 
     function renderCouriers(){
+      // Se eliminó la generación de Widgets KPI superiores de Courriers
       const stCls = {'Activo':'badge-ok', 'Pausado':'badge-warn', 'Bloqueado':'badge-danger', 'Inactivo':'badge-neutral'};
       
       document.getElementById('courierTableBody').innerHTML = DB.couriers.map(c => {
@@ -4569,6 +4432,8 @@
         const gridContainer = document.getElementById('agencyGrid');
         const listBody = document.getElementById('agencyListBody');
         if(!gridContainer || !listBody) return;
+
+        // Se eliminó la generación de Widgets KPI superiores de Agencias
 
         if (!DB.agencies || !DB.agencies.length) {
             gridContainer.innerHTML = '<div style="padding:2rem;text-align:center;color:var(--text-muted);grid-column:1/-1;">No hay agencias registradas.</div>';
