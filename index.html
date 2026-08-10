@@ -986,6 +986,288 @@ table.data-table tbody tr,
   }
 }
 
+/* ============================================================
+   ANIMACIONES ULTRA SUAVES
+   Mantiene todas las funciones y estados del sistema.
+   Solo modifica la sensación visual de las transiciones.
+   ============================================================ */
+:root {
+  --ui-fast: 180ms;
+  --ui-normal: 260ms;
+  --ui-slow: 520ms;
+  --ui-ease: cubic-bezier(.22, 1, .36, 1);
+  --ui-ease-soft: cubic-bezier(.25, .8, .25, 1);
+}
+
+/* Navegación */
+.nav-link,
+.nav-icon,
+.nav-link::before,
+.nav-link::after {
+  transition-duration: 220ms !important;
+  transition-timing-function: var(--ui-ease) !important;
+}
+
+/* Logo: movimiento suave y discreto, sin rebotes bruscos */
+.brand-icon-wrapper {
+  animation: smoothLeaf 5s ease-in-out infinite !important;
+  transition-duration: 260ms !important;
+  transition-timing-function: var(--ui-ease-soft) !important;
+}
+
+.brand-text,
+.brand-text span {
+  transition-duration: 260ms !important;
+  transition-timing-function: var(--ui-ease-soft) !important;
+}
+
+.brand-text span {
+  animation: smoothTextGlow 5s ease-in-out infinite !important;
+}
+
+@keyframes smoothLeaf {
+  0%, 100% {
+    transform: scale(1) rotate(0deg);
+  }
+  50% {
+    transform: scale(1.025) rotate(-1.5deg);
+  }
+}
+
+@keyframes smoothTextGlow {
+  0%, 100% {
+    opacity: .96;
+    text-shadow: 0 0 0 transparent;
+  }
+  50% {
+    opacity: 1;
+    text-shadow: 0 0 8px var(--primary-glow);
+  }
+}
+
+/* Subpestañas */
+.sub-tabs-group.active {
+  animation-duration: 260ms !important;
+  animation-timing-function: var(--ui-ease) !important;
+}
+
+.sub-tab,
+.sub-tab-text {
+  transition-duration: 240ms !important;
+  transition-timing-function: var(--ui-ease) !important;
+}
+
+/* Búsqueda */
+.modern-search {
+  transition-duration: 280ms !important;
+  transition-timing-function: var(--ui-ease) !important;
+}
+
+.modern-search input {
+  transition-duration: 220ms !important;
+  transition-timing-function: var(--ui-ease) !important;
+}
+
+/* Botones superiores */
+.ai-trigger,
+.action-circle-btn,
+.profile-trigger,
+.fab-btn {
+  transition-duration: 220ms !important;
+  transition-timing-function: var(--ui-ease) !important;
+}
+
+.ai-trigger:hover {
+  transform: translate3d(0,-1px,0) scale(1.035) rotate(2deg);
+}
+
+.action-circle-btn:hover {
+  transform: translate3d(0,-1px,0) scale(1.035);
+}
+
+.profile-trigger:hover {
+  transform: translate3d(0,-1px,0) scale(1.01);
+}
+
+.fab-btn:hover {
+  transform: translate3d(0,-1px,0) scale(1.045) rotate(8deg);
+}
+
+/* Dropdowns: entrada suave, sin rebote */
+.action-dropdown {
+  transition-duration: 260ms !important;
+  transition-timing-function: var(--ui-ease) !important;
+}
+
+/* Tarjetas */
+.soft-panel,
+.dash-card,
+.entity-card,
+.kpi-box,
+.pos-product-card,
+.segment-card {
+  transition-duration: 240ms !important;
+  transition-timing-function: var(--ui-ease-soft) !important;
+}
+
+.dash-card:hover,
+.kpi-box:hover,
+.entity-card:hover,
+.pos-product-card:hover,
+.segment-card:hover {
+  transform: translate3d(0,-2px,0) scale(1.002) !important;
+}
+
+/* Páginas y subpáginas */
+.section-content.active,
+.sub-content.active,
+.ai-message,
+.settings-pane.active {
+  animation-duration: 300ms !important;
+  animation-timing-function: var(--ui-ease) !important;
+}
+
+@keyframes uiPageIn {
+  from {
+    opacity: 0;
+    transform: translate3d(0,10px,0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0,0,0);
+  }
+}
+
+@keyframes uiTabsIn {
+  from {
+    opacity: 0;
+    transform: translate3d(0,-6px,0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0,0,0);
+  }
+}
+
+/* Entrada de tarjetas escalonada visualmente, pero sin retrasos artificiales */
+.kpi-strip .kpi-box,
+.dash-row-3 .dash-card,
+.dash-row-2 .dash-card,
+.segment-grid .segment-card,
+.entity-grid .entity-card {
+  animation-duration: 280ms !important;
+  animation-timing-function: var(--ui-ease) !important;
+}
+
+@keyframes uiCardIn {
+  from {
+    opacity: 0;
+    transform: translate3d(0,10px,0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0,0,0);
+  }
+}
+
+/* Controles y formularios */
+.btn,
+.chip-select button,
+.settings-nav-item,
+.modal-close,
+.pos-qty-ctrl button {
+  transition-duration: 200ms !important;
+  transition-timing-function: var(--ui-ease) !important;
+}
+
+.btn-primary:hover,
+.btn-ghost:hover,
+.btn-outline:hover {
+  transform: translate3d(0,-1px,0) !important;
+}
+
+.btn:active,
+.pos-qty-ctrl button:active {
+  transform: scale(.985) !important;
+  transition-duration: 100ms !important;
+}
+
+/* Inputs */
+.filter-input,
+.form-group input,
+.form-group select,
+.form-group textarea {
+  transition-duration: 200ms !important;
+  transition-timing-function: var(--ui-ease-soft) !important;
+}
+
+/* Tablas, listas y estados hover */
+table.data-table tbody tr,
+.feed-item,
+.dropdown-item {
+  transition-duration: 180ms !important;
+  transition-timing-function: ease-out !important;
+}
+
+/* Gráficos: movimientos largos pero suaves */
+.progress-fill {
+  transition: width 650ms var(--ui-ease-soft) !important;
+}
+
+.bar-chart .bar {
+  transition: height 650ms var(--ui-ease-soft) !important;
+}
+
+#goalRing {
+  transition: stroke-dashoffset 700ms var(--ui-ease-soft) !important;
+}
+
+/* Toggle */
+.toggle-switch {
+  transition-duration: 220ms !important;
+  transition-timing-function: var(--ui-ease-soft) !important;
+}
+
+.toggle-switch .knob {
+  transition-duration: 260ms !important;
+  transition-timing-function: var(--ui-ease) !important;
+}
+
+/* Modales */
+.modal-overlay {
+  transition-duration: 260ms !important;
+  transition-timing-function: ease-out !important;
+}
+
+.modal-box {
+  transition-duration: 300ms !important;
+  transition-timing-function: var(--ui-ease) !important;
+}
+
+.modal-close:hover {
+  transform: rotate(45deg) scale(1.04);
+}
+
+/* Toasts */
+.toast-msg {
+  transition-duration: 280ms !important;
+  transition-timing-function: var(--ui-ease) !important;
+}
+
+/* Mantener todas las animaciones suaves al cambiar de página */
+*,
+*::before,
+*::after {
+  animation-timing-function: var(--ui-ease-soft);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .brand-icon-wrapper,
+  .brand-text span {
+    animation: none !important;
+  }
+}
+
   </style>
 </head>
 <body>
