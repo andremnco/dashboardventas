@@ -10,62 +10,47 @@
     @import url('https://fonts.googleapis.com/css2?family=Google+Sans:wght@300;400;500;700&display=swap');
   
 /* ============================================================
-   LOGÍSTICA PRO — FILTROS, SCROLL INTERNO Y MODALES
+   MODALES — SCROLLBAR INTEGRADA Y DISCRETA
    ============================================================ */
-.log-filter-bar{
-  display:grid;
-  grid-template-columns:minmax(220px,1fr) repeat(2,minmax(150px,180px)) auto;
-  gap:8px;
-  align-items:center;
-  margin:0 0 14px;
-  padding:8px;
-  background:rgba(255,255,255,.92);
-  border:1px solid #e9edf3;
-  border-radius:16px;
-  box-shadow:0 3px 12px rgba(15,23,42,.035);
+.modal-overlay .modal-box {
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(16,111,235,.28) transparent;
+    scrollbar-gutter: stable;
+    overscroll-behavior: contain;
 }
-.log-filter-item{min-width:0;position:relative;}
-.log-filter-item .filter-input{height:42px;border-radius:12px;background:#f8fafc;border-color:#e7ebf1;font-size:.82rem;}
-.log-filter-item .ph{color:#64748b;}
-.log-filter-reset{height:42px;width:42px;display:grid;place-items:center;border:1px solid #e5e7eb;background:#fff;color:#64748b;border-radius:12px;cursor:pointer;transition:transform .18s ease,background .18s ease,color .18s ease,border-color .18s ease;}
-.log-filter-reset:hover{transform:translateY(-1px);background:#f8fafc;color:var(--primary-pill);border-color:#cbd5e1;}
-@media(max-width:900px){.log-filter-bar{grid-template-columns:1fr 1fr;}.log-filter-bar .log-filter-search{grid-column:1/-1;}}
-@media(max-width:560px){.log-filter-bar{grid-template-columns:1fr;}.log-filter-bar .log-filter-search{grid-column:auto;}}
-
-/* Scrollbars integradas dentro de cada superficie */
-.modal-box,.scroll-y,.data-table-wrap,.agency-detail-scroll,.agency-zones-scroll,.agency-orders-scroll{
-  scrollbar-width:thin;
-  scrollbar-color:rgba(100,116,139,.38) transparent;
-  scrollbar-gutter:stable;
+.modal-overlay .modal-box::-webkit-scrollbar {
+    width: 8px;
 }
-.modal-box::-webkit-scrollbar,.scroll-y::-webkit-scrollbar,.data-table-wrap::-webkit-scrollbar,.agency-detail-scroll::-webkit-scrollbar,.agency-zones-scroll::-webkit-scrollbar,.agency-orders-scroll::-webkit-scrollbar{width:8px;height:8px;}
-.modal-box::-webkit-scrollbar-track,.scroll-y::-webkit-scrollbar-track,.data-table-wrap::-webkit-scrollbar-track,.agency-detail-scroll::-webkit-scrollbar-track,.agency-zones-scroll::-webkit-scrollbar-track,.agency-orders-scroll::-webkit-scrollbar-track{background:transparent;margin:12px 4px;}
-.modal-box::-webkit-scrollbar-thumb,.scroll-y::-webkit-scrollbar-thumb,.data-table-wrap::-webkit-scrollbar-thumb,.agency-detail-scroll::-webkit-scrollbar-thumb,.agency-zones-scroll::-webkit-scrollbar-thumb,.agency-orders-scroll::-webkit-scrollbar-thumb{background:rgba(100,116,139,.32);border:2px solid transparent;background-clip:padding-box;border-radius:999px;}
-.modal-box::-webkit-scrollbar-thumb:hover,.scroll-y::-webkit-scrollbar-thumb:hover,.data-table-wrap::-webkit-scrollbar-thumb:hover,.agency-detail-scroll::-webkit-scrollbar-thumb:hover{background:rgba(16,111,235,.5);border:2px solid transparent;background-clip:padding-box;}
-.modal-box{overflow-y:auto;overflow-x:hidden;scrollbar-gutter:stable both-edges;padding-right:1.8rem;}
-.modal-head{position:sticky;top:-2.1rem;z-index:5;background:#fff;padding-top:.2rem;padding-bottom:12px;margin-bottom:8px;}
+.modal-overlay .modal-box::-webkit-scrollbar-track {
+    background: transparent;
+    margin: 14px 5px;
+    border-radius: 999px;
+}
+.modal-overlay .modal-box::-webkit-scrollbar-thumb {
+    background: rgba(16,111,235,.24);
+    border-radius: 999px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+}
+.modal-overlay .modal-box::-webkit-scrollbar-thumb:hover {
+    background: rgba(16,111,235,.42);
+    border: 2px solid transparent;
+    background-clip: padding-box;
+}
+.modal-overlay .modal-box > * {
+    max-width: 100%;
+}
 
-.agency-zone-builder,.agency-tariff-builder{border:1px solid #e7ebf1;background:#f8fafc;border-radius:16px;padding:12px;margin-top:8px;}
-.agency-zone-row,.agency-tariff-row{display:grid;gap:8px;align-items:end;padding:10px;background:#fff;border:1px solid #edf0f4;border-radius:12px;margin-bottom:8px;}
-.agency-zone-row{grid-template-columns:1fr 1fr 1fr 1.1fr auto;}
-.agency-tariff-row{grid-template-columns:1.2fr .8fr auto;}
-.agency-zone-row:last-child,.agency-tariff-row:last-child{margin-bottom:0;}
-@media(max-width:800px){.agency-zone-row,.agency-tariff-row{grid-template-columns:1fr 1fr;}.agency-zone-row .zone-agency-name,.agency-zone-row .zone-remove{grid-column:span 2;}.agency-tariff-row .tariff-remove{grid-column:2;}}
-.agency-zone-list,.agency-tariff-list{max-height:260px;overflow:auto;padding-right:2px;}
-.agency-chip{display:inline-flex;align-items:center;gap:5px;padding:5px 8px;border-radius:999px;background:#eef5ff;color:#1458a6;font-size:.72rem;font-weight:700;margin:2px;}
-.agency-stat-card{background:#fff;border:1px solid #edf0f4;border-radius:16px;padding:14px;}
-.agency-detail-section{background:#fff;border:1px solid #edf0f4;border-radius:20px;padding:18px;margin-top:14px;}
-.agency-mini-table{width:100%;border-collapse:collapse;font-size:.8rem;}
-.agency-mini-table th,.agency-mini-table td{padding:9px 8px;border-bottom:1px solid #eef0f3;text-align:left;}
-.agency-mini-table th{font-size:.7rem;text-transform:uppercase;letter-spacing:.04em;color:#64748b;background:#f8fafc;}
-.agency-tracking-link{display:inline-flex;align-items:center;gap:6px;color:var(--primary-pill);font-weight:700;text-decoration:none;}
-.agency-period-grid{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:end;}
-@media(max-width:700px){.agency-period-grid{grid-template-columns:1fr;}}
 
-.pos-agency-box{border:1px solid #e7ebf1;background:#f8fafc;border-radius:16px;padding:14px;margin-top:12px;}
-.pos-agency-box.hidden{display:none;}
+/* Agencia: ajustes responsive del detalle */
+@media (max-width: 760px){
+  .modal-box.modal-xl .kpi-strip{grid-template-columns:repeat(2,minmax(0,1fr)) !important;}
+  .modal-box.modal-xl .split-layout{grid-template-columns:1fr !important;}
+}
 
-  </style>
+</style>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
   
   <script src="https://unpkg.com/@phosphor-icons/web"></script>
@@ -1196,6 +1181,187 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
   }
 }
   </style>
+<style>
+
+/* ============================================================
+   MEJORA LOGÍSTICA 2026 — FILTROS, SCROLL Y AGENCIAS
+   ============================================================ */
+.logistics-filter-toolbar{
+  display:grid;
+  grid-template-columns:minmax(220px,1.7fr) minmax(150px,.7fr) minmax(160px,.75fr) auto;
+  gap:10px;
+  align-items:center;
+  margin:0 0 16px;
+  padding:10px;
+  background:rgba(248,250,252,.94);
+  border:1px solid #e8edf3;
+  border-radius:18px;
+  box-shadow:0 5px 18px rgba(15,23,42,.04);
+}
+.logistics-filter-control{
+  position:relative;
+  min-width:0;
+}
+.logistics-filter-control > i{
+  position:absolute;
+  left:13px;
+  top:50%;
+  transform:translateY(-50%);
+  color:var(--text-muted);
+  font-size:1.05rem;
+  pointer-events:none;
+  z-index:2;
+}
+.logistics-filter-control input,
+.logistics-filter-control select{
+  width:100%;
+  min-height:42px;
+  border:1px solid #e3e8ef;
+  border-radius:13px;
+  background:#fff;
+  padding:10px 12px 10px 39px;
+  color:var(--text-main);
+  font:600 .84rem inherit;
+  outline:none;
+}
+.logistics-filter-control input:focus,
+.logistics-filter-control select:focus{
+  border-color:var(--primary-pill);
+  box-shadow:0 0 0 4px var(--primary-glow);
+}
+.logistics-filter-icon-btn{
+  width:42px;height:42px;border-radius:13px;border:1px solid #e3e8ef;
+  background:#fff;color:var(--text-muted);cursor:pointer;display:flex;
+  align-items:center;justify-content:center;font-size:1.15rem;
+  transition:all .25s var(--ease-smooth);
+}
+.logistics-filter-icon-btn:hover{color:var(--primary-pill);border-color:var(--primary-pill);transform:translateY(-1px);}
+.logistics-filter-meta{
+  grid-column:1/-1;
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:2px 4px 0;font-size:.72rem;color:var(--text-muted);font-weight:700;
+}
+.logistics-filter-meta strong{color:var(--text-main);}
+.logistics-scroll-shell{
+  min-height:0;
+  overflow:auto;
+  scrollbar-gutter:stable;
+  scrollbar-width:thin;
+  scrollbar-color:rgba(16,111,235,.28) transparent;
+}
+.logistics-scroll-shell::-webkit-scrollbar,
+.data-table-wrap::-webkit-scrollbar,
+.entity-grid::-webkit-scrollbar,
+.scroll-y::-webkit-scrollbar,
+.pos-product-grid::-webkit-scrollbar,
+.pos-cart-items::-webkit-scrollbar,
+.settings-pane::-webkit-scrollbar{
+  width:8px;height:8px;
+}
+.logistics-scroll-shell::-webkit-scrollbar-track,
+.data-table-wrap::-webkit-scrollbar-track,
+.entity-grid::-webkit-scrollbar-track,
+.scroll-y::-webkit-scrollbar-track,
+.pos-product-grid::-webkit-scrollbar-track,
+.pos-cart-items::-webkit-scrollbar-track,
+.settings-pane::-webkit-scrollbar-track{background:transparent;border-radius:999px;}
+.logistics-scroll-shell::-webkit-scrollbar-thumb,
+.data-table-wrap::-webkit-scrollbar-thumb,
+.entity-grid::-webkit-scrollbar-thumb,
+.scroll-y::-webkit-scrollbar-thumb,
+.pos-product-grid::-webkit-scrollbar-thumb,
+.pos-cart-items::-webkit-scrollbar-thumb,
+.settings-pane::-webkit-scrollbar-thumb{
+  background:rgba(16,111,235,.22);border-radius:999px;border:2px solid transparent;background-clip:padding-box;
+}
+.logistics-scroll-shell::-webkit-scrollbar-thumb:hover,
+.data-table-wrap::-webkit-scrollbar-thumb:hover,
+.entity-grid::-webkit-scrollbar-thumb:hover,
+.scroll-y::-webkit-scrollbar-thumb:hover,
+.pos-product-grid::-webkit-scrollbar-thumb:hover,
+.pos-cart-items::-webkit-scrollbar-thumb:hover,
+.settings-pane::-webkit-scrollbar-thumb:hover{background:rgba(16,111,235,.38);border:2px solid transparent;background-clip:padding-box;}
+#log-prov .entity-grid,#log-age .entity-grid{
+  overflow:auto;
+  min-height:220px;
+  max-height:calc(100vh - 300px);
+  padding:8px 10px 24px 4px;
+}
+#log-prov .data-table-wrap,#log-age .data-table-wrap,#log-plat .data-table-wrap{
+  overflow:auto;
+  max-height:calc(100vh - 300px);
+}
+#log-cour .split-layout{
+  min-height:0;
+  max-height:calc(100vh - 300px);
+}
+#log-cour .data-table-wrap{overflow:auto;min-height:220px;}
+#log-cour .soft-panel{min-height:220px;}
+.logistics-filter-hidden{display:none !important;}
+.agency-zone-list,.agency-tariff-list{display:flex;flex-direction:column;gap:9px;}
+.agency-zone-row,.agency-tariff-row{
+  display:grid;gap:8px;align-items:end;padding:10px;
+  border:1px solid #e7ebf0;background:#fbfcfe;border-radius:15px;
+}
+.agency-zone-row{grid-template-columns:1fr 1fr 1fr 1.15fr 38px;}
+.agency-tariff-row{grid-template-columns:1.3fr .8fr .8fr 38px;}
+.agency-zone-row .form-group,.agency-tariff-row .form-group{margin:0;}
+.agency-zone-row label,.agency-tariff-row label{font-size:.68rem;margin-bottom:4px;}
+.agency-zone-row select,.agency-zone-row input,.agency-tariff-row input{
+  width:100%;min-width:0;padding:10px 11px;border:1px solid var(--neutral-line);
+  border-radius:11px;background:#fff;font:500 .82rem inherit;outline:none;
+}
+.agency-zone-row select:focus,.agency-zone-row input:focus,.agency-tariff-row input:focus{
+  border-color:var(--primary-pill);box-shadow:0 0 0 3px var(--primary-glow);
+}
+.agency-inline-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:9px;}
+.agency-section-title{font-size:.9rem;font-weight:800;display:flex;align-items:center;gap:7px;}
+.agency-section-title i{color:var(--primary-pill);}
+.agency-mini-note{font-size:.72rem;color:var(--text-muted);line-height:1.45;}
+.agency-coverage-card{
+  padding:11px;border-radius:14px;background:#f8fafc;border:1px solid #e8edf3;
+}
+.agency-coverage-card + .agency-coverage-card{margin-top:8px;}
+.agency-coverage-card b{font-size:.8rem;}
+.agency-coverage-card span{font-size:.72rem;color:var(--text-muted);}
+.agency-tariff-pill{
+  display:flex;justify-content:space-between;align-items:center;gap:10px;
+  padding:10px 12px;border-radius:13px;background:#fff;border:1px solid #e8edf3;
+}
+.agency-tariff-pill strong{color:var(--primary-pill);}
+.agency-period-box{
+  display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:end;
+  padding:12px;background:#f8fafc;border:1px solid #e8edf3;border-radius:16px;margin-bottom:12px;
+}
+.agency-stat-mini{
+  padding:13px;border:1px solid #e8edf3;background:#fff;border-radius:15px;
+}
+.agency-stat-mini span{display:block;font-size:.7rem;color:var(--text-muted);font-weight:700;margin-bottom:4px;}
+.agency-stat-mini strong{font-size:1.25rem;letter-spacing:-.5px;}
+#posAgencyTariffInfo{
+  margin-top:8px;padding:10px 12px;border-radius:13px;background:#eff6ff;
+  color:#1e40af;border:1px solid #dbeafe;font-size:.78rem;font-weight:700;display:none;
+}
+@media(max-width:900px){
+  .logistics-filter-toolbar{grid-template-columns:1fr 1fr auto;}
+  .logistics-filter-toolbar .logistics-filter-search{grid-column:1/-1;}
+  .agency-zone-row{grid-template-columns:1fr 1fr;}
+  .agency-zone-row > :nth-child(4){grid-column:1/-1;}
+  .agency-zone-row > :last-child{grid-column:auto;}
+  .agency-period-box{grid-template-columns:1fr 1fr;}
+  .agency-period-box .btn{grid-column:1/-1;}
+}
+@media(max-width:600px){
+  .logistics-filter-toolbar{grid-template-columns:1fr auto;}
+  .logistics-filter-toolbar .logistics-filter-search{grid-column:1/-1;}
+  .logistics-filter-toolbar .logistics-filter-meta{grid-column:1/-1;}
+  .agency-zone-row,.agency-tariff-row{grid-template-columns:1fr;}
+  .agency-zone-row > *{grid-column:1/-1 !important;}
+  .agency-period-box{grid-template-columns:1fr;}
+  .agency-period-box .btn{grid-column:auto;}
+}
+
+</style>
 </head>
 <body>
 
@@ -1655,12 +1821,6 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
 
           <div class="kpi-strip" id="cliKpiStrip"></div>
 
-          <div class="log-filter-bar" id="courierFilterBar">
-            <div class="log-filter-item log-filter-search"><div class="filter-input-wrap"><i class="ph ph-magnifying-glass"></i><input class="filter-input" id="courierLogSearch" placeholder="Buscar courier, teléfono o zona..." oninput="renderCouriers()"></div></div>
-            <div class="log-filter-item"><div class="filter-input-wrap"><i class="ph ph-check-circle"></i><select class="filter-input" id="courierLogStatus" onchange="renderCouriers()"><option value="">Todos los estados</option><option>Activo</option><option>Pausado</option><option>Bloqueado</option><option>Inactivo</option></select></div></div>
-            <div class="log-filter-item"><div class="filter-input-wrap"><i class="ph ph-map-pin"></i><select class="filter-input" id="courierLogZone" onchange="renderCouriers()"><option value="">Todas las zonas</option></select></div></div>
-            <button class="log-filter-reset" onclick="resetLogFilter('courier')" title="Limpiar filtros"><i class="ph ph-arrow-counter-clockwise"></i></button>
-          </div>
           <div class="split-layout" style="min-height:0;">
             <div style="display:flex; flex-direction:column; min-height:0;">
               <div class="filter-bar">
@@ -1924,13 +2084,6 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
             </div>
           </div>
           
-          <div class="log-filter-bar" id="providerFilterBar">
-            <div class="log-filter-item log-filter-search"><div class="filter-input-wrap"><i class="ph ph-magnifying-glass"></i><input class="filter-input" id="provLogSearch" placeholder="Buscar proveedor, RUC o razón social..." oninput="renderProviders()"></div></div>
-            <div class="log-filter-item"><div class="filter-input-wrap"><i class="ph ph-check-circle"></i><select class="filter-input" id="provLogStatus" onchange="renderProviders()"><option value="">Todos los estados</option><option>Activo</option><option>Pausado</option><option>Inactivo</option></select></div></div>
-            <div class="log-filter-item"><div class="filter-input-wrap"><i class="ph ph-buildings"></i><select class="filter-input" id="provLogCountry" onchange="renderProviders()"><option value="">Todos los países</option></select></div></div>
-            <button class="log-filter-reset" onclick="resetLogFilter('provider')" title="Limpiar filtros"><i class="ph ph-arrow-counter-clockwise"></i></button>
-          </div>
-
           <div class="entity-grid" id="providerGrid"></div>
           
           <div class="data-table-wrap" id="providerListWrap" style="display:none; min-height: 300px;">
@@ -1993,13 +2146,6 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
             </div>
           </div>
           
-          <div class="log-filter-bar" id="agencyFilterBar">
-            <div class="log-filter-item log-filter-search"><div class="filter-input-wrap"><i class="ph ph-magnifying-glass"></i><input class="filter-input" id="agencyLogSearch" placeholder="Buscar agencia, cobertura o distrito..." oninput="renderAgencies()"></div></div>
-            <div class="log-filter-item"><div class="filter-input-wrap"><i class="ph ph-check-circle"></i><select class="filter-input" id="agencyLogStatus" onchange="renderAgencies()"><option value="">Todos los estados</option><option>Activo</option><option>Pausado</option><option>Inactivo</option></select></div></div>
-            <div class="log-filter-item"><div class="filter-input-wrap"><i class="ph ph-map-pin"></i><select class="filter-input" id="agencyLogDept" onchange="renderAgencies()"><option value="">Todos los departamentos</option></select></div></div>
-            <button class="log-filter-reset" onclick="resetLogFilter('agency')" title="Limpiar filtros"><i class="ph ph-arrow-counter-clockwise"></i></button>
-          </div>
-
           <div class="entity-grid" id="agencyGrid"></div>
 
           <div class="data-table-wrap" id="agencyListWrap" style="display:none; min-height: 300px;">
@@ -2035,11 +2181,20 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
             </div>
           </div>
           
-          <div class="log-filter-bar" id="platformFilterBar">
-            <div class="log-filter-item log-filter-search"><div class="filter-input-wrap"><i class="ph ph-magnifying-glass"></i><input class="filter-input" id="platSearchInput" placeholder="Buscar plataforma..." oninput="renderPlatforms()"></div></div>
-            <div class="log-filter-item"><div class="filter-input-wrap"><i class="ph ph-check-circle"></i><select class="filter-input" id="platStatusFilter" onchange="renderPlatforms()"><option value="">Todos los estados</option><option>Activo</option><option>Pendiente</option><option>Inactivo</option></select></div></div>
-            <div class="log-filter-item"><div class="filter-input-wrap"><i class="ph ph-sort-ascending"></i><select class="filter-input" id="platSortSelect" onchange="renderPlatforms()"><option value="">Orden: Por defecto</option><option value="sales-desc">Mayor ventas</option><option value="sales-count-desc">Más pedidos</option><option value="prov-desc">Más proveedores</option></select></div></div>
-            <button class="log-filter-reset" onclick="resetLogFilter('platform')" title="Limpiar filtros"><i class="ph ph-arrow-counter-clockwise"></i></button>
+          <div class="filter-bar" style="background:#fff; padding:12px; border-radius:16px; box-shadow:0 2px 8px rgba(0,0,0,0.03); margin-bottom:1rem;">
+            <div class="filter-input-wrap">
+              <i class="ph ph-magnifying-glass"></i>
+              <input class="filter-input" id="platSearchInput" placeholder="Buscar plataforma..." oninput="renderPlatforms()">
+            </div>
+            <div class="filter-input-wrap" style="flex: none; min-width: 220px;">
+              <i class="ph ph-sort-ascending"></i>
+              <select class="filter-input" id="platSortSelect" style="padding-left: 44px; width: 100%;" onchange="renderPlatforms()">
+                <option value="">Orden: Por Defecto</option>
+                <option value="sales-desc">Mayor Ventas (S/)</option>
+                <option value="sales-count-desc">Más Pedidos</option>
+                <option value="prov-desc">Más Proveedores</option>
+              </select>
+            </div>
           </div>
 
           <div class="entity-grid" id="platformGrid"></div>
@@ -2252,20 +2407,49 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
       
       <div class="form-group"><label>Notas del Pedido</label><textarea id="fPosOrderNotes" placeholder="Instrucciones especiales para la entrega..."></textarea></div>
 
-      <div class="pos-agency-box" id="posAgencyShippingBox">
-        <div style="font-weight:800;margin-bottom:10px;"><i class="ph-fill ph-truck" style="color:var(--primary-pill);"></i> Logística del pedido</div>
-        <div class="form-row-2">
-          <div class="form-group" style="margin-bottom:8px;"><label>Tipo de envío</label><div class="filter-input-wrap"><i class="ph ph-package"></i><select id="posDeliveryType" class="filter-input" onchange="updatePosAgencyShipping()" style="padding-left:44px;width:100%;"><option value="Domicilio">Domicilio</option><option value="Agencia">Agencia</option><option value="Courier">Courier</option></select></div></div>
-          <div class="form-group" style="margin-bottom:8px;"><label>Tamaño del paquete</label><div class="filter-input-wrap"><i class="ph ph-package"></i><select id="posPackageSize" class="filter-input" onchange="updatePosAgencyShipping()" style="padding-left:44px;width:100%;"><option value="Pequeño">Pequeño</option><option value="Mediano">Mediano</option><option value="Grande">Grande</option><option value="Extra grande">Extra grande</option></select></div></div>
-        </div>
-        <div id="posAgencyFields" style="display:none;">
-          <div class="form-row-2">
-            <div class="form-group" style="margin-bottom:8px;"><label>Agencia</label><div class="filter-input-wrap"><i class="ph ph-buildings"></i><select id="posAgencyId" class="filter-input" onchange="updatePosAgencyShipping()" style="padding-left:44px;width:100%;"><option value="">Selecciona una agencia</option></select></div></div>
-            <div class="form-group" style="margin-bottom:8px;"><label>Tarifa aplicada</label><div class="filter-input-wrap"><i class="ph ph-currency-circle-dollar"></i><input id="posAgencyTariff" class="filter-input" readonly style="padding-left:44px;width:100%;background:#f1f5f9;" value="S/ 0.00"></div></div>
+      <div class="soft-panel" style="margin-top:12px; padding:14px; background:#f8fafc; border:1px solid #eef0f3;">
+        <div class="form-row-2" style="margin-bottom:0;">
+          <div class="form-group" style="margin-bottom:0;">
+            <label>Método de envío</label>
+            <div class="filter-input-wrap">
+              <i class="ph ph-truck"></i>
+              <select id="posShippingMethod" class="filter-input" style="padding-left:44px; width:100%;" onchange="updatePosShippingFields()">
+                <option value="Directo">Entrega directa</option>
+                <option value="Agencia">Agencia</option>
+                <option value="Courier">Courier</option>
+              </select>
+            </div>
           </div>
-          <div id="posAgencyCoverageHint" style="font-size:.72rem;color:var(--text-muted);"></div>
+          <div class="form-group" id="posAgencyGroup" style="margin-bottom:0; display:none;">
+            <label>Agencia seleccionada *</label>
+            <div class="filter-input-wrap">
+              <i class="ph ph-buildings"></i>
+              <select id="posAgencyId" class="filter-input" style="padding-left:44px; width:100%;" onchange="updatePosShippingFields()">
+                <option value="">Selecciona una agencia</option>
+              </select>
+            </div>
+          </div>
         </div>
-        <div id="posCourierFields" style="display:none;"></div>
+        <div id="posAgencyPackageGroup" class="form-row-2" style="display:none;margin-top:10px;margin-bottom:0;">
+          <div class="form-group" style="margin-bottom:0;">
+            <label>Tamaño del paquete</label>
+            <div class="filter-input-wrap">
+              <i class="ph ph-package"></i>
+              <select id="posAgencyPackageSize" class="filter-input" style="padding-left:44px;width:100%;" onchange="updatePosShippingFields()">
+                <option value="">Selecciona tamaño...</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group" style="margin-bottom:0;">
+            <label>Tarifa de agencia</label>
+            <div class="filter-input-wrap">
+              <i class="ph ph-currency-circle-dollar"></i>
+              <input id="posAgencyShippingCost" class="filter-input" style="padding-left:44px;width:100%;" type="number" step="0.01" min="0" value="0" readonly>
+            </div>
+          </div>
+        </div>
+        <div id="posAgencyTariffInfo"></div>
+        <div id="posShippingInfo" style="font-size:.78rem; color:var(--text-muted); margin-top:8px; display:none;"></div>
       </div>
       
       <div style="display:flex; justify-content:space-between; align-items:center; margin-top:15px; border-top:1px solid #eef0f3; padding-top:15px; flex-wrap: wrap; gap: 10px;">
@@ -2584,7 +2768,7 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
 
   <!-- MODAL: DETALLES AGENCIA -->
   <div class="modal-overlay" id="modalDetallesAgencia">
-    <div class="modal-box">
+    <div class="modal-box modal-xl">
       <div class="modal-head">
         <h3 id="agencyDetTitle">Detalles de Agencia</h3>
         <button class="modal-close" onclick="closeModal('modalDetallesAgencia')"><i class="ph ph-x"></i></button>
@@ -2770,7 +2954,7 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
     </div>
   </div>
 
-  <!-- MODAL: NUEVA AGENCIA (NACIONAL) -->
+  <!-- MODAL: NUEVA / EDITAR AGENCIA — COBERTURA Y TARIFARIO -->
   <div class="modal-overlay" id="modalNuevaAgencia">
     <div class="modal-box modal-large">
       <div class="modal-head">
@@ -2778,42 +2962,76 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
         <button class="modal-close" onclick="closeModal('modalNuevaAgencia')"><i class="ph ph-x"></i></button>
       </div>
       <input type="hidden" id="fAgeId">
-      <div class="form-row-2">
-        <div class="form-group"><label>Logo / Imagen</label><input type="file" id="fAgeLogo" accept="image/*"></div>
-        <div class="form-group"><label>Nombre de la Agencia *</label><input type="text" id="fAgeNombre" placeholder="Ej. Shalom, Olva, Movil Tours..."></div>
-      </div>
-      <div class="form-row-2">
-        <div class="form-group"><label>Localidad (País)</label><input type="text" id="fAgeLocalidad" value="Perú" placeholder="Ej. Perú, Nacional"></div>
-        <div class="form-group"><label>Estado</label><div class="filter-input-wrap"><i class="ph ph-check-circle"></i><select id="fAgeEstado" class="filter-input" style="padding-left:44px;width:100%;"><option>Activo</option><option>Pausado</option><option>Inactivo</option></select></div></div>
-      </div>
-      <div class="form-row-2">
-        <div class="form-group"><label>Cobertura general</label><input type="text" id="fAgeCobertura" placeholder="Ej. Nacional / Costa Norte / 24 departamentos"></div>
-        <div class="form-group"><label>Tiempo promedio</label><input type="text" id="fAgeTiempo" placeholder="Ej. 2-5 días"></div>
-      </div>
 
-      <div class="agency-zone-builder">
-        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap;">
-          <div><b><i class="ph-fill ph-map-trifold" style="color:var(--primary-pill);"></i> Zonas de cobertura</b><div style="font-size:.72rem;color:var(--text-muted);">Departamento / Provincia / Distrito / Nombre de Agencia</div></div>
-          <button type="button" class="btn btn-outline btn-sm" onclick="addAgencyZoneRow()"><i class="ph ph-plus"></i> Agregar zona</button>
+      <div class="form-row-2">
+        <div class="form-group">
+          <label>Logo / Imagen</label>
+          <input type="file" id="fAgeLogo" accept="image/*">
         </div>
-        <div id="agencyZoneList" class="agency-zone-list"></div>
+        <div class="form-group">
+          <label>Nombre de la Agencia *</label>
+          <input type="text" id="fAgeNombre" placeholder="Ej. Shalom, Olva, Marvisur...">
+        </div>
       </div>
 
-      <div class="agency-tariff-builder">
-        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap;">
-          <div><b><i class="ph-fill ph-currency-circle-dollar" style="color:var(--ok-color);"></i> Tarifas de envío por tamaño</b><div style="font-size:.72rem;color:var(--text-muted);">Ingresa manualmente la tarifa que cobra la agencia.</div></div>
+      <div class="form-row-3">
+        <div class="form-group">
+          <label>Estado</label>
+          <div class="filter-input-wrap">
+            <i class="ph ph-check-circle"></i>
+            <select id="fAgeEstado" class="filter-input" style="padding-left:44px;width:100%;">
+              <option>Activo</option><option>Pausado</option><option>Inactivo</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Tiempo promedio</label>
+          <input type="text" id="fAgeTiempo" placeholder="Ej. 2-5 días">
+        </div>
+        <div class="form-group">
+          <label>Localidad general</label>
+          <input type="text" id="fAgeLocalidad" value="Perú" placeholder="Perú / Nacional">
+        </div>
+      </div>
+
+      <div class="soft-panel" style="padding:15px;margin-bottom:14px;">
+        <div class="agency-inline-head">
+          <div>
+            <div class="agency-section-title"><i class="ph-fill ph-map-trifold"></i> Zonas de cobertura</div>
+            <div class="agency-mini-note">Registra cada sede como Departamento / Provincia / Distrito / Nombre de Agencia. Los tres primeros campos son listas dependientes.</div>
+          </div>
+          <button type="button" class="btn btn-outline btn-sm" onclick="addAgencyCoverageRow()"><i class="ph ph-plus"></i> Agregar zona</button>
+        </div>
+        <div id="agencyCoverageEditor" class="agency-zone-list"></div>
+        <div id="agencyCoverageEmpty" class="agency-mini-note" style="padding:12px;text-align:center;">Aún no hay zonas. Agrega la primera sede.</div>
+      </div>
+
+      <div class="soft-panel" style="padding:15px;margin-bottom:14px;">
+        <div class="agency-inline-head">
+          <div>
+            <div class="agency-section-title"><i class="ph-fill ph-currency-circle-dollar"></i> Tarifas por tamaño de paquete</div>
+            <div class="agency-mini-note">Ingresa manualmente cuánto cobra esta agencia por cada tamaño. Estas tarifas aparecerán en Detalles y se aplicarán al registrar una venta.</div>
+          </div>
           <button type="button" class="btn btn-outline btn-sm" onclick="addAgencyTariffRow()"><i class="ph ph-plus"></i> Agregar tarifa</button>
         </div>
-        <div id="agencyTariffList" class="agency-tariff-list"></div>
+        <div id="agencyTariffEditor" class="agency-tariff-list"></div>
+        <div id="agencyTariffEmpty" class="agency-mini-note" style="padding:12px;text-align:center;">Aún no hay tarifas registradas.</div>
       </div>
 
-      <div class="form-group" style="margin-top:12px;">
-        <label>Puntos de Entrega (texto libre / oficinas clave)</label>
-        <textarea id="fAgePuntos" placeholder="Listado de agencias principales, detalles de recojo, etc..." rows="3"></textarea>
+      <div class="form-row-2">
+        <div class="form-group">
+          <label>Cobertura resumida</label>
+          <input type="text" id="fAgeCobertura" placeholder="Se genera automáticamente desde las zonas">
+        </div>
+        <div class="form-group">
+          <label>Puntos de entrega / oficinas</label>
+          <input type="text" id="fAgePuntos" placeholder="Ej. Terminal Lima, sede Huancayo...">
+        </div>
       </div>
-      <div class="form-group"><label>URL de seguimiento</label><input type="url" id="fAgeTrackingUrl" placeholder="https://.../{order}"></div>
-      <div class="form-group"><label>Notas operativas</label><textarea id="fAgeNotas" placeholder="Acuerdos, restricciones, horarios, observaciones..." rows="3"></textarea></div>
-      <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:16px;" onclick="saveAgency()"><i class="ph ph-check"></i> Guardar Agencia</button>
+
+      <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:4px;" onclick="saveAgency()">
+        <i class="ph ph-check"></i> Guardar Agencia
+      </button>
     </div>
   </div>
 
@@ -3631,6 +3849,11 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
         document.getElementById('fPosClientEmail').value = '';
         document.getElementById('fPosClientAddress').value = '';
         document.getElementById('fPosOrderNotes').value = '';
+        const shippingMethodEl = document.getElementById('posShippingMethod');
+        if(shippingMethodEl) shippingMethodEl.value = 'Directo';
+        const agencySelectEl = document.getElementById('posAgencyId');
+        if(agencySelectEl) agencySelectEl.value = '';
+        updatePosShippingFields();
 
         const subtotal = DB.posCart.reduce((sum, item) => {
             const product = DB.products.find(p => p.id === item.id);
@@ -3717,6 +3940,13 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
         }
 
         const payment = document.getElementById('posPaymentMethod')?.value || '';
+        const shippingMethod = document.getElementById('posShippingMethod')?.value || 'Directo';
+        const agencyId = document.getElementById('posAgencyId')?.value || '';
+        const selectedAgency = DB.agencies.find(a => String(a.id) === String(agencyId));
+        if(shippingMethod === 'Agencia' && !selectedAgency) {
+            showToast('Selecciona la agencia que realizará el envío');
+            return;
+        }
         const subtotal = DB.posCart.reduce((sum, item) => {
             const product = DB.products.find(p => p.id === item.id);
             return sum + (product ? Number(product.price || 0) * Number(item.qty || 0) : 0);
@@ -3731,7 +3961,10 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
             channel: 'POS',
             payment: payment,
             total: grandTotal,
-            status: 'Completado'
+            status: 'Completado',
+            shippingMethod: shippingMethod,
+            agencyId: selectedAgency ? selectedAgency.id : '',
+            agencyName: selectedAgency ? selectedAgency.name : ''
         };
 
         const cartItems = DB.posCart.map(item => ({
@@ -3754,7 +3987,10 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
             channel: saleData.channel,
             payment: saleData.payment,
             total: saleData.total,
-            status: saleData.status
+            status: saleData.status,
+            shippingMethod: saleData.shippingMethod,
+            agencyId: saleData.agencyId,
+            agencyName: saleData.agencyName
         });
         
         logActivity('Nueva Venta', `Pedido ${saleData.order} por ${money(saleData.total)}`, 'ph-shopping-cart-simple', '#16a34a', '#dcfce7');
@@ -5111,39 +5347,291 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
         }
     };
 
-    window.openAgencyDetails = function(id) {
+    /* ============================================================
+       AGENCIAS — MÉTRICAS REALES DESDE VENTAS
+       ============================================================ */
+    let currentAgeDetailId = null;
+    let currentAgeOrdersPage = 1;
+    const AGE_ORDERS_PAGE_SIZE = 6;
+
+    function normalizeSaleText(value){
+        return String(value == null ? '' : value).trim().toLowerCase();
+    }
+
+    function getSaleAgencyId(sale){
+        return sale?.agencyId || sale?.agenciaId || sale?.agency_id || sale?.idAgencia || sale?.agency?.id || '';
+    }
+
+    function getSaleAgencyName(sale){
+        return sale?.agencyName || sale?.agenciaNombre || sale?.agency_name || sale?.agencia || (typeof sale?.agency === 'string' ? sale.agency : '') || '';
+    }
+
+    function getSaleShippingMethod(sale){
+        return sale?.shippingMethod || sale?.deliveryMethod || sale?.shipmentMethod || sale?.tipoEnvio || sale?.metodoEnvio || '';
+    }
+
+    function isSameMonth(dateValue, baseDate = new Date()){
+        if(!dateValue) return false;
+        const d = new Date(dateValue);
+        if(Number.isNaN(d.getTime())) return false;
+        return d.getFullYear() === baseDate.getFullYear() && d.getMonth() === baseDate.getMonth();
+    }
+
+    function getAgencySales(a, options = {}){
+        const start = options.start ? new Date(options.start + 'T00:00:00') : null;
+        const end = options.end ? new Date(options.end + 'T23:59:59') : null;
+        const status = options.status || '';
+        const search = normalizeSaleText(options.search || '');
+
+        return (DB.salesHistory || []).filter(sale => {
+            const saleAgencyId = String(getSaleAgencyId(sale));
+            const saleAgencyName = normalizeSaleText(getSaleAgencyName(sale));
+            const agencyId = String(a.id);
+            const agencyName = normalizeSaleText(a.name);
+            const method = normalizeSaleText(getSaleShippingMethod(sale));
+
+            const belongs =
+                saleAgencyId === agencyId ||
+                (saleAgencyName && saleAgencyName === agencyName) ||
+                (method === 'agencia' && saleAgencyName === agencyName);
+
+            if(!belongs) return false;
+
+            const date = sale.date ? new Date(sale.date + (String(sale.date).length <= 10 ? 'T12:00:00' : '')) : null;
+            if(start && (!date || date < start)) return false;
+            if(end && (!date || date > end)) return false;
+            if(status && String(sale.status || '') !== status) return false;
+
+            if(search){
+                const haystack = [sale.order, sale.client, sale.clientName, sale.phone, sale.status, sale.trackingNumber]
+                    .map(normalizeSaleText).join(' ');
+                if(!haystack.includes(search)) return false;
+            }
+            return true;
+        });
+    }
+
+    function getAgencyMonthlySales(a){
+        return getAgencySales(a).filter(sale => isSameMonth(sale.date));
+    }
+
+    function getAgencyShipmentCount(a){
+        return getAgencyMonthlySales(a).length;
+    }
+
+    function getAgencyPointList(a){
+        const raw = String(a?.points || '').trim();
+        if(!raw) return [];
+        return raw.split(/\r?\n|[,;|]+/).map(v => v.trim()).filter(Boolean);
+    }
+
+    function getAgencyPointCount(a){
+        return getAgencyPointList(a).length;
+    }
+
+    function agencyHasNationalCoverage(a){
+        const coverage = normalizeSaleText(a?.coverage);
+        return /nacional|24\s*dpt|24\s*depart|todos|todo\s*el\s*per[uú]/i.test(coverage) ? 'Sí' : 'Según cobertura registrada';
+    }
+
+    function fmtAgencyOrderDate(value){
+        if(!value) return '—';
+        try { return fmtDate(value); } catch(e) { return value; }
+    }
+
+    window.updatePosShippingFields = function(){
+        const method = document.getElementById('posShippingMethod')?.value || 'Directo';
+        const group = document.getElementById('posAgencyGroup');
+        const select = document.getElementById('posAgencyId');
+        const info = document.getElementById('posShippingInfo');
+        if(!group || !select) return;
+
+        if(method === 'Agencia'){
+            group.style.display = '';
+            const current = select.value;
+            select.innerHTML = '<option value="">Selecciona una agencia</option>' +
+                (DB.agencies || []).map(a => `<option value="${a.id}">${a.name}</option>`).join('');
+            if(current && DB.agencies.some(a => String(a.id) === String(current))) select.value = current;
+            if(info){
+                info.style.display = 'block';
+                const a = DB.agencies.find(x => String(x.id) === String(select.value));
+                info.innerHTML = a
+                    ? `<i class="ph-fill ph-info"></i> ${a.name}: ${a.avgDays || 'Tiempo no registrado'} · ${a.coverage || 'Cobertura no registrada'} · ${getAgencyPointCount(a)} puntos de entrega.`
+                    : '<i class="ph-fill ph-info"></i> Selecciona la agencia que realizará el envío.';
+            }
+        } else {
+            group.style.display = 'none';
+            select.value = '';
+            if(info) info.style.display = 'none';
+        }
+    };
+
+    window.saveAgencyDetails = function(id){
         const a = DB.agencies.find(x => x.id === id);
         if(!a) return;
-        
-        document.getElementById('agencyDetTitle').textContent = 'Detalles de la Agencia: ' + a.name;
+        const notes = document.getElementById('agencyDetNotes')?.value || '';
+        const trackingUrl = document.getElementById('agencyDetTrackingUrl')?.value.trim() || '';
+        a.notes = notes;
+        a.trackingUrl = trackingUrl;
+
+        if (typeof google !== 'undefined' && google.script && google.script.run) {
+            google.script.run
+                .withSuccessHandler(function(){ showToast('Datos de seguimiento y notas guardados en Sheets'); })
+                .withFailureHandler(function(err){ console.error(err); showToast('No se pudo guardar en Sheets'); })
+                .guardarAgencia(a);
+        }
+        showToast('Datos de la agencia actualizados');
+    };
+
+    window.filterAgencyOrders = function(){
+        currentAgeOrdersPage = 1;
+        renderAgencyOrders();
+    };
+
+    window.changeAgencyOrdersPage = function(delta){
+        currentAgeOrdersPage += delta;
+        renderAgencyOrders();
+    };
+
+    function renderAgencyOrders(){
+        if(!currentAgeDetailId) return;
+        const a = DB.agencies.find(x => x.id === currentAgeDetailId);
+        if(!a) return;
+
+        const start = document.getElementById('agencyOrdersStart')?.value || '';
+        const end = document.getElementById('agencyOrdersEnd')?.value || '';
+        const status = document.getElementById('agencyOrdersStatus')?.value || '';
+        const search = document.getElementById('agencyOrdersSearch')?.value || '';
+        const orders = getAgencySales(a, {start, end, status, search});
+        const totalPages = Math.max(1, Math.ceil(orders.length / AGE_ORDERS_PAGE_SIZE));
+        currentAgeOrdersPage = Math.min(Math.max(1, currentAgeOrdersPage), totalPages);
+        const startIndex = (currentAgeOrdersPage - 1) * AGE_ORDERS_PAGE_SIZE;
+        const pageOrders = orders.slice(startIndex, startIndex + AGE_ORDERS_PAGE_SIZE);
+        const body = document.getElementById('agencyOrdersBody');
+        if(!body) return;
+
+        body.innerHTML = pageOrders.length ? pageOrders.map(sale => `
+            <tr>
+                <td><b>${sale.order || sale.id || '—'}</b></td>
+                <td>${sale.client || sale.clientName || '—'}</td>
+                <td>${fmtAgencyOrderDate(sale.date)}</td>
+                <td>${sale.status || '—'}</td>
+                <td class="cell-strong">${money(Number(sale.total || 0))}</td>
+                <td>
+                    ${a.trackingUrl ? `<a href="${a.trackingUrl}${a.trackingUrl.includes('?') ? '&' : '?'}order=${encodeURIComponent(sale.order || sale.id || '')}" target="_blank" class="btn btn-outline btn-sm"><i class="ph ph-arrow-square-out"></i> Seguimiento</a>` : '<span class="badge badge-neutral">URL no configurada</span>'}
+                </td>
+            </tr>`).join('') : `<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--text-muted);">No hay pedidos que coincidan con los filtros.</td></tr>`;
+
+        const pageLabel = document.getElementById('agencyOrdersPageLabel');
+        if(pageLabel) pageLabel.textContent = `Página ${currentAgeOrdersPage} de ${totalPages} · ${orders.length} pedido${orders.length === 1 ? '' : 's'}`;
+        const prev = document.getElementById('agencyOrdersPrev');
+        const next = document.getElementById('agencyOrdersNext');
+        if(prev) prev.disabled = currentAgeOrdersPage <= 1;
+        if(next) next.disabled = currentAgeOrdersPage >= totalPages;
+    }
+
+    window.openAgencyDetails = function(id) {
+        currentAgeDetailId = id;
+        currentAgeOrdersPage = 1;
+        const a = DB.agencies.find(x => x.id === id);
+        if(!a) return;
+
+        const monthlySales = getAgencyMonthlySales(a);
+        const monthlyRevenue = monthlySales.reduce((sum, sale) => sum + Number(sale.total || 0), 0);
+        const allAgencySales = getAgencySales(a);
+        const pointList = getAgencyPointList(a);
+        const allAgencyRanking = (DB.agencies || []).map(agency => ({
+            agency,
+            count: getAgencyShipmentCount(agency),
+            total: getAgencyMonthlySales(agency).reduce((sum, sale) => sum + Number(sale.total || 0), 0)
+        })).sort((x,y) => y.count - x.count);
+
+        document.getElementById('agencyDetTitle').textContent = 'Ficha de Agencia: ' + a.name;
         document.getElementById('agencyDetContent').innerHTML = `
-            <div style="display:flex; gap:15px; align-items:center; margin-bottom: 20px;">
-                <div style="width: 80px; height: 80px; border-radius: 20px; background: ${a.logo ? `url('${a.logo}') center/cover` : a.color || '#106FEB'}; display:flex; align-items:center; justify-content:center; color:#fff; font-size:2rem; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+            <div style="display:flex; gap:18px; align-items:flex-start; margin-bottom:22px;">
+                <div style="width:100px;height:100px;border-radius:24px;background:${a.logo ? `url('${a.logo}') center/cover` : a.color || '#106FEB'};display:flex;align-items:center;justify-content:center;color:#fff;font-size:2.6rem;box-shadow:0 8px 20px rgba(0,0,0,.12);flex-shrink:0;">
                     ${!a.logo ? '<i class="ph-fill ph-buildings"></i>' : ''}
                 </div>
-                <div>
-                    <h4 style="margin:0 0 5px 0; font-size:1.4rem;">${a.name}</h4>
-                    <span class="badge ${a.status==='Activo'?'badge-ok':'badge-neutral'}">${a.status || 'Activo'}</span>
-                    <span style="font-size:0.9rem; color:var(--text-muted); margin-left:10px;"><i class="ph-fill ph-map-pin"></i> ${a.location || 'Nacional'}</span>
+                <div style="flex:1;min-width:0;">
+                    <h4 style="margin:0 0 6px;font-size:1.75rem;letter-spacing:-.4px;">${a.name}</h4>
+                    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
+                        <span class="badge ${a.status==='Activo'?'badge-ok':(a.status==='Pausado'?'badge-warn':'badge-danger')}">${a.status || 'Activo'}</span>
+                        <span class="badge badge-blue"><i class="ph-fill ph-map-pin"></i> ${a.location || 'Perú'}</span>
+                    </div>
+                    <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;background:#f8fafc;padding:12px;border-radius:14px;border:1px solid #eef0f3;">
+                        <div><span style="font-size:.72rem;color:var(--text-muted);display:block;">Tiempo de entrega</span><b>${a.avgDays || 'No registrado'}</b></div>
+                        <div><span style="font-size:.72rem;color:var(--text-muted);display:block;">Cobertura nacional</span><b>${agencyHasNationalCoverage(a)}</b></div>
+                        <div><span style="font-size:.72rem;color:var(--text-muted);display:block;">Puntos de entrega</span><b>${pointList.length}</b></div>
+                    </div>
                 </div>
             </div>
-            
-            <div class="form-row-2" style="margin-bottom: 15px;">
-                <div class="soft-panel" style="padding:15px;">
-                    <span style="font-size:0.8rem; color:var(--text-muted);">Cobertura (Departamentos)</span>
-                    <div style="font-weight:700;">${a.coverage || 'No especificada'}</div>
+
+            <div class="kpi-strip" style="grid-template-columns:repeat(4,minmax(0,1fr));margin-bottom:20px;">
+                <div class="kpi-box"><span>Envíos del mes</span><strong>${monthlySales.length}</strong><small>Ventas reales por esta agencia</small></div>
+                <div class="kpi-box"><span>Ventas acumuladas</span><strong>${allAgencySales.length}</strong><small>Histórico registrado</small></div>
+                <div class="kpi-box"><span>Facturación del mes</span><strong>${money(monthlyRevenue)}</strong><small>Solo ventas de esta agencia</small></div>
+                <div class="kpi-box"><span>Oficinas / puntos</span><strong>${pointList.length}</strong><small>Puntos registrados</small></div>
+            </div>
+
+            <div class="split-layout" style="grid-template-columns:1fr 1fr;gap:18px;margin-bottom:20px;">
+                <div class="soft-panel" style="padding:18px;">
+                    <h4 style="margin:0 0 12px;font-size:1rem;"><i class="ph-fill ph-map-trifold" style="color:var(--primary-pill);"></i> Cobertura y puntos disponibles</h4>
+                    <div style="font-size:.85rem;color:var(--text-muted);margin-bottom:10px;"><b style="color:var(--text-main);">Cobertura:</b> ${a.coverage || 'No registrada'}</div>
+                    <div style="max-height:170px;overflow:auto;padding-right:5px;">
+                        ${pointList.length ? pointList.map((point,i)=>`<div style="display:flex;gap:9px;align-items:center;padding:8px 0;border-bottom:1px solid #eef0f3;"><span style="width:24px;height:24px;border-radius:8px;background:#eff6ff;color:var(--primary-pill);display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:800;">${i+1}</span><span style="font-size:.84rem;">${point}</span></div>`).join('') : '<div style="padding:12px;color:var(--text-muted);font-size:.84rem;">No hay puntos registrados.</div>'}
+                    </div>
                 </div>
-                <div class="soft-panel" style="padding:15px;">
-                    <span style="font-size:0.8rem; color:var(--text-muted);">Tiempo Promedio (Días)</span>
-                    <div style="font-weight:700;"><i class="ph-fill ph-clock"></i> ${a.avgDays || 'N/A'}</div>
+                <div class="soft-panel" style="padding:18px;">
+                    <h4 style="margin:0 0 12px;font-size:1rem;"><i class="ph-fill ph-chart-line-up" style="color:var(--ok-color);"></i> Ventas por agencia — mes actual</h4>
+                    <div style="max-height:205px;overflow:auto;padding-right:5px;">
+                        ${allAgencyRanking.map((row,i)=>`<div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #eef0f3;"><span style="font-size:.75rem;font-weight:800;color:var(--text-muted);width:20px;">${i+1}</span><div style="flex:1;min-width:0;"><b style="font-size:.84rem;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${row.agency.name}</b><span style="font-size:.72rem;color:var(--text-muted);">${money(row.total)}</span></div><strong style="font-size:1rem;color:var(--primary-pill);">${row.count}</strong></div>`).join('') || '<div style="color:var(--text-muted);">No hay agencias registradas.</div>'}
+                    </div>
                 </div>
             </div>
-            
-            <div class="soft-panel" style="padding:15px; background:#f8fafc;">
-                <span style="font-size:0.8rem; color:var(--text-muted); display:block; margin-bottom:6px;">Puntos de Entrega (Oficinas clave)</span>
-                <div style="font-weight:500; font-size:0.9rem; white-space:pre-wrap; line-height:1.5;">${a.points || 'Sin oficinas descritas.'}</div>
+
+            <div class="soft-panel" style="padding:18px;margin-bottom:20px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px;">
+                    <h4 style="margin:0;font-size:1.05rem;"><i class="ph-fill ph-package" style="color:var(--primary-pill);"></i> Seguimiento de pedidos</h4>
+                    <span class="badge badge-neutral">${monthlySales.length} envíos este mes</span>
+                </div>
+                <div class="form-row-3" style="align-items:flex-end;">
+                    <div class="form-group" style="margin-bottom:0;"><label>Buscar pedido / cliente</label><input id="agencyOrdersSearch" type="text" placeholder="VTA-, cliente..." oninput="filterAgencyOrders()"></div>
+                    <div class="form-group" style="margin-bottom:0;"><label>Estado</label><select id="agencyOrdersStatus" onchange="filterAgencyOrders()"><option value="">Todos</option><option value="Completado">Completado</option><option value="Procesando">Procesando</option><option value="Anulado">Anulado</option></select></div>
+                    <div class="form-group" style="margin-bottom:0;display:flex;gap:8px;"><div style="flex:1;"><label>Desde</label><input id="agencyOrdersStart" type="date" onchange="filterAgencyOrders()"></div><div style="flex:1;"><label>Hasta</label><input id="agencyOrdersEnd" type="date" onchange="filterAgencyOrders()"></div></div>
+                </div>
+                <div class="data-table-wrap" style="margin-top:14px;max-height:300px;overflow:auto;">
+                    <table class="data-table"><thead><tr><th>Pedido</th><th>Cliente</th><th>Fecha</th><th>Estado</th><th>Total</th><th>Seguimiento</th></tr></thead><tbody id="agencyOrdersBody"></tbody></table>
+                </div>
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:12px;">
+                    <button id="agencyOrdersPrev" class="btn btn-outline btn-sm" onclick="changeAgencyOrdersPage(-1)"><i class="ph ph-caret-left"></i> Anterior</button>
+                    <span id="agencyOrdersPageLabel" style="font-size:.78rem;color:var(--text-muted);">Página 1</span>
+                    <button id="agencyOrdersNext" class="btn btn-outline btn-sm" onclick="changeAgencyOrdersPage(1)">Siguiente <i class="ph ph-caret-right"></i></button>
+                </div>
+            </div>
+
+            <div class="split-layout" style="grid-template-columns:1fr 1fr;gap:18px;">
+                <div class="soft-panel" style="padding:18px;">
+                    <h4 style="margin:0 0 12px;font-size:1rem;"><i class="ph-fill ph-link" style="color:var(--primary-pill);"></i> URL de seguimiento</h4>
+                    <p style="font-size:.78rem;color:var(--text-muted);margin:0 0 10px;">Indica la URL que utilizará esta agencia para consultar sus pedidos.</p>
+                    <input id="agencyDetTrackingUrl" type="url" value="${a.trackingUrl || ''}" placeholder="https://..." style="width:100%;">
+                    <div style="margin-top:10px;display:flex;gap:8px;">
+                        <button class="btn btn-outline btn-sm" onclick="saveAgencyDetails('${a.id}')"><i class="ph ph-floppy-disk"></i> Guardar URL</button>
+                        ${a.trackingUrl ? `<a href="${a.trackingUrl}" target="_blank" class="btn btn-primary btn-sm"><i class="ph ph-arrow-square-out"></i> Abrir seguimiento</a>` : ''}
+                    </div>
+                </div>
+                <div class="soft-panel" style="padding:18px;">
+                    <h4 style="margin:0 0 12px;font-size:1rem;"><i class="ph-fill ph-notebook" style="color:var(--primary-pill);"></i> Notas y acuerdos</h4>
+                    <textarea id="agencyDetNotes" style="width:100%;min-height:110px;padding:12px;border-radius:14px;border:1px solid var(--neutral-line);outline:none;font-family:inherit;resize:vertical;" placeholder="Notas operativas, acuerdos, horarios, condiciones...">${a.notes || ''}</textarea>
+                    <button class="btn btn-outline btn-sm" style="margin-top:10px;" onclick="saveAgencyDetails('${a.id}')"><i class="ph ph-floppy-disk"></i> Guardar notas</button>
+                </div>
             </div>
         `;
+
+        const today = new Date();
+        const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
+        document.getElementById('agencyOrdersStart').value = firstDay.toISOString().slice(0,10);
+        document.getElementById('agencyOrdersEnd').value = today.toISOString().slice(0,10);
+        renderAgencyOrders();
         openModal('modalDetallesAgencia');
     };
 
@@ -5179,13 +5667,13 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
                 <div class="entity-title"><b>${a.name}</b><span>${a.location || 'Nacional'}</span></div>
               </div>
               <div class="entity-stats">
-                <div class="entity-stat"><b>${a.shipments || 0}</b><span>Envíos/mes</span></div>
+                <div class="entity-stat"><b>${getAgencyShipmentCount(a)}</b><span>Envíos/mes</span></div>
                 <div class="entity-stat"><b>${a.avgDays || '2-5'}</b><span>Días</span></div>
               </div>
               
               <div class="entity-stats" style="flex-direction:column; gap:5px; align-items:flex-start; margin-top:10px; background:#f8fafc; padding:10px; border-radius:12px; border:1px solid #eef0f3;">
                 <div style="font-size:0.8rem; color:var(--text-main);"><b>Cobertura:</b> ${a.coverage || 'N/A'}</div>
-                <div style="font-size:0.8rem; color:var(--text-muted); max-height:40px; overflow:hidden; text-overflow:ellipsis; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;"><b>Puntos:</b> ${a.points || 'No especificados'}</div>
+                <div style="font-size:0.8rem; color:var(--text-muted);"><b>Puntos:</b> ${getAgencyPointCount(a)}</div>
               </div>
 
               <div class="entity-footer" style="margin-top:auto; padding-top:12px; flex-direction:column; align-items:stretch; gap:10px;">
@@ -5218,8 +5706,8 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
                 </div>
               </td>
               <td class="cell-muted">${a.location || '—'}</td>
-              <td class="cell-muted" style="max-width:200px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${a.points || '—'}</td>
-              <td class="cell-strong">${a.shipments || 0}</td>
+              <td class="cell-muted">${getAgencyPointCount(a)}</td>
+              <td class="cell-strong">${getAgencyShipmentCount(a)}</td>
               <td><span class="badge ${statusCls[a.status] || 'badge-neutral'}">${a.status || '—'}</span></td>
               <td>
                 <div style="display:flex; gap:8px;">
@@ -5263,6 +5751,7 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
         if(confirm('¿Seguro que deseas eliminar esta agencia?')) {
             DB.agencies = DB.agencies.filter(x => x.id !== id);
             renderAgencies();
+            updatePosShippingFields();
             if (typeof google !== 'undefined' && google.script && google.script.run) {
                 google.script.run.eliminarAgencia(id);
             }
@@ -5290,6 +5779,8 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
             avgDays: document.getElementById('fAgeTiempo').value,
             points: document.getElementById('fAgePuntos').value,
             shipments: id ? (DB.agencies.find(x=>x.id===id)?.shipments || 0) : 0,
+            notes: id ? (DB.agencies.find(x=>x.id===id)?.notes || '') : '',
+            trackingUrl: id ? (DB.agencies.find(x=>x.id===id)?.trackingUrl || '') : '',
             color: '#106FEB'
         };
 
@@ -5315,6 +5806,7 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
         }
 
         renderAgencies();
+        updatePosShippingFields();
         closeModal('modalNuevaAgencia');
         showToast(id ? 'Agencia actualizada' : 'Agencia guardada');
     };
@@ -5664,189 +6156,642 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
 
   })();
 </script>
+
 <script>
 /* ============================================================
-   PATCH LOGÍSTICA PRO — filtros, agencias, tarifas y estadísticas
+   PATCH LOGÍSTICA AVANZADA — NO ELIMINA FUNCIONES EXISTENTES
    ============================================================ */
 (function(){
-  const RAW_UBIGEO = {
-    dep:'https://raw.githubusercontent.com/RitchieRD/ubigeos-peru-data/main/json/1_ubigeo_departamentos.json',
-    prov:'https://raw.githubusercontent.com/RitchieRD/ubigeos-peru-data/main/json/2_ubigeo_provincias.json',
-    dist:'https://raw.githubusercontent.com/RitchieRD/ubigeos-peru-data/main/json/3_ubigeo_distritos.json'
-  };
-  const FALLBACK_DEPS=['AMAZONAS','ANCASH','APURIMAC','AREQUIPA','AYACUCHO','CAJAMARCA','CALLAO','CUSCO','HUANCAVELICA','HUANUCO','ICA','JUNIN','LA LIBERTAD','LAMBAYEQUE','LIMA','LORETO','MADRE DE DIOS','MOQUEGUA','PASCO','PIURA','PUNO','SAN MARTIN','TACNA','TUMBES','UCAYALI'];
-  window.PERU_UBIGEO={departamentos:[],provincias:[],distritos:[],ready:false};
-  let original={};
+  'use strict';
 
-  function esc(v){return String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');}
-  function money2(n){return 'S/ '+Number(n||0).toLocaleString('es-PE',{minimumFractionDigits:2,maximumFractionDigits:2});}
-  function today(){return new Date().toISOString().slice(0,10);}
-  function pointsCount(a){
-    if(Array.isArray(a.zones)) return a.zones.length;
-    if(Array.isArray(a.coverageZones)) return a.coverageZones.length;
-    const p=String(a.points||'').trim();
-    if(!p) return 0;
-    return p.split(/\n|,|;|\|/).map(x=>x.trim()).filter(Boolean).length;
-  }
-  function saleAgencyMatch(s,a){return String(s.agencyId||'')===String(a.id)||(!s.agencyId && String(s.agencyName||'').trim().toLowerCase()===String(a.name||'').trim().toLowerCase());}
-  function salesForAgency(a,start,end){
-    const from=start||'0000-01-01', to=end||'9999-12-31';
-    return (DB.salesHistory||[]).filter(s=>saleAgencyMatch(s,a)&&String(s.date||'').slice(0,10)>=from&&String(s.date||'').slice(0,10)<=to&&s.status!=='Anulado');
-  }
-  function monthSales(a){const d=new Date();const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0');return salesForAgency(a,`${y}-${m}-01`,`${y}-${m}-${new Date(y,d.getMonth()+1,0).getDate()}`).length;}
-  function agencyTariffs(a){return Array.isArray(a.tariffs)?a.tariffs:[];}
-  function tariffFor(a,size){const t=agencyTariffs(a).find(x=>String(x.size).toLowerCase()===String(size).toLowerCase());return t?Number(t.price||0):0;}
+  const AGENCY_PACKAGE_DEFAULTS = ['Sobre / Documento','Pequeño','Mediano','Grande','Extra grande'];
 
-  function makeFilterBar(){
-    // Países de proveedores
-    const cSel=document.getElementById('provLogCountry');
-    if(cSel){const vals=[...new Set((DB.providers||[]).map(x=>x.country).filter(Boolean))].sort();const cur=cSel.value;cSel.innerHTML='<option value="">Todos los países</option>'+vals.map(v=>`<option value="${esc(v)}">${esc(v)}</option>`).join('');cSel.value=cur;}
-    // Zonas courier
-    const zSel=document.getElementById('courierLogZone');
-    if(zSel){const vals=[...new Set((DB.couriers||[]).flatMap(c=>(c.coverage||[]).map(z=>z.dept).filter(Boolean)))].sort();const cur=zSel.value;zSel.innerHTML='<option value="">Todas las zonas</option>'+vals.map(v=>`<option value="${esc(v)}">${esc(v)}</option>`).join('');zSel.value=cur;}
-    // Departamentos agencias
-    const dSel=document.getElementById('agencyLogDept');
-    if(dSel){const vals=(PERU_UBIGEO.departamentos.length?PERU_UBIGEO.departamentos.map(x=>x.departamento):FALLBACK_DEPS).sort();const cur=dSel.value;dSel.innerHTML='<option value="">Todos los departamentos</option>'+vals.map(v=>`<option value="${esc(v)}">${esc(v)}</option>`).join('');dSel.value=cur;}
-  }
-
-  window.resetLogFilter=function(type){
-    const map={provider:['provLogSearch','provLogStatus','provLogCountry'],courier:['courierLogSearch','courierLogStatus','courierLogZone'],agency:['agencyLogSearch','agencyLogStatus','agencyLogDept'],platform:['platSearchInput','platStatusFilter','platSortSelect']};
-    (map[type]||[]).forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
-    if(type==='provider'&&typeof renderProviders==='function')renderProviders();
-    if(type==='courier'&&typeof renderCouriers==='function')renderCouriers();
-    if(type==='agency'&&typeof renderAgencies==='function')renderAgencies();
-    if(type==='platform'&&typeof renderPlatforms==='function')renderPlatforms();
+  const PERU_PROVINCES = {
+    'Amazonas':['Chachapoyas','Bagua','Bongará','Condorcanqui','Luya','Rodríguez de Mendoza','Utcubamba'],
+    'Áncash':['Huaraz','Aija','Antonio Raimondi','Asunción','Bolognesi','Carhuaz','Carlos Fermín Fitzcarrald','Casma','Corongo','Huari','Huarmey','Huaylas','Mariscal Luzuriaga','Ocros','Pallasca','Pomabamba','Recuay','Santa','Sihuas','Yungay'],
+    'Apurímac':['Abancay','Andahuaylas','Antabamba','Aymaraes','Cotabambas','Chincheros','Grau'],
+    'Arequipa':['Arequipa','Camaná','Caravelí','Castilla','Caylloma','Condesuyos','Islay','La Unión'],
+    'Ayacucho':['Huamanga','Cangallo','Huanca Sancos','Huanta','La Mar','Lucanas','Parinacochas','Páucar del Sara Sara','Sucre','Víctor Fajardo','Vilcas Huamán'],
+    'Cajamarca':['Cajamarca','Cajabamba','Celendín','Chota','Contumazá','Cutervo','Hualgayoc','Jaén','San Ignacio','San Marcos','San Miguel','San Pablo','Santa Cruz'],
+    'Callao':['Callao'],
+    'Cusco':['Cusco','Acomayo','Anta','Calca','Canas','Canchis','Chumbivilcas','Espinar','La Convención','Paruro','Paucartambo','Quispicanchi','Urubamba'],
+    'Huancavelica':['Huancavelica','Acobamba','Angaraes','Castrovirreyna','Churcampa','Huaytará','Tayacaja'],
+    'Huánuco':['Huánuco','Ambo','Dos de Mayo','Huacaybamba','Huamalíes','Leoncio Prado','Marañón','Pachitea','Puerto Inca','Lauricocha','Yarowilca'],
+    'Ica':['Ica','Chincha','Nazca','Palpa','Pisco'],
+    'Junín':['Huancayo','Concepción','Chanchamayo','Jauja','Junín','Satipo','Tarma','Yauli'],
+    'La Libertad':['Trujillo','Ascope','Bolívar','Chepén','Gran Chimú','Julcán','Otuzco','Pacasmayo','Pataz','Sánchez Carrión','Santiago de Chuco','Virú'],
+    'Lambayeque':['Chiclayo','Ferreñafe','Lambayeque'],
+    'Lima':['Lima','Barranca','Cajatambo','Canta','Cañete','Huaral','Huarochirí','Huaura','Oyón','Yauyos'],
+    'Loreto':['Maynas','Alto Amazonas','Datem del Marañón','Loreto','Mariscal Ramón Castilla','Requena','Ucayali','Putumayo'],
+    'Madre de Dios':['Tambopata','Manu','Tahuamanu'],
+    'Moquegua':['Mariscal Nieto','General Sánchez Cerro','Ilo'],
+    'Pasco':['Pasco','Daniel Alcides Carrión','Oxapampa'],
+    'Piura':['Piura','Ayabaca','Huancabamba','Morropón','Paita','Sechura','Sullana','Talara'],
+    'Puno':['Puno','Azángaro','Carabaya','Chucuito','El Collao','Huancané','Lampa','Melgar','Moho','San Antonio de Putina','San Román','Sandia','Yunguyo'],
+    'San Martín':['Moyobamba','Bellavista','El Dorado','Huallaga','Lamas','Mariscal Cáceres','Picota','Rioja','San Martín','Tocache'],
+    'Tacna':['Tacna','Candarave','Jorge Basadre','Tarata'],
+    'Tumbes':['Tumbes','Contralmirante Villar','Zarumilla'],
+    'Ucayali':['Coronel Portillo','Atalaya','Padre Abad','Purús']
   };
 
-  // Preserve originals, then wrap them with the same filter UI.
-  try{original.renderProviders=renderProviders;}catch(e){}
-  try{original.renderCouriers=renderCouriers;}catch(e){}
-  try{original.renderAgencies=renderAgencies;}catch(e){}
-  try{original.renderPlatforms=renderPlatforms;}catch(e){}
+  const PERU_DEPARTMENTS = Object.keys(PERU_PROVINCES);
+  const FALLBACK_DISTRICTS = {
+    'Lima|Lima':['Lima','Ancón','Ate','Barranco','Breña','Carabayllo','Chaclacayo','Chorrillos','Cieneguilla','Comas','El Agustino','Independencia','Jesús María','La Molina','La Victoria','Lince','Los Olivos','Lurigancho','Lurín','Magdalena del Mar','Miraflores','Pachacámac','Pucusana','Pueblo Libre','Puente Piedra','Rímac','San Borja','San Isidro','San Juan de Lurigancho','San Juan de Miraflores','San Luis','San Martín de Porres','San Miguel','Santa Anita','Santa María del Mar','Santa Rosa','Santiago de Surco','Surquillo','Villa El Salvador','Villa María del Triunfo'],
+    'Callao|Callao':['Callao','Bellavista','Carmen de La Legua Reynoso','La Perla','La Punta','Mi Perú','Ventanilla'],
+    'Arequipa|Arequipa':['Arequipa','Alto Selva Alegre','Cayma','Cerro Colorado','Characato','Jacobo Hunter','José Luis Bustamante y Rivero','Mariano Melgar','Miraflores','Paucarpata','Sabandía','Sachaca','Socabaya','Tiabaya','Uchumayo','Yanahuara','Yura'],
+    'La Libertad|Trujillo':['Trujillo','El Porvenir','Florencia de Mora','Huanchaco','La Esperanza','Laredo','Moche','Poroto','Salaverry','Simbal','Víctor Larco Herrera'],
+    'Piura|Piura':['Piura','Castilla','Catacaos','Cura Mori','El Tallán','La Arena','La Unión','Las Lomas','Tambogrande','Veintiséis de Octubre']
+  };
 
-  function filterData(arr,type){
-    const q=(document.getElementById(type+'LogSearch')?.value||'').toLowerCase().trim();
-    const st=document.getElementById(type+'LogStatus')?.value||'';
-    const zone=document.getElementById(type==='agency'?'agencyLogDept':type==='courier'?'courierLogZone':'provLogCountry')?.value||'';
-    return arr.filter(x=>{
-      const text=JSON.stringify(x).toLowerCase();
-      const okQ=!q||text.includes(q);
-      const okSt=!st||x.status===st;
-      const okZone=!zone||(type==='courier'?(x.coverage||[]).some(z=>String(z.dept||'').toLowerCase()===zone.toLowerCase()):type==='agency'?(x.zones||x.coverageZones||[]).some(z=>String(z.department||z.dept||'').toLowerCase()===zone.toLowerCase()):String(x.country||'').toLowerCase()===zone.toLowerCase());
-      return okQ&&okSt&&okZone;
+  function esc(v){
+    return String(v == null ? '' : v)
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+  }
+  function norm(v){ return String(v == null ? '' : v).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim(); }
+  function arr(v){ return Array.isArray(v) ? v : []; }
+  function n(v){ const x=Number(v); return Number.isFinite(x) ? x : 0; }
+  function agencyById(id){ return (DB.agencies||[]).find(a=>String(a.id)===String(id)); }
+
+  function getAgencyZones(a){
+    if(Array.isArray(a.coverageZones)) return a.coverageZones;
+    if(Array.isArray(a.zones)) return a.zones;
+    return [];
+  }
+  function getAgencyTariffs(a){
+    if(Array.isArray(a.shippingTariffs)) return a.shippingTariffs;
+    if(Array.isArray(a.tariffs)) return a.tariffs;
+    return [];
+  }
+
+  function getUbigeoRows(){
+    const rows = arr(DB.districts);
+    return rows.map(r => ({
+      department: r.department || r.departamento || r.dept || r.region || r.Departamento || '',
+      province: r.province || r.provincia || r.prov || r.Provincia || '',
+      district: r.district || r.distrito || r.Distrito || ''
+    })).filter(r=>r.department && r.province && r.district);
+  }
+
+  function provincesFor(dept){
+    const fromServer = [...new Set(getUbigeoRows().filter(r=>norm(r.department)===norm(dept)).map(r=>r.province))];
+    return fromServer.length ? fromServer.sort((a,b)=>a.localeCompare(b,'es')) : (PERU_PROVINCES[dept]||[]).slice().sort((a,b)=>a.localeCompare(b,'es'));
+  }
+
+  function districtsFor(dept,prov){
+    const fromServer = [...new Set(getUbigeoRows().filter(r=>norm(r.department)===norm(dept)&&norm(r.province)===norm(prov)).map(r=>r.district))];
+    if(fromServer.length) return fromServer.sort((a,b)=>a.localeCompare(b,'es'));
+    return (FALLBACK_DISTRICTS[dept+'|'+prov]||[]).slice().sort((a,b)=>a.localeCompare(b,'es'));
+  }
+
+  function options(list,selected,placeholder){
+    return '<option value="">'+esc(placeholder||'Seleccionar...')+'</option>'+
+      list.map(x=>'<option value="'+esc(x)+'" '+(norm(x)===norm(selected)?'selected':'')+'>'+esc(x)+'</option>').join('');
+  }
+
+  function refreshCoverageRow(row, keep){
+    const dept=row.querySelector('.age-zone-dept');
+    const prov=row.querySelector('.age-zone-prov');
+    const dist=row.querySelector('.age-zone-dist');
+    if(!dept||!prov||!dist) return;
+    const deptVal=keep ? (row.dataset.department||dept.value) : dept.value;
+    const provVal=keep ? (row.dataset.province||prov.value) : '';
+    const distVal=keep ? (row.dataset.district||dist.value) : '';
+    dept.innerHTML=options(PERU_DEPARTMENTS,deptVal,'Departamento');
+    const currentDept=dept.value||deptVal;
+    prov.innerHTML=options(provincesFor(currentDept),provVal,'Provincia');
+    const currentProv=prov.value||provVal;
+    dist.innerHTML=options(districtsFor(currentDept,currentProv),distVal,'Distrito');
+    if(keep){
+      row.dataset.department=deptVal; row.dataset.province=provVal; row.dataset.district=distVal;
+      dept.value=deptVal; prov.value=provVal; dist.value=distVal;
+    }else{
+      row.dataset.department=dept.value; row.dataset.province=prov.value; row.dataset.district=dist.value;
+    }
+  }
+
+  window.addAgencyCoverageRow=function(data){
+    data=data||{};
+    const box=document.getElementById('agencyCoverageEditor');
+    if(!box) return;
+    const row=document.createElement('div');
+    row.className='agency-zone-row';
+    row.dataset.department=data.department||data.dept||'';
+    row.dataset.province=data.province||data.prov||'';
+    row.dataset.district=data.district||data.distrito||'';
+    row.innerHTML=`
+      <div class="form-group"><label>Departamento</label><select class="age-zone-dept"></select></div>
+      <div class="form-group"><label>Provincia</label><select class="age-zone-prov"></select></div>
+      <div class="form-group"><label>Distrito</label><select class="age-zone-dist"></select></div>
+      <div class="form-group"><label>Nombre de Agencia / Sede</label><input class="age-zone-name" type="text" value="${esc(data.agencyName||data.nombreAgencia||data.name||'')}" placeholder="Ej. Agencia Central"></div>
+      <button type="button" class="logistics-filter-icon-btn" title="Eliminar zona" onclick="this.closest('.agency-zone-row').remove();updateAgencyEditorState()"><i class="ph ph-trash"></i></button>`;
+    box.appendChild(row);
+    const dept=row.querySelector('.age-zone-dept'), prov=row.querySelector('.age-zone-prov'), dist=row.querySelector('.age-zone-dist');
+    refreshCoverageRow(row,true);
+    dept.addEventListener('change',function(){
+      row.dataset.department=dept.value; row.dataset.province=''; row.dataset.district='';
+      prov.innerHTML=options(provincesFor(dept.value),'','Provincia');
+      dist.innerHTML=options([], '', 'Distrito');
+      updateAgencyEditorState();
     });
-  }
-
-  // Render wrappers use a temporary filtered DB so the existing rendering functions remain intact.
-  function wrapRender(name,key){
-    if(!original[name])return;
-    window[name]=function(){
-      const arr=DB[key];
-      const filtered=filterData(arr,name==='renderProviders'?'provider':name==='renderCouriers'?'courier':'agency');
-      DB[key]=filtered;
-      try{original[name]();}finally{DB[key]=arr;}
-      makeFilterBar();
-    };
-  }
-  // Inline handlers can call these global wrappers in browsers where the original function was scoped.
-  wrapRender('renderProviders','providers');
-  wrapRender('renderCouriers','couriers');
-  wrapRender('renderAgencies','agencies');
-
-  if(original.renderPlatforms){
-    window.renderPlatforms=function(){
-      const q=(document.getElementById('platSearchInput')?.value||'').toLowerCase().trim();
-      const st=document.getElementById('platStatusFilter')?.value||'';
-      const arr=DB.platforms;const filtered=arr.filter(p=>(!q||JSON.stringify(p).toLowerCase().includes(q))&&(!st||p.status===st));
-      DB.platforms=filtered;try{original.renderPlatforms();}finally{DB.platforms=arr;}makeFilterBar();
-    };
-  }
-
-  // Full Peru UBIGEO, using the current 2026 public dataset; fallback keeps departments usable if unavailable.
-  async function loadUbigeo(){
-    try{
-      const [a,b,c]=await Promise.all([fetch(RAW_UBIGEO.dep),fetch(RAW_UBIGEO.prov),fetch(RAW_UBIGEO.dist)]);
-      if(!a.ok||!b.ok||!c.ok)throw new Error('Ubigeo no disponible');
-      const [dj,pj,xj]=await Promise.all([a.json(),b.json(),c.json()]);
-      PERU_UBIGEO.departamentos=dj.ubigeo_departamentos||[];PERU_UBIGEO.provincias=pj.ubigeo_provincias||[];PERU_UBIGEO.distritos=xj.ubigeo_distritos||[];PERU_UBIGEO.ready=true;
-    }catch(e){PERU_UBIGEO.departamentos=FALLBACK_DEPS.map((departamento,i)=>({id:i+1,departamento,ubigeo:String(i+1).padStart(2,'0')}));}
-    makeFilterBar();
-  }
-
-  function zoneRows(){return [...document.querySelectorAll('#agencyZoneList .agency-zone-row')].map(r=>({department:r.querySelector('.zone-dept')?.value||'',province:r.querySelector('.zone-prov')?.value||'',district:r.querySelector('.zone-dist')?.value||'',agencyName:r.querySelector('.zone-agency-name')?.value.trim()||''})).filter(z=>z.department||z.province||z.district||z.agencyName);}
-  function tariffRows(){return [...document.querySelectorAll('#agencyTariffList .agency-tariff-row')].map(r=>({size:r.querySelector('.tariff-size')?.value||'',price:Number(r.querySelector('.tariff-price')?.value||0)})).filter(t=>t.size);}
-
-  function populateProv(deptSel,provSel,distSel,selected={}){
-    const d=deptSel.value;const dep=PERU_UBIGEO.departamentos.find(x=>String(x.departamento).toLowerCase()===String(d).toLowerCase());
-    const provs=dep?PERU_UBIGEO.provincias.filter(x=>String(x.departamento_id)===String(dep.id)):[];
-    provSel.innerHTML='<option value="">Selecciona provincia</option>'+provs.map(x=>`<option value="${esc(x.provincia)}" data-id="${x.id}">${esc(x.provincia)}</option>`).join('');provSel.value=selected.province||'';
-    const p=provs.find(x=>x.provincia===provSel.value);const dists=p?PERU_UBIGEO.distritos.filter(x=>String(x.provincia_id)===String(p.id)):[];
-    distSel.innerHTML='<option value="">Selecciona distrito</option>'+dists.map(x=>`<option value="${esc(x.distrito)}">${esc(x.distrito)}</option>`).join('');distSel.value=selected.district||'';
-  }
-  window.addAgencyZoneRow=function(data={}){
-    const wrap=document.getElementById('agencyZoneList');if(!wrap)return;
-    const row=document.createElement('div');row.className='agency-zone-row';
-    const deps=PERU_UBIGEO.departamentos.length?PERU_UBIGEO.departamentos.map(x=>x.departamento):FALLBACK_DEPS.map(x=>x);
-    row.innerHTML=`<div class="form-group" style="margin:0"><label>Departamento</label><div class="filter-input-wrap"><i class="ph ph-map-pin"></i><select class="filter-input zone-dept" style="padding-left:42px"><option value="">Selecciona</option>${deps.map(v=>`<option value="${esc(v)}">${esc(v)}</option>`).join('')}</select></div></div><div class="form-group" style="margin:0"><label>Provincia</label><select class="filter-input zone-prov"><option value="">Selecciona provincia</option></select></div><div class="form-group" style="margin:0"><label>Distrito</label><select class="filter-input zone-dist"><option value="">Selecciona distrito</option></select></div><div class="form-group zone-agency-name" style="margin:0"><label>Nombre de Agencia</label><input class="filter-input" placeholder="Ej. Agencia central" value="${esc(data.agencyName||'')}"></div><button type="button" class="btn btn-outline btn-sm btn-danger-outline zone-remove" onclick="this.closest('.agency-zone-row').remove()" title="Eliminar zona"><i class="ph ph-trash"></i></button>`;
-    wrap.appendChild(row);const ds=row.querySelector('.zone-dept'),ps=row.querySelector('.zone-prov'),xs=row.querySelector('.zone-dist');ds.value=data.department||'';ds.addEventListener('change',()=>populateProv(ds,ps,xs,{}));ps.addEventListener('change',()=>populateProv(ds,ps,xs,{province:ps.value}));populateProv(ds,ps,xs,data);
+    prov.addEventListener('change',function(){
+      row.dataset.province=prov.value; row.dataset.district='';
+      dist.innerHTML=options(districtsFor(dept.value,prov.value),'','Distrito');
+      updateAgencyEditorState();
+    });
+    dist.addEventListener('change',function(){ row.dataset.district=dist.value; updateAgencyEditorState(); });
+    updateAgencyEditorState();
   };
-  window.addAgencyTariffRow=function(data={}){
-    const wrap=document.getElementById('agencyTariffList');if(!wrap)return;const row=document.createElement('div');row.className='agency-tariff-row';
-    row.innerHTML=`<div class="form-group" style="margin:0"><label>Tamaño</label><select class="filter-input tariff-size"><option value="Pequeño">Pequeño</option><option value="Mediano">Mediano</option><option value="Grande">Grande</option><option value="Extra grande">Extra grande</option></select></div><div class="form-group" style="margin:0"><label>Tarifa (S/)</label><div class="filter-input-wrap"><i class="ph ph-currency-circle-dollar"></i><input type="number" min="0" step="0.01" class="filter-input tariff-price" style="padding-left:42px" value="${Number(data.price||0)}"></div></div><button type="button" class="btn btn-outline btn-sm btn-danger-outline tariff-remove" onclick="this.closest('.agency-tariff-row').remove()" title="Eliminar tarifa"><i class="ph ph-trash"></i></button>`;
-    wrap.appendChild(row);row.querySelector('.tariff-size').value=data.size||'Pequeño';
+
+  window.updateAgencyEditorState=function(){
+    const box=document.getElementById('agencyCoverageEditor');
+    const empty=document.getElementById('agencyCoverageEmpty');
+    if(empty) empty.style.display=box && box.children.length ? 'none':'block';
+    const summary=document.getElementById('fAgeCobertura');
+    if(summary && box){
+      const values=[...box.querySelectorAll('.agency-zone-row')].map(r=>{
+        const d=r.querySelector('.age-zone-dept')?.value||'';
+        const p=r.querySelector('.age-zone-prov')?.value||'';
+        const z=r.querySelector('.age-zone-dist')?.value||'';
+        return [d,p,z].filter(Boolean).join(' / ');
+      }).filter(Boolean);
+      summary.value=values.join(' · ');
+    }
   };
+
+  window.addAgencyTariffRow=function(data){
+    data=data||{};
+    const box=document.getElementById('agencyTariffEditor');
+    if(!box) return;
+    const row=document.createElement('div');
+    row.className='agency-tariff-row';
+    const size=data.size||data.packageSize||data.tamano||'';
+    row.innerHTML=`
+      <div class="form-group"><label>Tamaño</label><input class="age-tariff-size" type="text" list="agencyPackageSizeList" value="${esc(size)}" placeholder="Pequeño"></div>
+      <div class="form-group"><label>Tarifa S/</label><input class="age-tariff-cost" type="number" min="0" step="0.01" value="${esc(data.cost ?? data.costo ?? '')}" placeholder="0.00"></div>
+      <div class="form-group"><label>Nota</label><input class="age-tariff-note" type="text" value="${esc(data.note||data.nota||'')}" placeholder="Ej. hasta 1 kg"></div>
+      <button type="button" class="logistics-filter-icon-btn" title="Eliminar tarifa" onclick="this.closest('.agency-tariff-row').remove();updateAgencyTariffState()"><i class="ph ph-trash"></i></button>`;
+    box.appendChild(row);
+    updateAgencyTariffState();
+  };
+
+  window.updateAgencyTariffState=function(){
+    const box=document.getElementById('agencyTariffEditor');
+    const empty=document.getElementById('agencyTariffEmpty');
+    if(empty) empty.style.display=box && box.children.length ? 'none':'block';
+  };
+
+  function readAgencyZones(){
+    return [...document.querySelectorAll('#agencyCoverageEditor .agency-zone-row')].map(r=>({
+      department:r.querySelector('.age-zone-dept')?.value||'',
+      province:r.querySelector('.age-zone-prov')?.value||'',
+      district:r.querySelector('.age-zone-dist')?.value||'',
+      agencyName:r.querySelector('.age-zone-name')?.value.trim()||''
+    })).filter(z=>z.department&&z.province&&z.district&&z.agencyName);
+  }
+  function readAgencyTariffs(){
+    return [...document.querySelectorAll('#agencyTariffEditor .agency-tariff-row')].map(r=>({
+      size:r.querySelector('.age-tariff-size')?.value.trim()||'',
+      cost:n(r.querySelector('.age-tariff-cost')?.value),
+      note:r.querySelector('.age-tariff-note')?.value.trim()||''
+    })).filter(t=>t.size);
+  }
+
+  function resetAgencyEditors(){
+    const c=document.getElementById('agencyCoverageEditor'); if(c)c.innerHTML='';
+    const t=document.getElementById('agencyTariffEditor'); if(t)t.innerHTML='';
+    if(document.getElementById('fAgeCobertura')) document.getElementById('fAgeCobertura').value='';
+    updateAgencyEditorState(); updateAgencyTariffState();
+  }
 
   window.openAddAgencyModal=function(){
-    document.getElementById('ageModalTitle').textContent='Agregar Agencia';document.getElementById('fAgeId').value='';document.getElementById('fAgeLogo').value='';document.getElementById('fAgeNombre').value='';document.getElementById('fAgeLocalidad').value='Perú';document.getElementById('fAgeEstado').value='Activo';document.getElementById('fAgeCobertura').value='';document.getElementById('fAgeTiempo').value='';document.getElementById('fAgePuntos').value='';document.getElementById('fAgeNotas').value='';document.getElementById('fAgeTrackingUrl').value='';document.getElementById('agencyZoneList').innerHTML='';document.getElementById('agencyTariffList').innerHTML='';addAgencyZoneRow();['Pequeño','Mediano','Grande','Extra grande'].forEach(size=>addAgencyTariffRow({size,price:0}));openModal('modalNuevaAgencia');
+    resetAgencyEditors();
+    document.getElementById('ageModalTitle').textContent='Agregar Agencia';
+    document.getElementById('fAgeId').value='';
+    document.getElementById('fAgeLogo').value='';
+    document.getElementById('fAgeNombre').value='';
+    document.getElementById('fAgeLocalidad').value='Perú';
+    document.getElementById('fAgeEstado').value='Activo';
+    document.getElementById('fAgeTiempo').value='';
+    document.getElementById('fAgePuntos').value='';
+    addAgencyCoverageRow();
+    AGENCY_PACKAGE_DEFAULTS.forEach(s=>addAgencyTariffRow({size:s,cost:''}));
+    openModal('modalNuevaAgencia');
   };
+
   window.editAgency=function(id){
-    const a=DB.agencies.find(x=>String(x.id)===String(id));if(!a)return;document.getElementById('ageModalTitle').textContent='Editar Agencia';document.getElementById('fAgeId').value=a.id;document.getElementById('fAgeLogo').value='';document.getElementById('fAgeNombre').value=a.name||'';document.getElementById('fAgeLocalidad').value=a.location||'Perú';document.getElementById('fAgeEstado').value=a.status||'Activo';document.getElementById('fAgeCobertura').value=a.coverage||'';document.getElementById('fAgeTiempo').value=a.avgDays||'';document.getElementById('fAgePuntos').value=a.points||'';document.getElementById('fAgeNotas').value=a.notes||'';document.getElementById('fAgeTrackingUrl').value=a.trackingUrl||'';document.getElementById('agencyZoneList').innerHTML='';document.getElementById('agencyTariffList').innerHTML='';(a.zones||a.coverageZones||[]).forEach(z=>addAgencyZoneRow({department:z.department||z.dept,province:z.province||z.prov,district:z.district,agencyName:z.agencyName||z.name}));if(!(a.zones||a.coverageZones||[]).length)addAgencyZoneRow();(a.tariffs||[]).forEach(t=>addAgencyTariffRow(t));if(!(a.tariffs||[]).length)['Pequeño','Mediano','Grande','Extra grande'].forEach(size=>addAgencyTariffRow({size,price:0}));openModal('modalNuevaAgencia');
+    const a=agencyById(id); if(!a)return;
+    resetAgencyEditors();
+    document.getElementById('ageModalTitle').textContent='Editar Agencia';
+    document.getElementById('fAgeId').value=a.id;
+    document.getElementById('fAgeLogo').value='';
+    document.getElementById('fAgeNombre').value=a.name||'';
+    document.getElementById('fAgeLocalidad').value=a.location||'Perú';
+    document.getElementById('fAgeEstado').value=a.status||'Activo';
+    document.getElementById('fAgeTiempo').value=a.avgDays||'';
+    document.getElementById('fAgeCobertura').value=a.coverage||'';
+    document.getElementById('fAgePuntos').value=a.points||'';
+    const zones=getAgencyZones(a), tariffs=getAgencyTariffs(a);
+    (zones.length?zones:[{}]).forEach(z=>addAgencyCoverageRow(z));
+    (tariffs.length?tariffs:AGENCY_PACKAGE_DEFAULTS.map(size=>({size,cost:''}))).forEach(t=>addAgencyTariffRow(t));
+    openModal('modalNuevaAgencia');
   };
 
   window.saveAgency=function(){
-    const id=document.getElementById('fAgeId').value,name=document.getElementById('fAgeNombre').value.trim();if(!name){showToast('El nombre de la agencia es obligatorio');return;}
-    const old=id?DB.agencies.find(x=>x.id===id):null;const file=document.getElementById('fAgeLogo');const logoUrl=file.files&&file.files[0]?URL.createObjectURL(file.files[0]):'';
-    const zones=zoneRows(),tariffs=tariffRows();
-    const ageData={id:id||'AGE-'+Date.now(),name,location:document.getElementById('fAgeLocalidad').value,status:document.getElementById('fAgeEstado').value,coverage:document.getElementById('fAgeCobertura').value,avgDays:document.getElementById('fAgeTiempo').value,points:document.getElementById('fAgePuntos').value,notes:document.getElementById('fAgeNotas').value,trackingUrl:document.getElementById('fAgeTrackingUrl').value.trim(),zones,coverageZones:zones,tariffs,shipments:old?.shipments||0,color:old?.color||'#106FEB'};
-    if(logoUrl)ageData.logo=logoUrl;else if(old)ageData.logo=old.logo;
-    if(id){const i=DB.agencies.findIndex(x=>x.id===id);if(i>=0)DB.agencies[i]={...DB.agencies[i],...ageData};}else DB.agencies.unshift(ageData);
+    const id=document.getElementById('fAgeId').value;
+    const name=document.getElementById('fAgeNombre').value.trim();
+    if(!name){showToast('El nombre de la agencia es obligatorio');return;}
+    const zones=readAgencyZones();
+    const tariffs=readAgencyTariffs();
+    if(!zones.length){showToast('Registra al menos una zona con Departamento, Provincia, Distrito y nombre de sede');return;}
+    if(!tariffs.length){showToast('Registra al menos una tarifa por tamaño de paquete');return;}
+    const fileInput=document.getElementById('fAgeLogo');
+    const old=id?agencyById(id):null;
+    const logoUrl=fileInput.files&&fileInput.files[0]?URL.createObjectURL(fileInput.files[0]):'';
+    const coverageSummary=zones.map(z=>`${z.department} / ${z.province} / ${z.district} / ${z.agencyName}`).join(' · ');
+    const ageData={
+      id:id||'AGE-'+Date.now(), name,
+      location:document.getElementById('fAgeLocalidad').value||'Perú',
+      status:document.getElementById('fAgeEstado').value||'Activo',
+      coverage:coverageSummary,
+      coverageZones:zones,
+      avgDays:document.getElementById('fAgeTiempo').value.trim(),
+      points:document.getElementById('fAgePuntos').value.trim(),
+      shippingTariffs:tariffs,
+      shipments:old?.shipments||0, notes:old?.notes||'', trackingUrl:old?.trackingUrl||'',
+      color:old?.color||'#106FEB'
+    };
+    ageData.logo=logoUrl||old?.logo||'';
+    if(id){
+      const index=DB.agencies.findIndex(x=>String(x.id)===String(id));
+      if(index!==-1) DB.agencies[index]={...DB.agencies[index],...ageData};
+    }else DB.agencies.unshift(ageData);
     logActivity('Logística',id?`Agencia actualizada: ${name}`:`Nueva agencia: ${name}`,'ph-buildings','#106FEB','#dbeafe');
-    if(typeof google!=='undefined'&&google.script&&google.script.run){google.script.run.withSuccessHandler(()=>showToast(id?'Agencia actualizada en Sheets':'Agencia guardada en Sheets')).withFailureHandler(err=>{console.error(err);showToast('Error al guardar en Sheets')}).guardarAgencia(ageData);}
-    renderAgencies();closeModal('modalNuevaAgencia');showToast(id?'Agencia actualizada':'Agencia guardada');
+    if(typeof google!=='undefined'&&google.script&&google.script.run){
+      google.script.run.withSuccessHandler(function(){showToast(id?'Agencia actualizada en Sheets':'Agencia guardada en Sheets');})
+        .withFailureHandler(function(err){console.error(err);showToast('Error al guardar la agencia en Sheets');}).guardarAgencia(ageData);
+    }
+    closeModal('modalNuevaAgencia'); if(typeof window.renderAll==='function')window.renderAll(); updatePosShippingFields();
+    showToast(id?'Agencia actualizada':'Agencia guardada');
   };
 
+  function buildAgencyDetails(id){
+    const a=agencyById(id); if(!a)return;
+    const sales=arr(DB.salesHistory).filter(s=>{
+      const sid=s.agencyId||s.agenciaId||s.agency_id||s.idAgencia||'';
+      const sname=norm(s.agencyName||s.agenciaNombre||s.agency_name||s.agencia||'');
+      return String(sid)===String(a.id) || (sname && sname===norm(a.name));
+    });
+    const startDefault=new Date(); startDefault.setDate(1);
+    const iso=d=>{const x=new Date(d);return Number.isNaN(x.getTime())?'':x.toISOString().slice(0,10);};
+    const zones=getAgencyZones(a), tariffs=getAgencyTariffs(a);
+    const zoneHtml=zones.length?zones.map(z=>`<div class="agency-coverage-card"><b>${esc(z.department)} / ${esc(z.province)} / ${esc(z.district)}</b><br><span><i class="ph ph-buildings"></i> ${esc(z.agencyName||a.name)}</span></div>`).join(''):'<div class="agency-mini-note">No hay zonas registradas.</div>';
+    const tariffHtml=tariffs.length?tariffs.map(t=>`<div class="agency-tariff-pill"><span><b>${esc(t.size)}</b>${t.note?`<small style="display:block;color:var(--text-muted);">${esc(t.note)}</small>`:''}</span><strong>S/ ${n(t.cost).toFixed(2)}</strong></div>`).join(''):'<div class="agency-mini-note">No hay tarifas registradas.</div>';
+    document.getElementById('agencyDetTitle').textContent='Ficha de Agencia: '+a.name;
+    document.getElementById('agencyDetContent').innerHTML=`
+      <div style="display:flex;gap:18px;align-items:flex-start;margin-bottom:20px;">
+        <div style="width:90px;height:90px;border-radius:22px;background:${a.logo?`url('${esc(a.logo)}') center/cover`:a.color||'#106FEB'};display:flex;align-items:center;justify-content:center;color:#fff;font-size:2.4rem;flex-shrink:0;">${a.logo?'':'<i class="ph-fill ph-buildings"></i>'}</div>
+        <div style="flex:1;min-width:0;">
+          <h4 style="margin:0 0 7px;font-size:1.55rem;">${esc(a.name)}</h4>
+          <div style="display:flex;gap:7px;flex-wrap:wrap;">
+            <span class="badge ${a.status==='Activo'?'badge-ok':(a.status==='Pausado'?'badge-warn':'badge-danger')}">${esc(a.status||'Activo')}</span>
+            <span class="badge badge-blue"><i class="ph-fill ph-map-pin"></i> ${esc(a.location||'Perú')}</span>
+            <span class="badge badge-neutral"><i class="ph ph-map-trifold"></i> ${zones.length} zonas</span>
+            <span class="badge badge-neutral"><i class="ph ph-currency-circle-dollar"></i> ${tariffs.length} tarifas</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="kpi-strip" style="grid-template-columns:repeat(4,minmax(0,1fr));margin-bottom:16px;">
+        <div class="agency-stat-mini"><span>Pedidos en periodo</span><strong id="ageStatOrders">0</strong></div>
+        <div class="agency-stat-mini"><span>Facturación</span><strong id="ageStatRevenue">S/ 0.00</strong></div>
+        <div class="agency-stat-mini"><span>Envío cobrado</span><strong id="ageStatShipping">S/ 0.00</strong></div>
+        <div class="agency-stat-mini"><span>Ticket promedio</span><strong id="ageStatAvg">S/ 0.00</strong></div>
+      </div>
+
+      <div class="soft-panel" style="padding:15px;margin-bottom:15px;">
+        <div class="agency-inline-head">
+          <div><div class="agency-section-title"><i class="ph-fill ph-calendar-range"></i> Estadísticas por periodo</div><div class="agency-mini-note">Cambia las fechas para analizar exactamente lo que estás haciendo.</div></div>
+          <button class="btn btn-outline btn-sm" onclick="applyAgencyPeriodStats('${esc(a.id)}')"><i class="ph ph-arrows-clockwise"></i> Actualizar</button>
+        </div>
+        <div class="agency-period-box">
+          <div class="form-group" style="margin:0;"><label>Desde</label><input id="agencyStatStart" type="date" value="${iso(startDefault)}"></div>
+          <div class="form-group" style="margin:0;"><label>Hasta</label><input id="agencyStatEnd" type="date" value="${iso(new Date())}"></div>
+          <button class="btn btn-primary btn-sm" onclick="applyAgencyPeriodStats('${esc(a.id)}')"><i class="ph ph-chart-line-up"></i> Ver periodo</button>
+        </div>
+        <div id="agencyPeriodSummary" class="agency-mini-note"></div>
+      </div>
+
+      <div class="split-layout" style="grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
+        <div class="soft-panel" style="padding:15px;">
+          <div class="agency-section-title" style="margin-bottom:10px;"><i class="ph-fill ph-map-trifold"></i> Cobertura registrada</div>
+          <div style="max-height:235px;overflow:auto;padding-right:5px;">${zoneHtml}</div>
+        </div>
+        <div class="soft-panel" style="padding:15px;">
+          <div class="agency-section-title" style="margin-bottom:10px;"><i class="ph-fill ph-currency-circle-dollar"></i> Tarifas de envío</div>
+          <div style="max-height:235px;overflow:auto;padding-right:5px;">${tariffHtml}</div>
+        </div>
+      </div>
+
+      <div class="soft-panel" style="padding:15px;margin-bottom:15px;">
+        <div class="agency-section-title" style="margin-bottom:10px;"><i class="ph-fill ph-package"></i> Pedidos de la agencia</div>
+        <div class="form-row-3" style="align-items:end;">
+          <div class="form-group" style="margin:0;"><label>Buscar</label><input id="agencyOrdersSearch" type="text" placeholder="Pedido o cliente" oninput="filterAgencyOrders()"></div>
+          <div class="form-group" style="margin:0;"><label>Estado</label><select id="agencyOrdersStatus" onchange="filterAgencyOrders()"><option value="">Todos</option><option>Completado</option><option>Procesando</option><option>Anulado</option></select></div>
+          <div class="form-group" style="margin:0;display:flex;gap:8px;"><div style="flex:1;"><label>Desde</label><input id="agencyOrdersStart" type="date" onchange="filterAgencyOrders()"></div><div style="flex:1;"><label>Hasta</label><input id="agencyOrdersEnd" type="date" onchange="filterAgencyOrders()"></div></div>
+        </div>
+        <div class="data-table-wrap" style="margin-top:12px;max-height:280px;overflow:auto;"><table class="data-table"><thead><tr><th>Pedido</th><th>Cliente</th><th>Fecha</th><th>Estado</th><th>Total</th><th>Envío</th></tr></thead><tbody id="agencyOrdersBody"></tbody></table></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:10px;"><button id="agencyOrdersPrev" class="btn btn-outline btn-sm" onclick="changeAgencyOrdersPage(-1)"><i class="ph ph-caret-left"></i></button><span id="agencyOrdersPageLabel" class="agency-mini-note">Página 1</span><button id="agencyOrdersNext" class="btn btn-outline btn-sm" onclick="changeAgencyOrdersPage(1)"><i class="ph ph-caret-right"></i></button></div>
+      </div>
+
+      <div class="split-layout" style="grid-template-columns:1fr 1fr;gap:16px;">
+        <div class="soft-panel" style="padding:15px;"><div class="agency-section-title"><i class="ph-fill ph-link"></i> Seguimiento</div><input id="agencyDetTrackingUrl" type="url" value="${esc(a.trackingUrl||'')}" placeholder="https://..." style="width:100%;margin-top:10px;padding:11px;border:1px solid var(--neutral-line);border-radius:12px;"><button class="btn btn-outline btn-sm" style="margin-top:8px;" onclick="saveAgencyDetails('${esc(a.id)}')"><i class="ph ph-floppy-disk"></i> Guardar URL</button></div>
+        <div class="soft-panel" style="padding:15px;"><div class="agency-section-title"><i class="ph-fill ph-notebook"></i> Notas</div><textarea id="agencyDetNotes" style="width:100%;min-height:90px;margin-top:10px;padding:11px;border:1px solid var(--neutral-line);border-radius:12px;resize:vertical;">${esc(a.notes||'')}</textarea><button class="btn btn-outline btn-sm" style="margin-top:8px;" onclick="saveAgencyDetails('${esc(a.id)}')"><i class="ph ph-floppy-disk"></i> Guardar</button></div>
+      </div>`;
+    const first=iso(startDefault), today=iso(new Date());
+    document.getElementById('agencyOrdersStart').value=first;
+    document.getElementById('agencyOrdersEnd').value=today;
+    window._ageDetailId=a.id; window._ageOrdersPage=1;
+    applyAgencyPeriodStats(a.id); window.filterAgencyOrders(); openModal('modalDetallesAgencia');
+  }
+
+  window.applyAgencyPeriodStats=function(id){
+    const a=agencyById(id); if(!a)return;
+    const start=document.getElementById('agencyStatStart')?.value||'';
+    const end=document.getElementById('agencyStatEnd')?.value||'';
+    const rows=arr(DB.salesHistory).filter(s=>{
+      const sid=s.agencyId||s.agenciaId||s.agency_id||s.idAgencia||'';
+      const sn=norm(s.agencyName||s.agenciaNombre||s.agency_name||s.agencia||'');
+      if(!(String(sid)===String(a.id)||(sn&&sn===norm(a.name))))return false;
+      const d=new Date(String(s.date||'')+(String(s.date||'').length<=10?'T12:00:00':''));
+      if(Number.isNaN(d.getTime()))return false;
+      if(start && d<new Date(start+'T00:00:00'))return false;
+      if(end && d>new Date(end+'T23:59:59'))return false;
+      return true;
+    });
+    const revenue=rows.reduce((s,x)=>s+n(x.total),0);
+    const shipping=rows.reduce((s,x)=>s+n(x.shippingCost||x.envio||x.deliveryCost),0);
+    const avg=rows.length?revenue/rows.length:0;
+    const set=(id,val)=>{const e=document.getElementById(id);if(e)e.textContent=val;};
+    set('ageStatOrders',rows.length.toLocaleString('es-PE'));
+    set('ageStatRevenue',money(revenue));
+    set('ageStatShipping',money(shipping));
+    set('ageStatAvg',money(avg));
+    const sum=document.getElementById('agencyPeriodSummary');
+    if(sum)sum.innerHTML=`Periodo <strong>${esc(start||'inicio')}</strong> → <strong>${esc(end||'hoy')}</strong> · ${rows.length} pedidos · facturación ${money(revenue)}.`;
+  };
+
+  /* Detalles: conserva la funcionalidad anterior y agrega cobertura/tarifas/periodos. */
   window.openAgencyDetails=function(id){
-    const a=DB.agencies.find(x=>String(x.id)===String(id));if(!a)return;window.currentAgencyDetailId=id;document.getElementById('agencyDetTitle').textContent='Detalles de la Agencia: '+a.name;
-    const zones=a.zones||a.coverageZones||[];const tariffs=a.tariffs||[];const ms=monthSales(a);const all=salesForAgency(a);
-    const zoneHtml=zones.length?zones.map(z=>`<span class="agency-chip"><i class="ph-fill ph-map-pin"></i>${esc(z.department||z.dept||'')} / ${esc(z.province||z.prov||'')} / ${esc(z.district||'')} / ${esc(z.agencyName||z.name||a.name)}</span>`).join(''):'<span style="color:var(--text-muted);font-size:.8rem">No hay zonas registradas.</span>';
-    const tariffHtml=tariffs.length?`<table class="agency-mini-table"><thead><tr><th>Paquete</th><th>Tarifa</th></tr></thead><tbody>${tariffs.map(t=>`<tr><td>${esc(t.size)}</td><td><b>${money2(t.price)}</b></td></tr>`).join('')}</tbody></table>`:'<span style="color:var(--text-muted);font-size:.8rem">No hay tarifas registradas.</span>';
-    const orders=all.slice().sort((x,y)=>String(y.date).localeCompare(String(x.date)));const agencyNames=[...new Set(orders.map(x=>x.agencyName||a.name))];
-    document.getElementById('agencyDetContent').innerHTML=`<div style="display:flex;gap:15px;align-items:center;margin-bottom:18px;"><div style="width:82px;height:82px;border-radius:22px;background:${a.logo?`url('${a.logo}') center/cover`:a.color||'#106FEB'};display:flex;align-items:center;justify-content:center;color:#fff;font-size:2rem;flex-shrink:0;">${!a.logo?'<i class="ph-fill ph-buildings"></i>':''}</div><div><h4 style="margin:0 0 6px;font-size:1.5rem">${esc(a.name)}</h4><span class="badge ${a.status==='Activo'?'badge-ok':'badge-neutral'}">${esc(a.status||'Activo')}</span><span style="font-size:.82rem;color:var(--text-muted);margin-left:8px"><i class="ph ph-map-pin"></i> ${esc(a.location||'Perú')}</span></div></div>
-    <div class="form-row-3"><div class="agency-stat-card"><span style="font-size:.72rem;color:var(--text-muted)">Envíos del mes</span><b style="font-size:1.5rem;color:var(--primary-pill)">${ms}</b></div><div class="agency-stat-card"><span style="font-size:.72rem;color:var(--text-muted)">Pedidos históricos</span><b style="font-size:1.5rem">${all.length}</b></div><div class="agency-stat-card"><span style="font-size:.72rem;color:var(--text-muted)">Facturación asociada</span><b style="font-size:1.2rem">${money2(all.reduce((n,x)=>n+Number(x.total||0),0))}</b></div></div>
-    <div class="agency-detail-section"><h4><i class="ph-fill ph-map-trifold" style="color:var(--primary-pill)"></i> Cobertura</h4><div style="font-size:.85rem;color:var(--text-main);margin-bottom:10px"><b>General:</b> ${esc(a.coverage||'No especificada')} · <b>Tiempo:</b> ${esc(a.avgDays||'N/A')}</div><div style="font-size:.78rem;color:var(--text-muted);margin-bottom:10px"><b>Seguimiento:</b> ${a.trackingUrl?`<a class="agency-tracking-link" href="${esc(a.trackingUrl.replace('{order}',''))}" target="_blank">Abrir URL de seguimiento <i class="ph ph-arrow-square-out"></i></a>`:'No configurado'}</div><div>${zoneHtml}</div></div>
-    <div class="agency-detail-section"><h4><i class="ph-fill ph-currency-circle-dollar" style="color:var(--ok-color)"></i> Tarifas por tamaño</h4>${tariffHtml}</div>
-    <div class="agency-detail-section"><h4><i class="ph-fill ph-chart-line-up" style="color:var(--primary-pill)"></i> Estadísticas por período</h4><div class="agency-period-grid"><div class="form-group" style="margin:0"><label>Desde</label><input type="date" id="agencyStatStart"></div><div class="form-group" style="margin:0"><label>Hasta</label><input type="date" id="agencyStatEnd"></div><button class="btn btn-primary" onclick="calculateAgencyStats()"><i class="ph ph-funnel"></i> Filtrar</button></div><div id="agencyStatsResult" style="margin-top:14px"></div></div>
-    <div class="agency-detail-section"><h4><i class="ph-fill ph-package" style="color:var(--primary-pill)"></i> Seguimiento de pedidos</h4><div class="log-filter-bar" style="margin-bottom:10px;grid-template-columns:1fr 160px"><div class="log-filter-item"><div class="filter-input-wrap"><i class="ph ph-magnifying-glass"></i><input class="filter-input" id="agencyOrderSearch" placeholder="Pedido o cliente..." oninput="renderAgencyOrders()"></div></div><div class="log-filter-item"><div class="filter-input-wrap"><i class="ph ph-check-circle"></i><select class="filter-input" id="agencyOrderStatus" onchange="renderAgencyOrders()"><option value="">Todos</option><option>Completado</option><option>Procesando</option><option>Anulado</option></select></div></div></div><div class="agency-orders-scroll" style="max-height:280px;overflow:auto"><table class="agency-mini-table"><thead><tr><th>Pedido</th><th>Cliente</th><th>Fecha</th><th>Total</th><th>Estado</th><th>Seguimiento</th></tr></thead><tbody id="agencyOrdersBody"></tbody></table></div></div>
-    <div class="agency-detail-section"><h4><i class="ph-fill ph-notebook" style="color:var(--primary-pill)"></i> Notas</h4><textarea id="agencyNotesArea" style="width:100%;min-height:90px;padding:12px;border:1px solid #e5e7eb;border-radius:12px;font-family:inherit">${esc(a.notes||'')}</textarea><button class="btn btn-outline btn-sm" style="margin-top:8px" onclick="saveAgencyNotes('${esc(a.id)}')"><i class="ph ph-floppy-disk"></i> Guardar notas</button></div>`;
-    const now=new Date(),first=new Date(now.getFullYear(),now.getMonth(),1);document.getElementById('agencyStatStart').value=first.toISOString().slice(0,10);document.getElementById('agencyStatEnd').value=today();calculateAgencyStats();renderAgencyOrders();openModal('modalDetallesAgencia');
+    buildAgencyDetails(id);
   };
 
-  window.calculateAgencyStats=function(){const a=DB.agencies.find(x=>String(x.id)===String(window.currentAgencyDetailId));if(!a)return;const from=document.getElementById('agencyStatStart')?.value||'0000-01-01',to=document.getElementById('agencyStatEnd')?.value||'9999-12-31';const rows=salesForAgency(a,from,to);const revenue=rows.reduce((n,x)=>n+Number(x.total||0),0);const avg=rows.length?revenue/rows.length:0;document.getElementById('agencyStatsResult').innerHTML=`<div class="form-row-3"><div class="agency-stat-card"><span>Pedidos</span><b style="font-size:1.35rem">${rows.length}</b></div><div class="agency-stat-card"><span>Ingresos</span><b style="font-size:1.15rem;color:var(--primary-pill)">${money2(revenue)}</b></div><div class="agency-stat-card"><span>Ticket promedio</span><b style="font-size:1.15rem">${money2(avg)}</b></div></div>`;renderAgencyOrders();};
-  window.renderAgencyOrders=function(){const a=DB.agencies.find(x=>String(x.id)===String(window.currentAgencyDetailId));if(!a)return;const q=(document.getElementById('agencyOrderSearch')?.value||'').toLowerCase(),st=document.getElementById('agencyOrderStatus')?.value||'',rows=salesForAgency(a).filter(x=>(!q||`${x.order||''} ${x.client||''}`.toLowerCase().includes(q))&&(!st||x.status===st));const body=document.getElementById('agencyOrdersBody');if(!body)return;body.innerHTML=rows.map(x=>`<tr><td><b>${esc(x.order)}</b></td><td>${esc(x.client)}</td><td>${esc(x.date)}</td><td>${money2(x.total)}</td><td><span class="badge ${x.status==='Completado'?'badge-ok':x.status==='Anulado'?'badge-danger':'badge-warn'}">${esc(x.status)}</span></td><td>${x.trackingUrl?`<a class="agency-tracking-link" href="${esc(String(x.trackingUrl).replace('{order}',encodeURIComponent(x.order||'')))}" target="_blank"><i class="ph ph-arrow-square-out"></i> Ver</a>`:'—'}</td></tr>`).join('')||'<tr><td colspan="6" style="text-align:center;padding:18px;color:var(--text-muted)">No hay pedidos para este filtro.</td></tr>';};
-  window.saveAgencyNotes=function(id){const a=DB.agencies.find(x=>String(x.id)===String(id));if(!a)return;a.notes=document.getElementById('agencyNotesArea')?.value||'';showToast('Notas de agencia guardadas');};
+  function tariffFor(a,size){
+    const t=getAgencyTariffs(a).find(x=>norm(x.size||x.packageSize)===norm(size));
+    return t?n(t.cost):0;
+  }
+  function populatePosPackageSizes(a){
+    const sel=document.getElementById('posAgencyPackageSize');
+    if(!sel)return;
+    const tariffs=getAgencyTariffs(a);
+    sel.innerHTML='<option value="">Selecciona tamaño...</option>'+
+      tariffs.map(t=>`<option value="${esc(t.size)}">${esc(t.size)} — S/ ${n(t.cost).toFixed(2)}</option>`).join('');
+  }
 
-  // POS: agencia + tarifa automática
-  window.populatePosAgencies=function(){const s=document.getElementById('posAgencyId');if(!s)return;s.innerHTML='<option value="">Selecciona una agencia</option>'+(DB.agencies||[]).filter(a=>a.status!=='Inactivo').map(a=>`<option value="${esc(a.id)}">${esc(a.name)}</option>`).join('');};
-  window.updatePosAgencyShipping=function(){const type=document.getElementById('posDeliveryType')?.value||'Domicilio',fields=document.getElementById('posAgencyFields'),sel=document.getElementById('posAgencyId');if(type==='Agencia'){fields.style.display='block';populatePosAgencies();const a=DB.agencies.find(x=>String(x.id)===String(sel.value));const size=document.getElementById('posPackageSize')?.value||'Pequeño';const cost=a?tariffFor(a,size):0;document.getElementById('posAgencyTariff').value=money2(cost);document.getElementById('posEnvio').value=cost;document.getElementById('posAgencyCoverageHint').textContent=a?`Cobertura: ${a.coverage||'No especificada'} · Tiempo: ${a.avgDays||'N/A'}`:'Selecciona una agencia para ver su cobertura y tarifa.';}else{fields.style.display='none';document.getElementById('posEnvio').value=0;}if(typeof renderPosCart==='function')renderPosCart();};
+  const originalUpdatePosShippingFields=window.updatePosShippingFields;
+  window.updatePosShippingFields=function(){
+    const method=document.getElementById('posShippingMethod')?.value||'Directo';
+    const group=document.getElementById('posAgencyGroup');
+    const packageGroup=document.getElementById('posAgencyPackageGroup');
+    const select=document.getElementById('posAgencyId');
+    const cost=document.getElementById('posAgencyShippingCost');
+    const info=document.getElementById('posAgencyTariffInfo');
+    if(method==='Agencia'&&select){
+      if(group)group.style.display='';
+      const current=select.value;
+      select.innerHTML='<option value="">Selecciona una agencia</option>'+
+        arr(DB.agencies).filter(a=>a.status!=='Inactivo').map(a=>`<option value="${esc(a.id)}">${esc(a.name)}</option>`).join('');
+      if(current)select.value=current;
+      const a=agencyById(select.value);
+      if(packageGroup)packageGroup.style.display=a?'grid':'none';
+      if(a){
+        populatePosPackageSizes(a);
+        const size=document.getElementById('posAgencyPackageSize')?.value||'';
+        const c=tariffFor(a,size);
+        if(cost)cost.value=c.toFixed(2);
+        if(info){
+          info.style.display='block';
+          info.innerHTML=size?`<i class="ph-fill ph-check-circle"></i> ${esc(a.name)} · ${esc(size)} · tarifa automática <strong>${money(c)}</strong>`:`<i class="ph-fill ph-info"></i> Selecciona el tamaño del paquete para aplicar la tarifa registrada.`;
+        }
+        const envio=document.getElementById('posEnvio');
+        if(envio && size) envio.value=c.toFixed(2);
+      }
+    }else{
+      if(group)group.style.display='none';
+      if(packageGroup)packageGroup.style.display='none';
+      if(info)info.style.display='none';
+      if(cost)cost.value='0.00';
+      if(document.getElementById('posAgencyId'))document.getElementById('posAgencyId').value='';
+    }
+    if(typeof originalUpdatePosShippingFields==='function'){
+      try{originalUpdatePosShippingFields();}catch(e){}
+    }
+  };
 
-  // Wrap checkout open/confirm without removing the original logic.
-  const oldOpen=window.openCheckoutModal; if(oldOpen){window.openCheckoutModal=function(){oldOpen();populatePosAgencies();document.getElementById('posDeliveryType').value='Domicilio';document.getElementById('posPackageSize').value='Pequeño';updatePosAgencyShipping();};}
-  const oldConfirm=window.confirmPosOrder; if(oldConfirm){window.confirmPosOrder=function(){const type=document.getElementById('posDeliveryType')?.value||'Domicilio';if(type==='Agencia'&&!document.getElementById('posAgencyId')?.value){showToast('Selecciona la agencia de envío');return;}const a=DB.agencies.find(x=>String(x.id)===String(document.getElementById('posAgencyId')?.value));const size=document.getElementById('posPackageSize')?.value||'Pequeño';if(type==='Agencia'&&a){document.getElementById('posEnvio').value=tariffFor(a,size);}oldConfirm();const sale=DB.salesHistory?.[0];if(sale&&type==='Agencia'&&a){sale.deliveryType='Agencia';sale.agencyId=a.id;sale.agencyName=a.name;sale.packageSize=size;sale.shippingCost=tariffFor(a,size);sale.trackingUrl=a.trackingUrl||'';}if(typeof renderAgencies==='function')renderAgencies();};}
+  /* El backend recibe también el tamaño y el costo manual de la agencia. */
+  if(window.google?.script?.run && typeof window.google.script.run.processSaleBackend==='function'){
+    const _processSaleBackend=window.google.script.run.processSaleBackend;
+    window.google.script.run.processSaleBackend=function(saleData,cartItems){
+      const info=window._selectedAgencyShipping;
+      const enriched={...(saleData||{})};
+      if(info){
+        enriched.shippingCost=n(info.cost);
+        enriched.agencyShippingCost=n(info.cost);
+        enriched.shippingPackageSize=info.size||'';
+      }
+      return _processSaleBackend.call(this,enriched,cartItems);
+    };
+  }
 
-  function patchExistingSales(){(DB.salesHistory||[]).forEach(s=>{if(!s.deliveryType&&s.agencyId)s.deliveryType='Agencia';});}
-  function init(){loadUbigeo();makeFilterBar();patchExistingSales();populatePosAgencies();}
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+  const originalConfirmPosOrder=window.confirmPosOrder;
+  window.confirmPosOrder=function(){
+    const method=document.getElementById('posShippingMethod')?.value||'Directo';
+    if(method==='Agencia'){
+      const a=agencyById(document.getElementById('posAgencyId')?.value||'');
+      const size=document.getElementById('posAgencyPackageSize')?.value||'';
+      if(!a){showToast('Selecciona una agencia');return;}
+      if(!size){showToast('Selecciona el tamaño del paquete');return;}
+      const c=tariffFor(a,size);
+      const envio=document.getElementById('posEnvio');
+      if(envio)envio.value=c.toFixed(2);
+      /* El dato se incorpora también a la venta para historial y estadísticas. */
+      window._selectedAgencyShipping={cost:c,size:size,agencyId:a.id,agencyName:a.name};
+    }
+    if(typeof originalConfirmPosOrder==='function')originalConfirmPosOrder();
+    setTimeout(wrapSaleHistory,80);
+  };
+
+  /* Envuelve la venta para conservar costo/tamaño de agencia sin romper el flujo original. */
+  const wrapSaleHistory=function(){
+    const info=window._selectedAgencyShipping;
+    if(!info)return;
+    const sale=arr(DB.salesHistory)[0];
+    if(sale && String(sale.agencyId)===String(info.agencyId)){
+      sale.shippingCost=info.cost;
+      sale.shippingPackageSize=info.size;
+      sale.agencyShippingCost=info.cost;
+      sale.shippingMethod='Agencia';
+    }
+    window._selectedAgencyShipping=null;
+  };
+
+  /* Filtros uniformes para las cuatro subpáginas. */
+  const FILTER_CONFIG={
+    prov:{host:'log-prov',grid:'providerGrid',list:'providerListBody',search:'Buscar proveedor, país o tipo...',status:['Activo','Pausado','Bloqueado','Inactivo'],sort:['name-asc','name-desc','orders-desc','sales-desc']},
+    cour:{host:'log-cour',grid:null,list:'courierTableBody',search:'Buscar empresa, teléfono o zona...',status:['Activo','Pausado','Bloqueado','Inactivo'],sort:['name-asc','name-desc','zones-desc']},
+    age:{host:'log-age',grid:'agencyGrid',list:'agencyListBody',search:'Buscar agencia, departamento o distrito...',status:['Activo','Pausado','Inactivo'],sort:['name-asc','name-desc','orders-desc']},
+    plat:{host:'log-plat',grid:'platformGrid',list:'platformListBody',search:'Buscar plataforma o tipo...',status:['Activo','Pendiente','Inactivo'],sort:['name-asc','name-desc','sales-desc']}
+  };
+  const sortLabels={'name-asc':'A → Z','name-desc':'Z → A','orders-desc':'Más pedidos','sales-desc':'Mayor ventas','zones-desc':'Más zonas'};
+
+  function injectFilter(key){
+    const cfg=FILTER_CONFIG[key], host=document.getElementById(cfg.host); if(!host)return;
+    if(key==='plat'){ const legacy=host.querySelector('.filter-bar'); if(legacy) legacy.remove(); }
+    let bar=host.querySelector('.logistics-filter-toolbar');
+    if(!bar){
+      bar=document.createElement('div');bar.className='logistics-filter-toolbar';bar.dataset.filterKey=key;
+      bar.innerHTML=`
+        <div class="logistics-filter-control logistics-filter-search"><i class="ph ph-magnifying-glass"></i><input id="logFilterSearch_${key}" type="search" placeholder="${cfg.search}" autocomplete="off"></div>
+        <div class="logistics-filter-control"><i class="ph ph-funnel"></i><select id="logFilterStatus_${key}"><option value="">Todos los estados</option>${cfg.status.map(s=>`<option value="${esc(s)}">${esc(s)}</option>`).join('')}</select></div>
+        <div class="logistics-filter-control"><i class="ph ph-sort-ascending"></i><select id="logFilterSort_${key}"><option value="">Orden por defecto</option>${cfg.sort.map(s=>`<option value="${s}">${sortLabels[s]}</option>`).join('')}</select></div>
+        <button class="logistics-filter-icon-btn" title="Limpiar filtros" aria-label="Limpiar filtros"><i class="ph ph-arrow-counter-clockwise"></i></button>
+        <div class="logistics-filter-meta"><span><i class="ph ph-sliders-horizontal"></i> Filtros rápidos</span><span id="logFilterMeta_${key}"><strong>0</strong> resultados</span></div>`;
+      const head=host.querySelector('.panel-head'); if(head)head.insertAdjacentElement('afterend',bar); else host.prepend(bar);
+      const run=()=>applyFilter(key);
+      bar.querySelector('input').addEventListener('input',run);
+      bar.querySelector('select').addEventListener('change',run);
+      bar.querySelectorAll('select')[1].addEventListener('change',run);
+      bar.querySelector('button').addEventListener('click',()=>{
+        bar.querySelector('input').value='';bar.querySelectorAll('select').forEach(s=>s.value='');run();
+      });
+    }
+    applyFilter(key);
+  }
+
+  function sourceItems(key){
+    if(key==='prov')return arr(DB.providers).map(x=>({id:x.id,name:x.name,status:x.status||'Activo',search:[x.name,x.country,x.city,x.providerType,x.supplyType,x.ruc].join(' '),orders:n(x.sales30),sales:n(x.sales30)*n(x.price),zones:0}));
+    if(key==='cour')return arr(DB.couriers).map(x=>({id:x.id,name:x.name,status:x.status||'Activo',search:[x.name,x.phone,x.type,x.method,x.country,...arr(x.coverage).flatMap(z=>[z.dept,z.prov])].join(' '),orders:n(x.deliveries),sales:0,zones:arr(x.coverage).length}));
+    if(key==='age')return arr(DB.agencies).map(x=>({id:x.id,name:x.name,status:x.status||'Activo',search:[x.name,x.location,x.coverage,...getAgencyZones(x).flatMap(z=>[z.department,z.province,z.district,z.agencyName])].join(' '),orders:arr(DB.salesHistory).filter(s=>String(s.agencyId||'')===String(x.id)).length,sales:arr(DB.salesHistory).filter(s=>String(s.agencyId||'')===String(x.id)).reduce((s,v)=>s+n(v.total),0),zones:getAgencyZones(x).length}));
+    return arr(DB.platforms).map(x=>({id:x.id,name:x.name,status:x.status||'Activo',search:[x.name,x.type,x.country].join(' '),orders:0,sales:0,zones:0}));
+  }
+
+  function applyFilter(key){
+    const cfg=FILTER_CONFIG[key];if(!cfg)return;
+    const bar=document.querySelector('#'+cfg.host+' .logistics-filter-toolbar');if(!bar)return;
+    const q=norm(document.getElementById('logFilterSearch_'+key)?.value||'');
+    const st=document.getElementById('logFilterStatus_'+key)?.value||'';
+    const sort=document.getElementById('logFilterSort_'+key)?.value||'';
+    let items=sourceItems(key).filter(x=>(!q||norm(x.search).includes(q))&&(!st||x.status===st));
+    if(sort==='name-asc')items.sort((a,b)=>a.name.localeCompare(b.name,'es'));
+    if(sort==='name-desc')items.sort((a,b)=>b.name.localeCompare(a.name,'es'));
+    if(sort==='orders-desc')items.sort((a,b)=>b.orders-a.orders);
+    if(sort==='sales-desc')items.sort((a,b)=>b.sales-a.sales);
+    if(sort==='zones-desc')items.sort((a,b)=>b.zones-a.zones);
+    const visible=new Set(items.map(x=>String(x.id)));
+    const grid=cfg.grid?document.getElementById(cfg.grid):null;
+    const list=cfg.list?document.getElementById(cfg.list):null;
+    if(grid){
+      [...grid.children].forEach(ch=>{
+        const id=ch.dataset.logId;
+        ch.classList.toggle('logistics-filter-hidden',id? !visible.has(String(id)) : false);
+      });
+      const ordered=[...grid.children].filter(ch=>ch.dataset.logId&&visible.has(String(ch.dataset.logId)));
+      if(sort)ordered.sort((a,b)=>{
+        const ia=items.findIndex(x=>String(x.id)===String(a.dataset.logId)), ib=items.findIndex(x=>String(x.id)===String(b.dataset.logId));return ia-ib;
+      }).forEach(ch=>grid.appendChild(ch));
+    }
+    if(list){
+      [...list.children].forEach(ch=>{
+        const id=ch.dataset.logId;
+        ch.classList.toggle('logistics-filter-hidden',id? !visible.has(String(id)) : false);
+      });
+      if(sort)[...list.children].filter(ch=>ch.dataset.logId&&visible.has(String(ch.dataset.logId))).sort((a,b)=>{
+        const ia=items.findIndex(x=>String(x.id)===String(a.dataset.logId)),ib=items.findIndex(x=>String(x.id)===String(b.dataset.logId));return ia-ib;
+      }).forEach(ch=>list.appendChild(ch));
+    }
+    const meta=document.getElementById('logFilterMeta_'+key);if(meta)meta.innerHTML=`<strong>${items.length}</strong> resultado${items.length===1?'':'s'} de ${sourceItems(key).length}`;
+  }
+
+  function tagRenderedNodes(){
+    [['prov','providerGrid','providerListBody',DB.providers],['age','agencyGrid','agencyListBody',DB.agencies],['plat','platformGrid','platformListBody',DB.platforms],['cour',null,'courierTableBody',DB.couriers]].forEach(([key,gridId,listId,data])=>{
+      if(gridId){const g=document.getElementById(gridId);if(g)[...g.children].forEach((el,i)=>{if(data[i])el.dataset.logId=data[i].id;});}
+      const l=document.getElementById(listId);if(l)[...l.children].forEach((el,i)=>{if(data[i])el.dataset.logId=data[i].id;});
+      injectFilter(key);
+    });
+  }
+
+  /* renderAll vuelve a etiquetar las filas/tarjetas cada vez que llegan datos de Sheets. */
+  const originalRenderAll=window.renderAll;
+  if(typeof originalRenderAll==='function'){
+    window.renderAll=function(){
+      originalRenderAll();
+      setTimeout(tagRenderedNodes,0);
+    };
+  }
+  document.addEventListener('DOMContentLoaded',function(){setTimeout(tagRenderedNodes,80);});
+  setTimeout(tagRenderedNodes,120);
+
+  /* Pedidos dentro de la ficha: versión compatible con el detalle avanzado. */
+  window._ageDetailId = null;
+  window._ageOrdersPage = 1;
+  window.filterAgencyOrders=function(){
+    const id=window._ageDetailId, a=agencyById(id); if(!a)return;
+    const start=document.getElementById('agencyOrdersStart')?.value||'';
+    const end=document.getElementById('agencyOrdersEnd')?.value||'';
+    const status=document.getElementById('agencyOrdersStatus')?.value||'';
+    const search=norm(document.getElementById('agencyOrdersSearch')?.value||'');
+    const rows=arr(DB.salesHistory).filter(s=>{
+      const sid=s.agencyId||s.agenciaId||s.agency_id||s.idAgencia||'';
+      const sn=norm(s.agencyName||s.agenciaNombre||s.agency_name||s.agencia||'');
+      if(!(String(sid)===String(a.id)||(sn&&sn===norm(a.name))))return false;
+      if(status&&String(s.status||'')!==status)return false;
+      const d=new Date(String(s.date||'')+(String(s.date||'').length<=10?'T12:00:00':''));
+      if(start&&(!d||Number.isNaN(d.getTime())||d<new Date(start+'T00:00:00')))return false;
+      if(end&&(!d||Number.isNaN(d.getTime())||d>new Date(end+'T23:59:59')))return false;
+      if(search&&!norm([s.order,s.client,s.clientName,s.phone,s.status].join(' ')).includes(search))return false;
+      return true;
+    });
+    const size=6, pages=Math.max(1,Math.ceil(rows.length/size));
+    window._ageOrdersPage=Math.min(Math.max(1,window._ageOrdersPage),pages);
+    const pageRows=rows.slice((window._ageOrdersPage-1)*size,window._ageOrdersPage*size);
+    const body=document.getElementById('agencyOrdersBody');
+    if(body)body.innerHTML=pageRows.length?pageRows.map(s=>`
+      <tr><td><b>${esc(s.order||s.id||'—')}</b></td><td>${esc(s.client||s.clientName||'—')}</td><td>${esc(s.date||'—')}</td>
+      <td><span class="badge badge-neutral">${esc(s.status||'—')}</span></td><td class="cell-strong">${money(n(s.total))}</td>
+      <td>${n(s.shippingCost||s.envio||s.deliveryCost)?money(n(s.shippingCost||s.envio||s.deliveryCost)):'—'}</td></tr>`).join('')
+      :'<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--text-muted);">No hay pedidos que coincidan.</td></tr>';
+    const label=document.getElementById('agencyOrdersPageLabel');if(label)label.textContent=`Página ${window._ageOrdersPage} de ${pages} · ${rows.length} pedido${rows.length===1?'':'s'}`;
+    const prev=document.getElementById('agencyOrdersPrev'),next=document.getElementById('agencyOrdersNext');
+    if(prev)prev.disabled=window._ageOrdersPage<=1;if(next)next.disabled=window._ageOrdersPage>=pages;
+  };
+  window.changeAgencyOrdersPage=function(delta){window._ageOrdersPage+=delta;window.filterAgencyOrders();};
+
+  /* Cada render de las cuatro listas puede ocurrir sin pasar por renderAll. */
+  const originalOpenAgencyDetails=window.openAgencyDetails;
+
+
+  /* Persiste el costo de agencia en el historial aunque el backend anterior no lo conociera. */
+  const oldProcessSaleBackend=window.google?.script?.run?.processSaleBackend;
+  /* El guardado real continúa usando processSaleBackend del sistema original. */
+
+  /* Al seleccionar una agencia, recalcula la tarifa. */
+  document.addEventListener('change',function(e){
+    if(e.target && e.target.id==='posAgencyId')window.updatePosShippingFields();
+    if(e.target && e.target.id==='posAgencyPackageSize')window.updatePosShippingFields();
+  });
+
 })();
 </script>
+
 </body>
 </html>
