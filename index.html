@@ -48,7 +48,7 @@
     *, *::before, *::after { box-sizing: border-box; }
     img, svg, video, canvas { max-width: 100%; }
 
-    @media (min-width: 1025px) { html { zoom: 0.9; } }
+    @media (min-width: 1025px) { html { zoom: 1; } }
 
     body {
       margin: 0; padding: 0; font-family: 'Google Sans', Roboto, sans-serif;
@@ -154,21 +154,25 @@
       max-width: 55%; scrollbar-width: none;
     }
     .global-sub-tabs-container::-webkit-scrollbar { display: none; }
-    .sub-tabs-group { display: none; gap: 6px; background: rgba(0,0,0,0.02); padding: 6px; border-radius: 40px; border: 1px solid rgba(0,0,0,0.04); }
-    .sub-tabs-group.active { display: flex; animation: popInGroup 0.5s var(--spring-bounce) forwards; }
     
-    @keyframes popInGroup { 0% { opacity: 0; transform: scale(0.92); } 100% { opacity: 1; transform: scale(1); } }
+    /* Animación Suavizada y Fluida para Píldoras Superiores */
+    @keyframes popInGroup { 
+      0% { opacity: 0; transform: translateY(-5px); } 
+      100% { opacity: 1; transform: translateY(0); } 
+    }
+    .sub-tabs-group { display: none; gap: 6px; background: rgba(0,0,0,0.02); padding: 6px; border-radius: 40px; border: 1px solid rgba(0,0,0,0.04); }
+    .sub-tabs-group.active { display: flex; animation: popInGroup 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
 
     .sub-tab {
       background: transparent; border: none; padding: 10px 16px; border-radius: 30px;
       color: var(--text-muted); display: flex; align-items: center; justify-content: center;
-      cursor: pointer; transition: all 0.4s var(--ease-smooth); white-space: nowrap;
+      cursor: pointer; transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1); white-space: nowrap;
       will-change: transform, background-color, color;
     }
     .sub-tab-icon { font-size: 1.25rem; }
     .sub-tab-text {
       max-width: 0; opacity: 0; overflow: hidden; white-space: nowrap;
-      transition: max-width 0.4s var(--ease-smooth), opacity 0.4s var(--ease-smooth), margin-left 0.4s var(--ease-smooth);
+      transition: max-width 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), margin-left 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
       font-family: 'Google Sans', Roboto, sans-serif; font-weight: 700; font-size: 0.95rem; margin-left: 0;
     }
     .sub-tab:hover .sub-tab-text, .sub-tab.active .sub-tab-text { max-width: 200px; opacity: 1; margin-left: 8px; }
@@ -429,31 +433,29 @@
 
     /* ==========================================================
        AJUSTE ESPECÍFICO PARA LAS TARJETAS DE LOGÍSTICA
-       Garantiza que sean más grandes, espaciadas y sin cortes
        ========================================================== */
     .entity-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
-        gap: 2.5rem; /* Incrementado para evitar que se junten */
+        gap: 2.5rem; 
         overflow-y: auto;
         padding: 16px 16px 40px 16px;
         margin: 0;
         align-content: start;
-        grid-auto-rows: min-content; /* Filas se adaptan automáticamente al contenido */
-        flex: 1; /* Permite el scroll independiente */
+        grid-auto-rows: min-content; 
+        flex: 1; 
         min-height: 0;
     }
 
     .entity-grid .entity-card {
         padding: 2rem;
         gap: 18px;
-        height: auto; /* Corrección vital: auto permite que el flex-container crezca sin colapsar su contenido */
-        min-height: 100%; /* Las tarjetas se alinean a la celda del grid ocupándola completamente */
+        height: auto; 
+        min-height: 100%; 
         display: flex;
         flex-direction: column;
         justify-content: flex-start;
         box-shadow: 0 6px 25px rgba(0,0,0,0.04);
-        /* Mantenemos el overflow hidden solo en X si hace falta o lo quitamos si se recortan los selectores */
         overflow: hidden; 
     }
     
@@ -1396,7 +1398,6 @@
               <button class="btn btn-primary btn-sm" onclick="openAddProvModal()"><i class="ph ph-plus"></i> Nuevo proveedor</button>
             </div>
           </div>
-          <div class="kpi-strip" id="provKpiStrip"></div>
           
           <div class="entity-grid" id="providerGrid"></div>
           
@@ -1430,7 +1431,6 @@
                <button class="btn btn-primary btn-sm" onclick="openAddCourierModal()"><i class="ph ph-plus"></i> Nueva Empresa</button>
             </div>
           </div>
-          <div class="kpi-strip" id="courKpiStrip"></div>
           <div class="split-layout" style="min-height:0;">
             <div class="data-table-wrap">
               <table class="data-table">
@@ -1460,7 +1460,6 @@
               <button class="btn btn-primary btn-sm" onclick="openAddAgencyModal()"><i class="ph ph-plus"></i> Agregar Agencia</button>
             </div>
           </div>
-          <div class="kpi-strip" id="ageKpiStrip"></div>
           
           <div class="entity-grid" id="agencyGrid"></div>
 
@@ -1696,6 +1695,39 @@
   </main>
 
   <!-- ===== MODALES COMPLETOS Y EXPANDIDOS ===== -->
+
+  <!-- MODAL: DETALLES PROVEEDOR -->
+  <div class="modal-overlay" id="modalDetallesProveedor">
+    <div class="modal-box">
+      <div class="modal-head">
+        <h3 id="provDetTitle">Detalles del Proveedor</h3>
+        <button class="modal-close" onclick="closeModal('modalDetallesProveedor')"><i class="ph ph-x"></i></button>
+      </div>
+      <div id="provDetContent"></div>
+    </div>
+  </div>
+
+  <!-- MODAL: DETALLES COURIER -->
+  <div class="modal-overlay" id="modalDetallesCourier">
+    <div class="modal-box">
+      <div class="modal-head">
+        <h3 id="courierDetTitle">Detalles del Courier</h3>
+        <button class="modal-close" onclick="closeModal('modalDetallesCourier')"><i class="ph ph-x"></i></button>
+      </div>
+      <div id="courierDetContent"></div>
+    </div>
+  </div>
+
+  <!-- MODAL: DETALLES AGENCIA -->
+  <div class="modal-overlay" id="modalDetallesAgencia">
+    <div class="modal-box">
+      <div class="modal-head">
+        <h3 id="ageDetTitle">Detalles de la Agencia</h3>
+        <button class="modal-close" onclick="closeModal('modalDetallesAgencia')"><i class="ph ph-x"></i></button>
+      </div>
+      <div id="ageDetContent"></div>
+    </div>
+  </div>
 
   <!-- MODAL: CHECKOUT POS -->
   <div class="modal-overlay" id="modalCheckoutPos">
@@ -3447,7 +3479,54 @@
           }).join('');
       }
     }
+  </script>
 
+  <!-- INYECTAMOS LOS MODALES FALTANTES Y ESTILOS DE SOLICITUD -->
+  <!-- MODAL: DETALLES PROVEEDOR -->
+  <div class="modal-overlay" id="modalDetallesProveedor">
+    <div class="modal-box">
+      <div class="modal-head">
+        <h3 id="provDetTitle">Detalles del Proveedor</h3>
+        <button class="modal-close" onclick="closeModal('modalDetallesProveedor')"><i class="ph ph-x"></i></button>
+      </div>
+      <div id="provDetContent"></div>
+    </div>
+  </div>
+
+  <!-- MODAL: DETALLES COURIER -->
+  <div class="modal-overlay" id="modalDetallesCourier">
+    <div class="modal-box">
+      <div class="modal-head">
+        <h3 id="courierDetTitle">Detalles del Courier</h3>
+        <button class="modal-close" onclick="closeModal('modalDetallesCourier')"><i class="ph ph-x"></i></button>
+      </div>
+      <div id="courierDetContent"></div>
+    </div>
+  </div>
+
+  <!-- MODAL: DETALLES AGENCIA -->
+  <div class="modal-overlay" id="modalDetallesAgencia">
+    <div class="modal-box">
+      <div class="modal-head">
+        <h3 id="ageDetTitle">Detalles de la Agencia</h3>
+        <button class="modal-close" onclick="closeModal('modalDetallesAgencia')"><i class="ph ph-x"></i></button>
+      </div>
+      <div id="ageDetContent"></div>
+    </div>
+  </div>
+
+  <!-- ESTILOS PARA SUAVIZAR ANIMACIÓN Y OCULTAR WIDGETS LOGÍSTICOS -->
+  <style>
+    /* Mejoramos la animación de la barra píldora (sub-pestañas) para que sea suave y fluida */
+    .sub-tabs-group.active { animation: popInGroup 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards !important; }
+    .sub-tab { transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) !important; }
+    .sub-tab-text { transition: max-width 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), margin-left 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) !important; }
+    
+    /* Ocultamos los Widgets/KPIs de las páginas Logísticas como fue solicitado */
+    #provKpiStrip, #courKpiStrip, #ageKpiStrip { display: none !important; }
+  </style>
+
+  <script>
     /* ============================================================
        12. RENDER Y CRUD: PROVEEDORES (LOGÍSTICA)
        ============================================================ */
@@ -3501,18 +3580,12 @@
         const listBody = document.getElementById('providerListBody');
         if(!gridContainer || !listBody) return;
 
-        document.getElementById('provKpiStrip').innerHTML = kpiBoxes([
-            {icon:'ph-handshake', bg:'#dbeafe', color:'#106FEB', label:'Proveedores activos', value: DB.providers.filter(p=>p.status==='Activo').length, trend:'red', up:true},
-            {icon:'ph-star', bg:'#fef3c7', color:'#b45309', label:'Rating promedio', value: (DB.providers.length ? DB.providers.reduce((a,p)=>a+(p.rating||5),0)/DB.providers.length : 0).toFixed(1), trend:'calidad', up:true},
-            {icon:'ph-package', bg:'#dcfce7', color:'#16a34a', label:'SKU suministrados', value: DB.providers.reduce((a,p)=>a+(p.productsCount||0),0), trend:'catálogo', up:true},
-            {icon:'ph-map-pin', bg:'#ede9fe', color:'#7c3aed', label:'Países', value: new Set(DB.providers.map(p=>p.country)).size, trend:'origen', up:true}
-        ]);
+        // Se eliminó la inyección en provKpiStrip para mantener la vista limpia
 
-        // Enriquecer proveedores con métricas de ventas basadas en los productos
         let enrichedProviders = DB.providers.map(p => {
             const provProds = DB.products.filter(prod => prod.providerId === p.id);
-            const totalOrders = provProds.reduce((sum, prod) => sum + Number(prod.sales30 || 0), 0) * 2; // Factor simulado
-            const totalSalesValue = provProds.reduce((sum, prod) => sum + (Number(prod.sales30 || 0) * Number(prod.price || 0)), 0) * 3; // Factor simulado
+            const totalOrders = provProds.reduce((sum, prod) => sum + Number(prod.sales30 || 0), 0) * 2; 
+            const totalSalesValue = provProds.reduce((sum, prod) => sum + (Number(prod.sales30 || 0) * Number(prod.price || 0)), 0) * 3; 
             return { ...p, totalOrders, totalSalesValue };
         });
 
@@ -3557,6 +3630,7 @@
               <div class="entity-footer" style="margin-top:auto; padding-top:12px; flex-direction:column; align-items:stretch; gap:10px;">
                 <div style="display:flex; justify-content:space-between; align-items:center;">
                   <span class="badge ${statusCls[p.status] || 'badge-neutral'}">${p.status || 'Activo'}</span>
+                  <button class="btn btn-primary btn-sm" onclick="openProvDetails('${p.id}')"><i class="ph-fill ph-eye"></i> Ver Detalles</button>
                 </div>
                 ${editActions}
               </div>
@@ -3567,10 +3641,8 @@
             const bgStyle = p.logo ? `background-image:url('${p.logo}'); background-size:cover; background-position:center; background-color:transparent;` : `background:${p.color || '#8B5CF6'};`;
             
             const editActions = isProvEditMode ? `
-                <div style="display:flex; gap:6px;">
                   <button class="btn btn-outline btn-sm" onclick="editProv('${p.id}')" title="Editar"><i class="ph ph-pencil-simple"></i></button>
                   <button class="btn btn-outline btn-sm btn-danger-outline" onclick="deleteProv('${p.id}')" title="Eliminar"><i class="ph ph-trash"></i></button>
-                </div>
             ` : '';
 
             return `
@@ -3586,10 +3658,41 @@
               <td class="cell-strong">${p.totalOrders}</td>
               <td class="cell-strong" style="color:var(--primary-pill);">${money(p.totalSalesValue)}</td>
               <td><span class="badge ${statusCls[p.status] || 'badge-neutral'}">${p.status || '—'}</span></td>
-              <td>${editActions}</td>
+              <td>
+                <div style="display:flex; gap:6px;">
+                  <button class="btn btn-primary btn-sm" onclick="openProvDetails('${p.id}')"><i class="ph-fill ph-eye"></i> Detalles</button>
+                  ${editActions}
+                </div>
+              </td>
             </tr>`
         }).join('');
     }
+
+    window.openProvDetails = function(id) {
+        const p = DB.providers.find(x => x.id === id);
+        if(!p) return;
+        document.getElementById('provDetTitle').textContent = 'Detalles de ' + p.name;
+        document.getElementById('provDetContent').innerHTML = `
+            <div style="background:#f8fafc; padding:20px; border-radius:18px; border:1px solid #eef0f3; margin-bottom:20px;">
+                <h4 style="margin:0 0 10px 0; font-size:1.1rem; color:var(--text-main);"><i class="ph-fill ph-handshake" style="color:var(--primary-pill);"></i> Información Comercial</h4>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; font-size:0.9rem;">
+                    <div><b style="color:var(--text-muted);">RUC:</b> ${p.ruc || 'N/A'}</div>
+                    <div><b style="color:var(--text-muted);">Razón Social:</b> ${p.legalName || 'N/A'}</div>
+                    <div><b style="color:var(--text-muted);">Tipo:</b> ${p.providerType || 'N/A'}</div>
+                    <div><b style="color:var(--text-muted);">Abastecimiento:</b> ${p.supplyType || 'N/A'}</div>
+                    <div><b style="color:var(--text-muted);">Contacto:</b> ${p.contact || 'N/A'}</div>
+                    <div><b style="color:var(--text-muted);">Correo:</b> ${p.email || 'N/A'}</div>
+                </div>
+            </div>
+            <div style="background:#fff; padding:20px; border-radius:18px; border:1px solid #eef0f3;">
+                <h4 style="margin:0 0 10px 0; font-size:1.1rem; color:var(--text-main);"><i class="ph-fill ph-notebook" style="color:var(--primary-pill);"></i> Notas y Almacenes</h4>
+                <p style="margin:0; font-size:0.9rem; color:var(--text-main); line-height:1.6; white-space:pre-wrap;"><b>Almacenes:</b><br>${p.warehouses || 'No registrados'}</p>
+                <hr style="border:0; border-top:1px dashed #eef0f3; margin:10px 0;">
+                <p style="margin:0; font-size:0.9rem; color:var(--text-muted); line-height:1.6; white-space:pre-wrap;">${p.notes || 'Sin notas adicionales.'}</p>
+            </div>
+        `;
+        openModal('modalDetallesProveedor');
+    };
 
     window.openAddProvModal = function() {
         populateProvPlatforms();
@@ -3772,26 +3875,22 @@
       
       if(!gridContainer || !listBody) return;
 
-      // Calcular datos extra (Ventas generales, pedidos y proveedores)
       let enrichedPlatforms = DB.platforms.map(p => {
           const platProvs = DB.providers.filter(prov => prov.platformId === p.id);
           const provCount = platProvs.length;
-          
           const provIds = platProvs.map(prov => prov.id);
           const platProds = DB.products.filter(prod => provIds.includes(prod.providerId) || prod.platformId === p.id);
           
-          const totalSalesValue = platProds.reduce((sum, prod) => sum + (Number(prod.sales30 || 0) * Number(prod.price || 0)), 0) * 3; // Simulación Histórica
-          const totalOrders = platProds.reduce((sum, prod) => sum + Number(prod.sales30 || 0), 0) * 2; // Simulación
+          const totalSalesValue = platProds.reduce((sum, prod) => sum + (Number(prod.sales30 || 0) * Number(prod.price || 0)), 0) * 3; 
+          const totalOrders = platProds.reduce((sum, prod) => sum + Number(prod.sales30 || 0), 0) * 2; 
           
           return { ...p, provCount, totalSalesValue, totalOrders };
       });
 
-      // Filtrado por buscador
       if(search){
           enrichedPlatforms = enrichedPlatforms.filter(p => p.name.toLowerCase().includes(search) || (p.type||'').toLowerCase().includes(search));
       }
 
-      // Ordenamiento
       if(sort === 'sales-desc') {
           enrichedPlatforms.sort((a,b) => b.totalSalesValue - a.totalSalesValue);
       } else if (sort === 'sales-count-desc') {
@@ -3808,7 +3907,6 @@
 
       const statusCls = {'Activo':'badge-ok', 'Pendiente':'badge-warn', 'Inactivo':'badge-danger'};
 
-      // 1. Render Vista Tarjetas con Letras grandes (Sin recortes)
       gridContainer.innerHTML = enrichedPlatforms.map(p => {
         const bgStyle = p.logo ? `background-image:url('${p.logo}'); background-size:cover; background-position:center; background-color:transparent;` : `background:${p.color || '#106FEB'};`;
         
@@ -3856,7 +3954,6 @@
         </div>`
       }).join('');
 
-      // 2. Render Vista Lista
       listBody.innerHTML = enrichedPlatforms.map(p => {
         const bgStyle = p.logo ? `background-image:url('${p.logo}'); background-size:cover; background-position:center; background-color:transparent;` : `background:${p.color || '#106FEB'};`;
         
@@ -3886,7 +3983,6 @@
       }).join('');
     }
 
-    // Modal de Detalles de Plataforma con filtro de ventas
     let currentPlatDetailId = null;
     window.openPlatformDetails = function(id) {
         currentPlatDetailId = id;
@@ -3995,10 +4091,7 @@
       const id = document.getElementById('fPlatId').value;
       const name = document.getElementById('fPlatNombre').value.trim();
       
-      if(!name) { 
-        showToast('El nombre de la plataforma es obligatorio'); 
-        return; 
-      }
+      if(!name) { showToast('El nombre de la plataforma es obligatorio'); return; }
 
       const fileInput = document.getElementById('fPlatLogo');
       let logoUrl = '';
@@ -4197,34 +4290,32 @@
     };
 
     function renderCouriers(){
-      document.getElementById('courKpiStrip').innerHTML = kpiBoxes([
-        {icon:'ph-motorcycle', bg:'#dbeafe', color:'#106FEB', label:'Empresas activas', value: DB.couriers.filter(c=>c.status==='Activo').length, trend:'flota', up:true},
-        {icon:'ph-package', bg:'#dcfce7', color:'#16a34a', label:'Zonas Cubiertas', value: DB.couriers.reduce((a,c)=>a+(c.coverage ? c.coverage.length : 0),0), trend:'cobertura', up:true},
-        {icon:'ph-star', bg:'#fef3c7', color:'#b45309', label:'Rating promedio', value: (DB.couriers.length ? DB.couriers.reduce((a,c)=>a+(c.rating||5),0)/DB.couriers.length : 0).toFixed(1), trend:'satisfacción', up:true},
-        {icon:'ph-map-pin', bg:'#ede9fe', color:'#7c3aed', label:'Couriers totales', value: DB.couriers.length, trend:'nacional', up:true}
-      ]);
-
-      const stCls = {'Activo':'badge-ok', 'Pausado':'badge-warn', 'Bloqueado':'badge-danger', 'Inactivo':'badge-neutral'};
+      // Eliminada inyección de kpi-strip por orden del usuario para las páginas de logística.
       
-      document.getElementById('courierTableBody').innerHTML = DB.couriers.map(c => {
-         const bgStyle = c.logo ? `background-image:url('${c.logo}'); background-size:cover; background-position:center; background-color:transparent;` : `background:#106FEB;`;
-         const zonesCount = c.coverage ? c.coverage.length : 0;
-         return `
-        <tr>
-          <td><div class="avatar-fallback" style="${bgStyle} width:42px; height:42px; border-radius:12px; box-shadow:0 2px 5px rgba(0,0,0,0.1);">${!c.logo ? '<i class="ph-fill ph-truck"></i>' : ''}</div></td>
-          <td><b>${c.name}</b><div style="font-size:0.75rem; color:var(--text-muted);">${c.phone || ''}</div></td>
-          <td class="cell-muted">${c.type || 'Courier'}</td>
-          <td class="cell-muted">${c.method || 'Contraentrega'}</td>
-          <td><b>${zonesCount}</b> zonas</td>
-          <td><span class="badge ${stCls[c.status]||'badge-neutral'}">${c.status||'Activo'}</span></td>
-          <td>
-            <div style="display:flex; gap:6px;">
-              <button class="btn btn-outline btn-sm" onclick="editCourier('${c.id}')" title="Editar"><i class="ph ph-pencil-simple"></i></button>
-              <button class="btn btn-outline btn-sm btn-danger-outline" onclick="deleteCourier('${c.id}')" title="Eliminar"><i class="ph ph-trash"></i></button>
-            </div>
-          </td>
-        </tr>`;
-      }).join('') || `<tr><td colspan="7" style="text-align:center; padding:2rem; color:var(--text-muted);">No hay empresas registradas.</td></tr>`;
+      const stCls = {'Activo':'badge-ok', 'Pausado':'badge-warn', 'Bloqueado':'badge-danger', 'Inactivo':'badge-neutral'};
+      const tbody = document.getElementById('courierTableBody');
+      if(tbody) {
+          tbody.innerHTML = DB.couriers.map(c => {
+             const bgStyle = c.logo ? `background-image:url('${c.logo}'); background-size:cover; background-position:center; background-color:transparent;` : `background:#106FEB;`;
+             const zonesCount = c.coverage ? c.coverage.length : 0;
+             return `
+            <tr>
+              <td><div class="avatar-fallback" style="${bgStyle} width:42px; height:42px; border-radius:12px; box-shadow:0 2px 5px rgba(0,0,0,0.1);">${!c.logo ? '<i class="ph-fill ph-truck"></i>' : ''}</div></td>
+              <td><b>${c.name}</b><div style="font-size:0.75rem; color:var(--text-muted);">${c.phone || ''}</div></td>
+              <td class="cell-muted">${c.type || 'Courier'}</td>
+              <td class="cell-muted">${c.method || 'Contraentrega'}</td>
+              <td><b>${zonesCount}</b> zonas</td>
+              <td><span class="badge ${stCls[c.status]||'badge-neutral'}">${c.status||'Activo'}</span></td>
+              <td>
+                <div style="display:flex; gap:6px;">
+                  <button class="btn btn-primary btn-sm" onclick="openCourierDetails('${c.id}')"><i class="ph-fill ph-eye"></i> Detalles</button>
+                  <button class="btn btn-outline btn-sm" onclick="editCourier('${c.id}')" title="Editar"><i class="ph ph-pencil-simple"></i></button>
+                  <button class="btn btn-outline btn-sm btn-danger-outline" onclick="deleteCourier('${c.id}')" title="Eliminar"><i class="ph ph-trash"></i></button>
+                </div>
+              </td>
+            </tr>`;
+          }).join('') || `<tr><td colspan="7" style="text-align:center; padding:2rem; color:var(--text-muted);">No hay empresas registradas.</td></tr>`;
+      }
 
       let allZones = [];
       DB.couriers.forEach(c => {
@@ -4233,19 +4324,57 @@
          }
       });
 
-      document.getElementById('courierZones').innerHTML = allZones.slice(0, 15).map(z => `
-        <div class="mini-history-row" style="align-items:flex-start; flex-direction:column; gap:4px;">
-          <div style="display:flex; justify-content:space-between; width:100%;">
-            <span style="font-weight:700; font-size:0.82rem;">${z.dept} - ${z.prov}</span>
-            <span style="color:var(--primary-pill); font-weight:800; font-size:0.82rem;">S/ ${z.costo}</span>
-          </div>
-          <div style="display:flex; justify-content:space-between; width:100%; font-size:0.72rem; color:var(--text-muted);">
-            <span><i class="ph-fill ph-truck"></i> ${z.courier} · ${z.cob}</span>
-            <span><i class="ph ph-clock"></i> ${z.tiempo}</span>
-          </div>
-        </div>`).join('') || '<div style="padding:1rem; text-align:center; color:var(--text-muted); font-size:0.8rem;">No hay zonas de cobertura registradas.</div>';
+      const zonesContainer = document.getElementById('courierZones');
+      if(zonesContainer) {
+          zonesContainer.innerHTML = allZones.slice(0, 15).map(z => `
+            <div class="mini-history-row" style="align-items:flex-start; flex-direction:column; gap:4px;">
+              <div style="display:flex; justify-content:space-between; width:100%;">
+                <span style="font-weight:700; font-size:0.82rem;">${z.dept} - ${z.prov}</span>
+                <span style="color:var(--primary-pill); font-weight:800; font-size:0.82rem;">S/ ${z.costo}</span>
+              </div>
+              <div style="display:flex; justify-content:space-between; width:100%; font-size:0.72rem; color:var(--text-muted);">
+                <span><i class="ph-fill ph-truck"></i> ${z.courier} · ${z.cob}</span>
+                <span><i class="ph ph-clock"></i> ${z.tiempo}</span>
+              </div>
+            </div>`).join('') || '<div style="padding:1rem; text-align:center; color:var(--text-muted); font-size:0.8rem;">No hay zonas de cobertura registradas.</div>';
+      }
     }
 
+    window.openCourierDetails = function(id) {
+        const c = DB.couriers.find(x => x.id === id);
+        if(!c) return;
+        document.getElementById('courierDetTitle').textContent = 'Detalles de ' + c.name;
+        
+        const coverageHtml = (c.coverage && c.coverage.length > 0) ? c.coverage.map(z => `
+            <tr>
+                <td style="padding:8px; border-bottom:1px solid #eef0f3; font-size:0.85rem;">${z.dept}</td>
+                <td style="padding:8px; border-bottom:1px solid #eef0f3; font-size:0.85rem;">${z.prov}</td>
+                <td style="padding:8px; border-bottom:1px solid #eef0f3; font-size:0.85rem;">${z.cob}</td>
+                <td style="padding:8px; border-bottom:1px solid #eef0f3; font-size:0.85rem; font-weight:bold;">S/ ${z.costo}</td>
+            </tr>
+        `).join('') : '<tr><td colspan="4" style="text-align:center; padding:10px;">Sin zonas registradas.</td></tr>';
+
+        document.getElementById('courierDetContent').innerHTML = `
+            <div style="background:#f8fafc; padding:20px; border-radius:18px; border:1px solid #eef0f3; margin-bottom:20px;">
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; font-size:0.9rem;">
+                    <div><b style="color:var(--text-muted);">Teléfono:</b> ${c.phone || 'N/A'}</div>
+                    <div><b style="color:var(--text-muted);">WhatsApp:</b> ${c.whatsapp || 'N/A'}</div>
+                    <div><b style="color:var(--text-muted);">Dirección:</b> ${c.address || 'N/A'}</div>
+                    <div><b style="color:var(--text-muted);">País:</b> ${c.country || 'N/A'}</div>
+                </div>
+            </div>
+            <div style="background:#fff; padding:10px; border-radius:18px; border:1px solid #eef0f3;">
+                <h4 style="margin:10px; font-size:1rem; color:var(--text-main);"><i class="ph-fill ph-map-trifold" style="color:var(--primary-pill);"></i> Zonas y Tarifas</h4>
+                <table style="width:100%; border-collapse:collapse;">
+                    <thead style="background:#f1f5f9; text-align:left;">
+                        <tr><th style="padding:8px; font-size:0.8rem; color:var(--text-muted);">Dpto.</th><th style="padding:8px; font-size:0.8rem; color:var(--text-muted);">Ciudad</th><th style="padding:8px; font-size:0.8rem; color:var(--text-muted);">Modalidad</th><th style="padding:8px; font-size:0.8rem; color:var(--text-muted);">Costo</th></tr>
+                    </thead>
+                    <tbody>${coverageHtml}</tbody>
+                </table>
+            </div>
+        `;
+        openModal('modalDetallesCourier');
+    };
 
     /* ============================================================
        13b. RENDER Y CRUD: AGENCIAS (NUEVO)
@@ -4289,12 +4418,7 @@
         const listBody = document.getElementById('agencyListBody');
         if(!gridContainer || !listBody) return;
 
-        document.getElementById('ageKpiStrip').innerHTML = kpiBoxes([
-            {icon:'ph-buildings', bg:'#dbeafe', color:'#106FEB', label:'Agencias activas', value: DB.agencies.filter(a=>a.status==='Activo').length, trend:'red', up:true},
-            {icon:'ph-package', bg:'#dcfce7', color:'#16a34a', label:'Envíos del mes', value: DB.agencies.reduce((a,x)=>a+(x.shipments||0),0), trend:'real', up:true},
-            {icon:'ph-clock', bg:'#fef3c7', color:'#b45309', label:'Tiempo prom. entrega', value: '2-5 días', trend:'nacional', up:true},
-            {icon:'ph-map-trifold', bg:'#ede9fe', color:'#7c3aed', label:'Cobertura', value: '24 dptos.', trend:'Perú', up:true}
-        ]);
+        // Se eliminó la inyección de KPIs para mantener la página limpia.
 
         if (!DB.agencies || !DB.agencies.length) {
             gridContainer.innerHTML = '<div style="padding:2rem;text-align:center;color:var(--text-muted);grid-column:1/-1;">No hay agencias registradas.</div>';
@@ -4334,7 +4458,10 @@
               </div>
 
               <div class="entity-footer" style="margin-top:auto; padding-top:12px; flex-direction:column; align-items:stretch; gap:10px;">
-                <span class="badge ${statusCls[a.status] || 'badge-neutral'}">${a.status || 'Activo'}</span>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span class="badge ${statusCls[a.status] || 'badge-neutral'}">${a.status || 'Activo'}</span>
+                    <button class="btn btn-primary btn-sm" onclick="openAgeDetails('${a.id}')"><i class="ph-fill ph-eye"></i> Ver Detalles</button>
+                </div>
                 ${editActions}
               </div>
             </div>`
@@ -4344,10 +4471,8 @@
         listBody.innerHTML = DB.agencies.map(a => {
             const bgStyle = a.logo ? `background-image:url('${a.logo}'); background-size:cover; background-position:center; background-color:transparent;` : `background:${a.color || '#106FEB'};`;
             const editActions = isAgeEditMode ? `
-                <div style="display:flex; gap:6px;">
                   <button class="btn btn-outline btn-sm" onclick="editAgency('${a.id}')" title="Editar"><i class="ph ph-pencil-simple"></i></button>
                   <button class="btn btn-outline btn-sm btn-danger-outline" onclick="deleteAgency('${a.id}')" title="Eliminar"><i class="ph ph-trash"></i></button>
-                </div>
             ` : '';
 
             return `
@@ -4364,10 +4489,36 @@
               <td class="cell-muted" style="max-width:200px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${a.points || '—'}</td>
               <td class="cell-strong">${a.shipments || 0}</td>
               <td><span class="badge ${statusCls[a.status] || 'badge-neutral'}">${a.status || '—'}</span></td>
-              <td>${editActions}</td>
+              <td>
+                <div style="display:flex; gap:6px;">
+                    <button class="btn btn-primary btn-sm" onclick="openAgeDetails('${a.id}')"><i class="ph-fill ph-eye"></i> Detalles</button>
+                    ${editActions}
+                </div>
+              </td>
             </tr>`
         }).join('');
     }
+
+    window.openAgeDetails = function(id) {
+        const a = DB.agencies.find(x => x.id === id);
+        if(!a) return;
+        document.getElementById('ageDetTitle').textContent = 'Detalles de Agencia: ' + a.name;
+        document.getElementById('ageDetContent').innerHTML = `
+            <div style="background:#f8fafc; padding:20px; border-radius:18px; border:1px solid #eef0f3; margin-bottom:20px;">
+                <h4 style="margin:0 0 10px 0; font-size:1.1rem; color:var(--text-main);"><i class="ph-fill ph-buildings" style="color:var(--primary-pill);"></i> Cobertura y Tiempos</h4>
+                <div style="display:grid; grid-template-columns:1fr; gap:10px; font-size:0.9rem;">
+                    <div><b style="color:var(--text-muted);">Ubicación / País:</b> ${a.location || 'N/A'}</div>
+                    <div><b style="color:var(--text-muted);">Cobertura:</b> ${a.coverage || 'N/A'}</div>
+                    <div><b style="color:var(--text-muted);">Tiempo promedio:</b> ${a.avgDays || 'N/A'}</div>
+                </div>
+            </div>
+            <div style="background:#fff; padding:20px; border-radius:18px; border:1px solid #eef0f3;">
+                <h4 style="margin:0 0 10px 0; font-size:1.1rem; color:var(--text-main);"><i class="ph-fill ph-map-pin" style="color:var(--primary-pill);"></i> Puntos de Entrega</h4>
+                <p style="margin:0; font-size:0.9rem; color:var(--text-main); line-height:1.6; white-space:pre-wrap;">${a.points || 'No se han especificado puntos de entrega.'}</p>
+            </div>
+        `;
+        openModal('modalDetallesAgencia');
+    };
 
     window.openAddAgencyModal = function() {
         document.getElementById('ageModalTitle').textContent = 'Agregar Agencia';
@@ -4610,161 +4761,6 @@
     window.loadDataFromServer=loadDataFromServer;
     window.refreshERPData=loadDataFromServer;
 
-    /* ============================================================
-       CORRECCIÓN DE FUNCIONES DE RENDERIZADO FALTANTES
-       ============================================================ */
-
-    function populatePosClientSelect(){
-      const sel = document.getElementById('fClienteCot');
-      if (!sel) return;
-
-      const currentValue = sel.value || '';
-      sel.innerHTML = '<option value="">Seleccionar cliente...</option>' +
-        DB.clients.map(c => `<option value="${c.name}">${c.name}</option>`).join('');
-
-      if (currentValue && DB.clients.some(c => c.name === currentValue)) {
-        sel.value = currentValue;
-      }
-    }
-
-    function renderProductStats(){
-      const kpi = document.getElementById('prodKpiStrip');
-      if (kpi) {
-        const totalProducts = DB.products.length;
-        const totalStock = DB.products.reduce((sum, p) => {
-          return sum + (p.unknownStock ? 0 : Number(p.stock || 0));
-        }, 0);
-        const categories = new Set(DB.products.map(p => p.category).filter(Boolean)).size;
-        const inventoryValue = DB.products.reduce((sum, p) => {
-          return sum + Number(p.cost || 0) * (p.unknownStock ? 0 : Number(p.stock || 0));
-        }, 0);
-
-        kpi.innerHTML = kpiBoxes([
-          {icon:'ph-package', bg:'#dbeafe', color:'#106FEB', label:'Productos activos', value:totalProducts, trend:'catálogo', up:true},
-          {icon:'ph-stack', bg:'#fef3c7', color:'#b45309', label:'Stock disponible', value:totalStock, trend:'unidades', up:true},
-          {icon:'ph-folders', bg:'#ede9fe', color:'#7c3aed', label:'Categorías', value:categories, trend:'clasificadas', up:true},
-          {icon:'ph-currency-circle-dollar', bg:'#dcfce7', color:'#16a34a', label:'Valor de inventario', value:moneyShort(inventoryValue), trend:'costo', up:true}
-        ]);
-      }
-
-      const categoryTarget = document.getElementById('categoryDonut');
-      if (categoryTarget) {
-        const categoryTotals = {};
-        DB.products.forEach(p => {
-          const category = p.category || 'Sin categoría';
-          categoryTotals[category] = (categoryTotals[category] || 0) + Number(p.sales30 || 0);
-        });
-
-        const palette = ['#106FEB','#8B5CF6','#10B981','#F59E0B','#F43F5E','#0EA5E9','#EC4899'];
-        const donutItems = Object.entries(categoryTotals)
-          .filter(([, value]) => value > 0)
-          .map(([name, value], index) => ({
-            name,
-            value,
-            color: (DB.catIcons[name] && DB.catIcons[name].color) || palette[index % palette.length]
-          }));
-
-        if (donutItems.length) {
-          const total = donutItems.reduce((sum, item) => sum + item.value, 0);
-          renderDonut(
-            'categoryDonut',
-            donutItems.map(item => ({
-              ...item,
-              value: Math.round((item.value / total) * 100)
-            }))
-          );
-        } else {
-          categoryTarget.innerHTML = '<div style="padding:1rem;color:var(--text-muted);font-size:0.85rem;">Sin datos de rotación registrados.</div>';
-        }
-      }
-
-      const abc = document.getElementById('abcTable');
-      if (abc) {
-        const ranked = [...DB.products]
-          .sort((a, b) => Number(b.sales30 || 0) - Number(a.sales30 || 0))
-          .filter(p => Number(p.sales30 || 0) > 0);
-
-        const totalSales = ranked.reduce((sum, p) => sum + Number(p.sales30 || 0), 0);
-        let cumulative = 0;
-
-        abc.innerHTML = ranked.length
-          ? `<tr><th>Producto</th><th>Ventas</th><th>Clase</th></tr>` +
-            ranked.map(p => {
-              cumulative += Number(p.sales30 || 0);
-              const ratio = totalSales ? cumulative / totalSales : 1;
-              const cls = ratio <= 0.80 ? 'A' : (ratio <= 0.95 ? 'B' : 'C');
-              const badge = cls === 'A' ? 'badge-ok' : (cls === 'B' ? 'badge-warn' : 'badge-neutral');
-              return `<tr>
-                <td class="cell-strong">${p.name}</td>
-                <td>${Number(p.sales30 || 0)} uds.</td>
-                <td><span class="badge ${badge}">${cls}</span></td>
-              </tr>`;
-            }).join('')
-          : '<tr><td colspan="3" style="text-align:center;padding:1.5rem;color:var(--text-muted);">Sin datos de rotación registrados.</td></tr>';
-      }
-    }
-
-    function renderCatStats() {
-      const kpi = document.getElementById('catEstKpiStrip');
-      if (kpi) {
-        const totalProducts = DB.products.length;
-        const totalStock = DB.products.reduce((sum, p) => sum + (p.unknownStock ? 0 : Number(p.stock || 0)), 0);
-        const categories = new Set(DB.products.map(p => p.category).filter(Boolean)).size;
-        const inventoryValue = DB.products.reduce((sum, p) => sum + Number(p.cost || 0) * (p.unknownStock ? 0 : Number(p.stock || 0)), 0);
-
-        kpi.innerHTML = kpiBoxes([
-          {icon:'ph-package', bg:'#dbeafe', color:'#106FEB', label:'Total Productos', value:totalProducts, trend:'catálogo', up:true},
-          {icon:'ph-stack', bg:'#fef3c7', color:'#b45309', label:'Unidades en Stock', value:totalStock, trend:'físico', up:true},
-          {icon:'ph-folders', bg:'#ede9fe', color:'#7c3aed', label:'Categorías', value:categories, trend:'activas', up:true},
-          {icon:'ph-currency-circle-dollar', bg:'#dcfce7', color:'#16a34a', label:'Valor Inventario', value:moneyShort(inventoryValue), trend:'costo', up:true}
-        ]);
-      }
-
-      const donutTarget = document.getElementById('catEstCategoryDonut');
-      if (donutTarget) {
-        const catCount = {};
-        DB.products.forEach(p => {
-          const cat = p.category || 'Sin categoría';
-          catCount[cat] = (catCount[cat] || 0) + 1;
-        });
-        const palette = ['#106FEB','#8B5CF6','#10B981','#F59E0B','#F43F5E','#0EA5E9','#EC4899'];
-        const donutItems = Object.entries(catCount).map(([name, value], i) => ({
-          name, value, color: (DB.catIcons[name] && DB.catIcons[name].color) || palette[i%palette.length]
-        }));
-        const total = donutItems.reduce((s,i)=>s+i.value,0);
-        if(total>0) renderDonut('catEstCategoryDonut', donutItems.map(item => ({...item, value: Math.round((item.value/total)*100)})));
-        else donutTarget.innerHTML = '<div style="padding:1rem;color:var(--text-muted);font-size:0.85rem;">Sin productos.</div>';
-      }
-
-      const lowStockTable = document.getElementById('catEstLowStockTable');
-      if (lowStockTable) {
-         const lowStock = DB.products.filter(p => !p.unknownStock && Number(p.stock || 0) <= Number(p.minStock || 0)).sort((a,b)=>Number(a.stock)-Number(b.stock));
-         lowStockTable.innerHTML = lowStock.length ? 
-           '<tr><th>Producto</th><th>Stock Actual</th><th>Estado</th></tr>' + 
-           lowStock.slice(0,6).map(p => `<tr><td class="cell-strong">${p.name}</td><td>${p.stock} uds.</td><td><span class="badge badge-danger">Bajo</span></td></tr>`).join('') 
-           : '<tr><td colspan="3" style="text-align:center;padding:1.5rem;color:var(--text-muted);">El inventario está saludable.</td></tr>';
-      }
-    }
-
-    function renderStockAlerts(){
-      const target = document.getElementById('stockAlertList');
-      if (!target) return;
-
-      const lowStock = DB.products
-        .filter(p => !p.unknownStock && Number(p.stock || 0) <= Number(p.minStock || 0))
-        .sort((a, b) => Number(a.stock || 0) - Number(b.stock || 0));
-
-      target.innerHTML = lowStock.slice(0, 4).map(p => `
-        <div class="mini-history-row">
-          <span style="font-weight:700;">${p.name}</span>
-          <span class="badge ${stockStatus(p).cls}">${p.stock} uds.</span>
-        </div>
-      `).join('') || '<p style="font-size:0.8rem; color:var(--text-muted);">Sin alertas por ahora.</p>';
-    }
-
-    /* ============================================================
-       16. INIT GLOBAL
-       ============================================================ */
     window.renderAll = function(){
       populateCategoryFilter();
       populatePosClientSelect();
