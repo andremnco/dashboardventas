@@ -1362,6 +1362,14 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
 }
 
 </style>
+<style>
+    /* === SEGURIDAD DE INTERACCIÓN ===
+       Los elementos invisibles no deben bloquear clics del contenido. */
+    .modal-overlay:not(.active) { visibility: hidden; }
+    .action-dropdown:not(.active) { visibility: hidden; }
+    .section-content:not(.active), .sub-content:not(.active), .sub-tabs-group:not(.active) { pointer-events: none; }
+    .section-content.active, .sub-content.active, .sub-tabs-group.active { pointer-events: auto; }
+</style>
 </head>
 <body>
 
@@ -3326,7 +3334,7 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
     });
 
     // --- INICIALIZACIÓN ---
-    window.onload = function() {
+    window.addEventListener('load', function() {
       const savedMain = localStorage.getItem('activeMainTab') || 'inicio';
 
       if (savedMain === 'ia-clinica' || savedMain === 'configuracion') {
@@ -3362,8 +3370,8 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
           });
       }
 
-      if (typeof loadDataFromServer === 'function') loadDataFromServer();
-    };
+      if (typeof window.loadDataFromServer === 'function') window.loadDataFromServer();
+    });
   </script>
 
   <!-- ============================================================ -->
@@ -5861,6 +5869,415 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
     window._selectedAgencyShipping=null;
   };
 
+
+  /* ============================================================
+     MOTOR DE DATOS ROBUSTO — GOOGLE SHEETS / APPS SCRIPT
+     - Normaliza respuestas de distintos formatos.
+     - Evita que un dato vacío rompa todo el render.
+     - Expone loadDataFromServer y renderAll globalmente.
+     ============================================================ */
+
+  const DATA_ALIASES = {
+    products: ['products','productos','producto','Producto','Productos'],
+    clients: ['clients','clientes','cliente','Clientes'],
+    providers: ['providers','proveedores','proveedor','Proveedores','Proovedores'],
+    couriers: ['couriers','courier','couriersEmpresas','empresasCouriers','empresas_couriers','Couriers'],
+    agencies: ['agencies','agencias','agencia','Agencias'],
+    platforms: ['platforms','plataformas','plataforma','Plataformas'],
+    channels: ['channels','canales','channel','Canales'],
+    sellers: ['sellers','vendedores','seller','Vendedores'],
+    districts: ['districts','distritos','Distrito','Distritos'],
+    quotes: ['quotes','cotizaciones','quote','Cotizaciones'],
+    activity: ['activity','activities','actividad','actividades','Actividad'],
+    revenueByDay: ['revenueByDay','ingresosPorDia','ventasPorDia','revenue_by_day'],
+    salesTrend30: ['salesTrend30','tendenciaVentas30','ventas30','sales_trend_30'],
+    salesHistory: ['salesHistory','historialVentas','ventas','historial','Ventas','HistorialVentas'],
+    goal: ['goal','meta','objetivo','Goal'],
+    categories: ['categories','categorias','categorías','Categorias','Categorías']
+  };
+
+  function safeArray(value){
+    if(Array.isArray(value)) return value;
+    if(value && typeof value === 'object'){
+      if(Array.isArray(value.data)) return value.data;
+      if(Array.isArray(value.rows)) return value.rows;
+      if(Array.isArray(value.values)) return value.values;
+      return Object.values(value);
+    }
+    return [];
+  }
+
+  function firstDefined(obj, keys, fallback){
+    if(!obj || typeof obj !== 'object') return fallback;
+    for(const key of keys){
+      if(obj[key] !== undefined && obj[key] !== null && obj[key] !== '') return obj[key];
+    }
+    return fallback;
+  }
+
+  function numberSafe(value, fallback=0){
+    if(typeof value === 'number' && Number.isFinite(value)) return value;
+    if(value === null || value === undefined || value === '') return fallback;
+    const cleaned=String(value).replace(/[^\d,.-]/g,'').replace(/\.(?=\d{3}(?:\D|$))/g,'').replace(',','.');
+    const n=Number(cleaned);
+    return Number.isFinite(n) ? n : fallback;
+  }
+
+  function stringSafe(value, fallback=''){
+    if(value === null || value === undefined) return fallback;
+    return String(value).trim();
+  }
+
+  function normalizeProduct(raw){
+    const x = (raw && typeof raw==='object') ? {...raw} : {};
+    x.id = stringSafe(firstDefined(x,['id','ID','sku','SKU','codigo','Código'],'PROD-'+Date.now()+Math.random().toString(36).slice(2,7)));
+    x.name = stringSafe(firstDefined(x,['name','nombre','Nombre','producto','Producto'],'Sin nombre'));
+    x.brand = stringSafe(firstDefined(x,['brand','marca','Marca','lab','laboratorio'],''));
+    x.lab = stringSafe(firstDefined(x,['lab','laboratorio','brand','marca'],''));
+    x.sku = stringSafe(firstDefined(x,['sku','SKU','codigo','Código'],''));
+    x.category = stringSafe(firstDefined(x,['category','categoria','categoría','Categoría'],'Otros'));
+    x.providerId = stringSafe(firstDefined(x,['providerId','proveedorId','idProveedor','provider_id'],''));
+    x.platformId = stringSafe(firstDefined(x,['platformId','plataformaId','idPlataforma','platform_id'],''));
+    x.warehouse = stringSafe(firstDefined(x,['warehouse','almacen','almacén','Almacen'],''));
+    x.cost = numberSafe(firstDefined(x,['cost','costo','Costo','precioCosto'],0));
+    x.price = numberSafe(firstDefined(x,['price','precio','Precio','precioVenta'],0));
+    x.minSalePrice = numberSafe(firstDefined(x,['minSalePrice','precioMinimo','precioMin','PrecioMinimo'],0));
+    x.stock = numberSafe(firstDefined(x,['stock','Stock','inventario'],0));
+    x.minStock = numberSafe(firstDefined(x,['minStock','stockMinimo','stockMin'],5),5);
+    x.unknownStock = Boolean(firstDefined(x,['unknownStock','stockDesconocido','stockIlimitado'],false));
+    x.sales30 = numberSafe(firstDefined(x,['sales30','ventas30','ventasUltimos30','ventas_30'],0));
+    x.image = stringSafe(firstDefined(x,['image','imagen','foto','urlImagen'],''));
+    x.keywords = stringSafe(firstDefined(x,['keywords','palabrasClave','keywordsIA'],''));
+    x.benefits = stringSafe(firstDefined(x,['benefits','beneficios','beneficiosIA'],''));
+    x.desc = stringSafe(firstDefined(x,['desc','description','descripcion','descripción'],''));
+    return x;
+  }
+
+  function normalizeClient(raw){
+    const x=(raw&&typeof raw==='object')?{...raw}:{};
+    x.id=stringSafe(firstDefined(x,['id','ID','codigo','Código'],'CLI-'+Date.now()+Math.random().toString(36).slice(2,7)));
+    x.name=stringSafe(firstDefined(x,['name','nombre','Nombre','cliente','Cliente'],'Sin nombre'));
+    x.phone=stringSafe(firstDefined(x,['phone','telefono','teléfono','Telefono','celular'],''));
+    x.email=stringSafe(firstDefined(x,['email','correo','Correo'],''));
+    x.address=stringSafe(firstDefined(x,['address','direccion','dirección','Direccion'],''));
+    x.condition=stringSafe(firstDefined(x,['condition','condicion','condición'],''));
+    x.segment=stringSafe(firstDefined(x,['segment','segmento'],'Nuevo')) || 'Nuevo';
+    x.orders=numberSafe(firstDefined(x,['orders','pedidos','ordenes','órdenes'],0));
+    x.totalSpent=numberSafe(firstDefined(x,['totalSpent','gastoTotal','totalCompras','compras'],0));
+    x.lastOrder=stringSafe(firstDefined(x,['lastOrder','ultimaCompra','últimaCompra','fechaUltimaCompra'],''));
+    x.color=stringSafe(firstDefined(x,['color','Color'],'#106FEB'));
+    return x;
+  }
+
+  function normalizeProvider(raw){
+    const x=(raw&&typeof raw==='object')?{...raw}:{};
+    x.id=stringSafe(firstDefined(x,['id','ID','codigo','Código'],'PROV-'+Date.now()+Math.random().toString(36).slice(2,7)));
+    x.name=stringSafe(firstDefined(x,['name','nombre','Nombre','proveedor','Proveedor'],'Sin nombre'));
+    x.legalName=stringSafe(firstDefined(x,['legalName','razonSocial','razónSocial','razon','RazonSocial'],''));
+    x.ruc=stringSafe(firstDefined(x,['ruc','RUC'],''));
+    x.providerType=stringSafe(firstDefined(x,['providerType','tipoProveedor','tipo','type'],'Proveedor'));
+    x.supplyType=stringSafe(firstDefined(x,['supplyType','tipoAbastecimiento','abastecimiento'],''));
+    x.status=stringSafe(firstDefined(x,['status','estado','Estado'],'Activo')) || 'Activo';
+    x.country=stringSafe(firstDefined(x,['country','pais','país','Pais'],''));
+    x.region=stringSafe(firstDefined(x,['region','región','Region'],''));
+    x.city=stringSafe(firstDefined(x,['city','ciudad','Ciudad'],''));
+    x.district=stringSafe(firstDefined(x,['district','distrito','Distrito'],''));
+    x.address=stringSafe(firstDefined(x,['address','direccion','dirección','Direccion'],''));
+    x.contact=stringSafe(firstDefined(x,['contact','contacto','Contacto'],''));
+    x.email=stringSafe(firstDefined(x,['email','correo','Correo'],''));
+    x.category=stringSafe(firstDefined(x,['category','categoria','categoría'],''));
+    x.platformId=stringSafe(firstDefined(x,['platformId','plataformaId','idPlataforma'],''));
+    x.notes=stringSafe(firstDefined(x,['notes','notas','Notas'],''));
+    x.color=stringSafe(firstDefined(x,['color','Color'],'#8B5CF6'));
+    x.logo=stringSafe(firstDefined(x,['logo','logoUrl','imagen','image'],''));
+    x.rating=numberSafe(firstDefined(x,['rating','calificacion','calificación'],5),5);
+    return x;
+  }
+
+  function normalizeCoverage(value){
+    return safeArray(value).map(z=>{
+      const x=(z&&typeof z==='object')?{...z}:{};
+      x.dept=stringSafe(firstDefined(x,['dept','department','departamento','Departamento'],''));
+      x.prov=stringSafe(firstDefined(x,['prov','province','provincia','Provincia'],''));
+      x.district=stringSafe(firstDefined(x,['district','distrito','Distrito'],''));
+      x.cob=stringSafe(firstDefined(x,['cob','coverage','tipoCobertura','cobertura'],'Contraentrega'));
+      x.costo=numberSafe(firstDefined(x,['costo','cost','precio','tarifa'],0));
+      x.tiempo=stringSafe(firstDefined(x,['tiempo','time','deliveryTime'],''));
+      return x;
+    });
+  }
+
+  function normalizeCourier(raw){
+    const x=(raw&&typeof raw==='object')?{...raw}:{};
+    x.id=stringSafe(firstDefined(x,['id','ID','codigo','Código'],'COUR-'+Date.now()+Math.random().toString(36).slice(2,7)));
+    x.name=stringSafe(firstDefined(x,['name','nombre','Nombre','courier','Courier'],'Sin nombre'));
+    x.type=stringSafe(firstDefined(x,['type','tipo','Tipo'],'Courier'));
+    x.status=stringSafe(firstDefined(x,['status','estado','Estado'],'Activo')) || 'Activo';
+    x.method=stringSafe(firstDefined(x,['method','metodo','método','Metodo'],'Contraentrega'));
+    x.country=stringSafe(firstDefined(x,['country','pais','país','Pais'],''));
+    x.address=stringSafe(firstDefined(x,['address','direccion','dirección','Direccion'],''));
+    x.phone=stringSafe(firstDefined(x,['phone','telefono','teléfono','Telefono'],''));
+    x.whatsapp=stringSafe(firstDefined(x,['whatsapp','wsp','WhatsApp'],''));
+    x.coverage=normalizeCoverage(firstDefined(x,['coverage','cobertura','zonas'],[]));
+    x.deliveries=numberSafe(firstDefined(x,['deliveries','entregas','pedidos'],0));
+    x.rating=numberSafe(firstDefined(x,['rating','calificacion','calificación'],5),5);
+    x.logo=stringSafe(firstDefined(x,['logo','logoUrl','imagen','image'],''));
+    return x;
+  }
+
+  function normalizeAgency(raw){
+    const x=(raw&&typeof raw==='object')?{...raw}:{};
+    x.id=stringSafe(firstDefined(x,['id','ID','codigo','Código'],'AGE-'+Date.now()+Math.random().toString(36).slice(2,7)));
+    x.name=stringSafe(firstDefined(x,['name','nombre','Nombre','agencia','Agencia'],'Sin nombre'));
+    x.status=stringSafe(firstDefined(x,['status','estado','Estado'],'Activo')) || 'Activo';
+    x.location=stringSafe(firstDefined(x,['location','ubicacion','ubicación','ciudad','Ciudad'],''));
+    x.address=stringSafe(firstDefined(x,['address','direccion','dirección','Direccion'],''));
+    x.phone=stringSafe(firstDefined(x,['phone','telefono','teléfono','Telefono'],''));
+    x.whatsapp=stringSafe(firstDefined(x,['whatsapp','wsp','WhatsApp'],''));
+    x.email=stringSafe(firstDefined(x,['email','correo','Correo'],''));
+    x.coverage=stringSafe(firstDefined(x,['coverage','cobertura','Cobertura'],''));
+    x.avgDays=stringSafe(firstDefined(x,['avgDays','diasPromedio','tiempoPromedio'],''));
+    x.logo=stringSafe(firstDefined(x,['logo','logoUrl','imagen','image'],''));
+    x.color=stringSafe(firstDefined(x,['color','Color'],'#106FEB'));
+    x.notes=stringSafe(firstDefined(x,['notes','notas','Notas'],''));
+    x.trackingUrl=stringSafe(firstDefined(x,['trackingUrl','urlSeguimiento','tracking'],''));
+    x.zones=safeArray(firstDefined(x,['zones','zonas','coverageZones','coberturaZonas'],[]));
+    x.tariffs=safeArray(firstDefined(x,['tariffs','tarifas','agencyTariffs'],[]));
+    x.points=safeArray(firstDefined(x,['points','puntos','sedes'],[]));
+    return x;
+  }
+
+  function normalizePlatform(raw){
+    const x=(raw&&typeof raw==='object')?{...raw}:{};
+    x.id=stringSafe(firstDefined(x,['id','ID','codigo','Código'],'PLAT-'+Date.now()+Math.random().toString(36).slice(2,7)));
+    x.name=stringSafe(firstDefined(x,['name','nombre','Nombre','plataforma','Plataforma'],'Sin nombre'));
+    x.legalName=stringSafe(firstDefined(x,['legalName','razonSocial','razónSocial','razon'],''));
+    x.ruc=stringSafe(firstDefined(x,['ruc','RUC'],''));
+    x.type=stringSafe(firstDefined(x,['type','tipo','Tipo'],'Plataforma'));
+    x.status=stringSafe(firstDefined(x,['status','estado','Estado'],'Activo')) || 'Activo';
+    x.country=stringSafe(firstDefined(x,['country','pais','país','Pais'],''));
+    x.url=stringSafe(firstDefined(x,['url','URL','web','website'],''));
+    x.contact=stringSafe(firstDefined(x,['contact','contacto','Contacto'],''));
+    x.date=stringSafe(firstDefined(x,['date','fecha','Fecha'],''));
+    x.notes=stringSafe(firstDefined(x,['notes','notas','Notas'],''));
+    x.logo=stringSafe(firstDefined(x,['logo','logoUrl','imagen','image'],''));
+    x.color=stringSafe(firstDefined(x,['color','Color'],'#106FEB'));
+    return x;
+  }
+
+  function normalizeSale(raw){
+    const x=(raw&&typeof raw==='object')?{...raw}:{};
+    x.id=stringSafe(firstDefined(x,['id','ID','order','pedido','orden'],'VTA-'+Date.now()+Math.random().toString(36).slice(2,7)));
+    x.order=stringSafe(firstDefined(x,['order','pedido','orden','id'],''));
+    x.client=stringSafe(firstDefined(x,['client','cliente','clientName','nombreCliente'],'Sin nombre'));
+    x.clientName=x.clientName || x.client;
+    x.date=stringSafe(firstDefined(x,['date','fecha','Fecha'],''));
+    x.channel=stringSafe(firstDefined(x,['channel','canal','Canal'],''));
+    x.payment=stringSafe(firstDefined(x,['payment','pago','metodoPago'],''));
+    x.total=numberSafe(firstDefined(x,['total','monto','importe','venta'],0));
+    x.status=stringSafe(firstDefined(x,['status','estado','Estado'],'Completado')) || 'Completado';
+    x.shippingMethod=stringSafe(firstDefined(x,['shippingMethod','metodoEnvio','métodoEnvio','envioMetodo'],''));
+    x.shippingCost=numberSafe(firstDefined(x,['shippingCost','agencyShippingCost','costoEnvio','envio','deliveryCost'],0));
+    x.agencyId=stringSafe(firstDefined(x,['agencyId','agenciaId','idAgencia','agency_id'],''));
+    x.agencyName=stringSafe(firstDefined(x,['agencyName','agenciaNombre','agencia','agency_name'],''));
+    return x;
+  }
+
+  function normalizeResponse(raw){
+    let source=raw;
+    if(source && typeof source==='object'){
+      if(source.result!==undefined) source=source.result;
+      else if(source.data!==undefined && !Array.isArray(source)) source=source.data;
+    }
+    if(Array.isArray(source)) {
+      /* Si Apps Script devuelve una matriz, asumimos filas de ventas sólo
+         cuando no existen nombres de colecciones. */
+      return {salesHistory: source};
+    }
+    if(!source || typeof source!=='object') return {};
+
+    const out={};
+    for(const key of Object.keys(DATA_ALIASES)){
+      const aliases=DATA_ALIASES[key];
+      let found;
+      for(const alias of aliases){
+        if(source[alias]!==undefined){ found=source[alias]; break; }
+      }
+      if(found!==undefined) out[key]=found;
+    }
+
+    /* Algunos backends envuelven todo bajo "db", "database" o "ERP". */
+    const nested=source.db || source.database || source.DB || source.erp || source.ERP;
+    if(nested && typeof nested==='object'){
+      const nestedOut=normalizeResponse(nested);
+      for(const key of Object.keys(nestedOut)){
+        if(out[key]===undefined) out[key]=nestedOut[key];
+      }
+    }
+
+    return out;
+  }
+
+  function replaceDbArray(key, value, normalizer){
+    const list=safeArray(value);
+    DB[key]=normalizer ? list.map(normalizer) : list;
+  }
+
+  function applyServerData(raw){
+    const data=normalizeResponse(raw);
+
+    replaceDbArray('products',data.products,normalizeProduct);
+    replaceDbArray('clients',data.clients,normalizeClient);
+    replaceDbArray('providers',data.providers,normalizeProvider);
+    replaceDbArray('couriers',data.couriers,normalizeCourier);
+    replaceDbArray('agencies',data.agencies,normalizeAgency);
+    replaceDbArray('platforms',data.platforms,normalizePlatform);
+    replaceDbArray('salesHistory',data.salesHistory,normalizeSale);
+    replaceDbArray('quotes',data.quotes);
+    replaceDbArray('activity',data.activity);
+    replaceDbArray('channels',data.channels);
+    replaceDbArray('sellers',data.sellers);
+    replaceDbArray('districts',data.districts);
+    replaceDbArray('revenueByDay',data.revenueByDay);
+    replaceDbArray('salesTrend30',data.salesTrend30);
+
+    if(data.goal && typeof data.goal==='object'){
+      DB.goal={
+        target:numberSafe(firstDefined(data.goal,['target','objetivo','meta'],0)),
+        current:numberSafe(firstDefined(data.goal,['current','actual','ventas'],0))
+      };
+    }
+
+    const rawCategories=safeArray(data.categories);
+    if(rawCategories.length){
+      DB.categories=rawCategories.map(x=>typeof x==='object'
+        ? stringSafe(firstDefined(x,['name','nombre','categoria','categoría'],'Otros'))
+        : stringSafe(x,'Otros')
+      ).filter(Boolean);
+    } else {
+      DB.categories=[...new Set(DB.products.map(p=>p.category).filter(Boolean))];
+    }
+
+    if(!DB.categories.length) DB.categories=Object.keys(DB.catIcons);
+
+    /* Compatibilidad con respuestas de Sheets que usan una sola fila por entidad. */
+    DB.products=DB.products.filter(Boolean);
+    DB.clients=DB.clients.filter(Boolean);
+    DB.providers=DB.providers.filter(Boolean);
+    DB.couriers=DB.couriers.filter(Boolean);
+    DB.agencies=DB.agencies.filter(Boolean);
+    DB.platforms=DB.platforms.filter(Boolean);
+    DB.salesHistory=DB.salesHistory.filter(Boolean);
+
+    return data;
+  }
+
+  let _dataLoading=false;
+  let _lastServerLoad=0;
+
+  window.loadDataFromServer=function(options){
+    options=options||{};
+    if(_dataLoading && !options.force) return;
+    _dataLoading=true;
+    document.body.classList.add('data-loading');
+    showToast(options.silent ? 'Actualizando datos...' : 'Cargando datos...');
+
+    const runner=window.google?.script?.run;
+    if(!runner || typeof runner.obtenerDatosERP!=='function'){
+      _dataLoading=false;
+      document.body.classList.remove('data-loading');
+      console.warn('No existe google.script.run.obtenerDatosERP. Se mostrará la interfaz sin datos remotos.');
+      renderAll();
+      if(!options.silent) showToast('Interfaz cargada; conexión con Sheets no disponible');
+      return;
+    }
+
+    let completed=false;
+    const finish=function(){
+      if(completed)return;
+      completed=true;
+      _dataLoading=false;
+      document.body.classList.remove('data-loading');
+      _lastServerLoad=Date.now();
+    };
+
+    try{
+      runner
+        .withSuccessHandler(function(result){
+          try{
+            applyServerData(result);
+            renderAll();
+            showToast(`Datos cargados: ${DB.products.length} productos · ${DB.clients.length} clientes`);
+          }catch(error){
+            console.error('Error procesando los datos recibidos de Google Sheets:',error,result);
+            renderAll();
+            showToast('Sheets respondió, pero algunos datos no pudieron procesarse');
+          }finally{
+            finish();
+          }
+        })
+        .withFailureHandler(function(error){
+          console.error('Error cargando Google Sheets:',error);
+          finish();
+          renderAll();
+          showToast('No se pudieron cargar los datos de Google Sheets');
+        })
+        .obtenerDatosERP();
+    }catch(error){
+      console.error('Error iniciando la carga de Google Sheets:',error);
+      finish();
+      renderAll();
+      showToast('Error al conectar con Google Sheets');
+    }
+  };
+
+  window.refreshERPData=function(){
+    window.loadDataFromServer({force:true,silent:true});
+  };
+
+  function callRender(fn,name){
+    if(typeof fn!=='function')return;
+    try{ fn(); }
+    catch(error){ console.error('Error renderizando '+name+':',error); }
+  }
+
+  window.renderAll=function(){
+    callRender(renderDashboard,'Dashboard');
+    callRender(renderClientKpis,'KPIs Clientes');
+    callRender(renderClientTable,'Clientes');
+    callRender(renderClientPreview,'Vista Cliente');
+    callRender(renderSegmentation,'Segmentación');
+    callRender(renderPosGrid,'POS Productos');
+    callRender(renderPosCart,'POS Carrito');
+    callRender(renderSalesHistory,'Historial Ventas');
+    callRender(renderSalesStats,'Estadísticas Ventas');
+    callRender(populateCategoryFilter,'Filtro Categorías');
+    callRender(renderInventoryTable,'Catálogo');
+    callRender(populateProvPlatforms,'Plataformas Proveedor');
+    callRender(renderProviders,'Proveedores');
+    callRender(renderPlatforms,'Plataformas');
+    callRender(renderCouriers,'Couriers');
+    callRender(renderAgencyOrders,'Pedidos Agencia');
+    setTimeout(function(){
+      try{ tagRenderedNodes(); }catch(e){ console.error('Error aplicando filtros logísticos:',e); }
+    },0);
+  };
+
+  /* Sincronización automática: útil cuando se deja el ERP abierto varias horas. */
+  window.startERPDataPolling=function(intervalMs){
+    const ms=Math.max(30000,Number(intervalMs)||120000);
+    clearInterval(window._erpPollingTimer);
+    window._erpPollingTimer=setInterval(function(){
+      if(document.hidden)return;
+      window.loadDataFromServer({force:true,silent:true});
+    },ms);
+  };
+
+  window.stopERPDataPolling=function(){
+    clearInterval(window._erpPollingTimer);
+    window._erpPollingTimer=null;
+  };
+
   /* Filtros uniformes para las cuatro subpáginas. */
   const FILTER_CONFIG={
     prov:{host:'log-prov',grid:'providerGrid',list:'providerListBody',search:'Buscar proveedor, país o tipo...',status:['Activo','Pausado','Bloqueado','Inactivo'],sort:['name-asc','name-desc','orders-desc','sales-desc']},
@@ -5948,11 +6365,12 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
 
   /* renderAll vuelve a etiquetar las filas/tarjetas cada vez que llegan datos de Sheets. */
   const originalRenderAll=window.renderAll;
-  if(typeof originalRenderAll==='function'){
+  if(typeof originalRenderAll==='function' && !window._renderAllWrapped){
     window.renderAll=function(){
       originalRenderAll();
       setTimeout(tagRenderedNodes,0);
     };
+    window._renderAllWrapped=true;
   }
   document.addEventListener('DOMContentLoaded',function(){setTimeout(tagRenderedNodes,80);});
   setTimeout(tagRenderedNodes,120);
