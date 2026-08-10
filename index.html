@@ -8,7 +8,49 @@
   <!-- Se importa Google Sans y Roboto como respaldo -->
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Google+Sans:wght@300;400;500;700&display=swap');
-  </style>
+  
+/* ============================================================
+   MODALES — SCROLLBAR INTEGRADA Y DISCRETA
+   ============================================================ */
+.modal-overlay .modal-box {
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(16,111,235,.28) transparent;
+    scrollbar-gutter: stable;
+    overscroll-behavior: contain;
+}
+.modal-overlay .modal-box::-webkit-scrollbar {
+    width: 8px;
+}
+.modal-overlay .modal-box::-webkit-scrollbar-track {
+    background: transparent;
+    margin: 14px 5px;
+    border-radius: 999px;
+}
+.modal-overlay .modal-box::-webkit-scrollbar-thumb {
+    background: rgba(16,111,235,.24);
+    border-radius: 999px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+}
+.modal-overlay .modal-box::-webkit-scrollbar-thumb:hover {
+    background: rgba(16,111,235,.42);
+    border: 2px solid transparent;
+    background-clip: padding-box;
+}
+.modal-overlay .modal-box > * {
+    max-width: 100%;
+}
+
+
+/* Agencia: ajustes responsive del detalle */
+@media (max-width: 760px){
+  .modal-box.modal-xl .kpi-strip{grid-template-columns:repeat(2,minmax(0,1fr)) !important;}
+  .modal-box.modal-xl .split-layout{grid-template-columns:1fr !important;}
+}
+
+</style>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
   
   <script src="https://unpkg.com/@phosphor-icons/web"></script>
@@ -986,288 +1028,158 @@ table.data-table tbody tr,
   }
 }
 
+
 /* ============================================================
-   ANIMACIONES ULTRA SUAVES
-   Mantiene todas las funciones y estados del sistema.
-   Solo modifica la sensación visual de las transiciones.
+   MOTION POLISH — ANIMACIONES SUAVES Y ELEGANTES
+   Solo ajusta animaciones/transiciones. No elimina funciones.
    ============================================================ */
 :root {
   --ui-fast: 180ms;
-  --ui-normal: 260ms;
+  --ui-normal: 300ms;
   --ui-slow: 520ms;
-  --ui-ease: cubic-bezier(.22, 1, .36, 1);
-  --ui-ease-soft: cubic-bezier(.25, .8, .25, 1);
+  --ui-slower: 700ms;
+  --ui-ease: cubic-bezier(.22,.8,.25,1);
+  --ui-ease-soft: cubic-bezier(.25,.75,.25,1);
+  --ui-ease-spring: cubic-bezier(.22,1.08,.3,1);
 }
 
 /* Navegación */
-.nav-link,
-.nav-icon,
-.nav-link::before,
-.nav-link::after {
-  transition-duration: 220ms !important;
-  transition-timing-function: var(--ui-ease) !important;
+.nav-link { transition: background-color 260ms var(--ui-ease-soft), color 260ms var(--ui-ease-soft), transform 300ms var(--ui-ease); }
+.nav-icon { transition: transform 300ms var(--ui-ease), color 240ms ease; }
+.nav-link::before, .nav-link::after { transition: transform 300ms var(--ui-ease), opacity 260ms ease; }
+.sub-tabs-group.active { animation: smoothTabs 360ms var(--ui-ease) both; }
+.sub-tab { transition: background-color 260ms var(--ui-ease-soft), color 240ms ease, transform 300ms var(--ui-ease), padding 300ms var(--ui-ease); }
+.sub-tab-text { transition: max-width 360ms var(--ui-ease), opacity 260ms ease, margin-left 360ms var(--ui-ease); }
+
+@keyframes smoothTabs {
+  from { opacity: 0; transform: translate3d(0,-7px,0); }
+  to { opacity: 1; transform: translate3d(0,0,0); }
 }
 
-/* Logo: movimiento suave y discreto, sin rebotes bruscos */
+/* Logo: movimiento lento y casi imperceptible */
 .brand-icon-wrapper {
-  animation: smoothLeaf 5s ease-in-out infinite !important;
-  transition-duration: 260ms !important;
-  transition-timing-function: var(--ui-ease-soft) !important;
+  transition: transform 420ms var(--ui-ease-spring), box-shadow 420ms var(--ui-ease-soft), background-color 320ms ease, color 320ms ease;
+  animation: softLeaf 5.5s ease-in-out infinite;
 }
-
-.brand-text,
+.brand-text { transition: transform 360ms var(--ui-ease); }
 .brand-text span {
-  transition-duration: 260ms !important;
-  transition-timing-function: var(--ui-ease-soft) !important;
+  transition: color 350ms ease, text-shadow 450ms ease;
+  animation: softTextGlow 5.5s ease-in-out infinite;
+}
+@keyframes softLeaf {
+  0%,100% { transform: translate3d(0,0,0) rotate(0deg) scale(1); }
+  50% { transform: translate3d(0,-1px,0) rotate(-1deg) scale(1.015); }
+}
+@keyframes softTextGlow {
+  0%,100% { opacity: 1; }
+  50% { opacity: .88; }
 }
 
-.brand-text span {
-  animation: smoothTextGlow 5s ease-in-out infinite !important;
+/* Buscador y acciones */
+.modern-search { transition: width 360ms var(--ui-ease), background-color 300ms ease, border-color 300ms ease, box-shadow 360ms ease; }
+.modern-search input { transition: opacity 260ms ease, transform 360ms var(--ui-ease); }
+.ai-trigger, .action-circle-btn, .profile-trigger, .fab-btn {
+  transition: transform 280ms var(--ui-ease-spring), box-shadow 320ms var(--ui-ease-soft), color 240ms ease, border-color 280ms ease, background-color 280ms ease;
 }
-
-@keyframes smoothLeaf {
-  0%, 100% {
-    transform: scale(1) rotate(0deg);
-  }
-  50% {
-    transform: scale(1.025) rotate(-1.5deg);
-  }
-}
-
-@keyframes smoothTextGlow {
-  0%, 100% {
-    opacity: .96;
-    text-shadow: 0 0 0 transparent;
-  }
-  50% {
-    opacity: 1;
-    text-shadow: 0 0 8px var(--primary-glow);
-  }
-}
-
-/* Subpestañas */
-.sub-tabs-group.active {
-  animation-duration: 260ms !important;
-  animation-timing-function: var(--ui-ease) !important;
-}
-
-.sub-tab,
-.sub-tab-text {
-  transition-duration: 240ms !important;
-  transition-timing-function: var(--ui-ease) !important;
-}
-
-/* Búsqueda */
-.modern-search {
-  transition-duration: 280ms !important;
-  transition-timing-function: var(--ui-ease) !important;
-}
-
-.modern-search input {
-  transition-duration: 220ms !important;
-  transition-timing-function: var(--ui-ease) !important;
-}
-
-/* Botones superiores */
-.ai-trigger,
-.action-circle-btn,
-.profile-trigger,
-.fab-btn {
-  transition-duration: 220ms !important;
-  transition-timing-function: var(--ui-ease) !important;
-}
-
-.ai-trigger:hover {
-  transform: translate3d(0,-1px,0) scale(1.035) rotate(2deg);
-}
-
-.action-circle-btn:hover {
-  transform: translate3d(0,-1px,0) scale(1.035);
-}
-
-.profile-trigger:hover {
-  transform: translate3d(0,-1px,0) scale(1.01);
-}
-
-.fab-btn:hover {
-  transform: translate3d(0,-1px,0) scale(1.045) rotate(8deg);
-}
-
-/* Dropdowns: entrada suave, sin rebote */
-.action-dropdown {
-  transition-duration: 260ms !important;
-  transition-timing-function: var(--ui-ease) !important;
-}
+.action-dropdown { transition: transform 340ms var(--ui-ease), opacity 260ms ease; }
+.dropdown-item { transition: background-color 220ms ease, color 220ms ease, transform 260ms var(--ui-ease); }
+.dropdown-item:hover { transform: translate3d(3px,0,0); }
 
 /* Tarjetas */
-.soft-panel,
-.dash-card,
-.entity-card,
-.kpi-box,
-.pos-product-card,
-.segment-card {
-  transition-duration: 240ms !important;
-  transition-timing-function: var(--ui-ease-soft) !important;
+.soft-panel, .dash-card, .entity-card, .kpi-box, .pos-product-card, .segment-card {
+  transition: transform 360ms var(--ui-ease), border-color 280ms ease, background-color 300ms ease, box-shadow 360ms var(--ui-ease-soft);
+}
+.dash-card:hover, .kpi-box:hover, .entity-card:hover, .pos-product-card:hover, .segment-card:hover {
+  transform: translate3d(0,-3px,0) scale(1.003);
+  border-color: rgba(16,111,235,.28);
+  box-shadow: 0 10px 28px rgba(15,23,42,.055);
+  z-index: 2;
 }
 
-.dash-card:hover,
-.kpi-box:hover,
-.entity-card:hover,
-.pos-product-card:hover,
-.segment-card:hover {
-  transform: translate3d(0,-2px,0) scale(1.002) !important;
+/* Contenido / navegación de páginas */
+main { transition: margin-left 360ms var(--ui-ease), padding 360ms var(--ui-ease); }
+.section-content.active { animation: smoothPageIn 360ms var(--ui-ease) both; }
+.sub-content.active { animation: smoothPageIn 320ms var(--ui-ease) both; }
+@keyframes smoothPageIn {
+  from { opacity: 0; transform: translate3d(0,10px,0); }
+  to { opacity: 1; transform: translate3d(0,0,0); }
 }
+.folder-body { transition: opacity 260ms ease, transform 360ms var(--ui-ease); }
 
-/* Páginas y subpáginas */
-.section-content.active,
-.sub-content.active,
-.ai-message,
-.settings-pane.active {
-  animation-duration: 300ms !important;
-  animation-timing-function: var(--ui-ease) !important;
+/* Botones */
+.btn {
+  transition: transform 260ms var(--ui-ease-spring), box-shadow 320ms var(--ui-ease-soft), background-color 260ms ease, border-color 260ms ease, color 220ms ease;
 }
-
-@keyframes uiPageIn {
-  from {
-    opacity: 0;
-    transform: translate3d(0,10px,0);
-  }
-  to {
-    opacity: 1;
-    transform: translate3d(0,0,0);
-  }
-}
-
-@keyframes uiTabsIn {
-  from {
-    opacity: 0;
-    transform: translate3d(0,-6px,0);
-  }
-  to {
-    opacity: 1;
-    transform: translate3d(0,0,0);
-  }
-}
-
-/* Entrada de tarjetas escalonada visualmente, pero sin retrasos artificiales */
-.kpi-strip .kpi-box,
-.dash-row-3 .dash-card,
-.dash-row-2 .dash-card,
-.segment-grid .segment-card,
-.entity-grid .entity-card {
-  animation-duration: 280ms !important;
-  animation-timing-function: var(--ui-ease) !important;
-}
-
-@keyframes uiCardIn {
-  from {
-    opacity: 0;
-    transform: translate3d(0,10px,0);
-  }
-  to {
-    opacity: 1;
-    transform: translate3d(0,0,0);
-  }
-}
-
-/* Controles y formularios */
-.btn,
-.chip-select button,
-.settings-nav-item,
-.modal-close,
-.pos-qty-ctrl button {
-  transition-duration: 200ms !important;
-  transition-timing-function: var(--ui-ease) !important;
-}
-
-.btn-primary:hover,
-.btn-ghost:hover,
-.btn-outline:hover {
-  transform: translate3d(0,-1px,0) !important;
-}
-
-.btn:active,
-.pos-qty-ctrl button:active {
-  transform: scale(.985) !important;
-  transition-duration: 100ms !important;
-}
+.btn-primary:hover { transform: translate3d(0,-2px,0); box-shadow: 0 9px 24px var(--primary-glow); }
+.btn-ghost:hover, .btn-outline:hover { transform: translate3d(0,-1px,0); }
+.btn:active { transform: translate3d(0,1px,0) scale(.985); transition-duration: 100ms; }
+.chip-select button { transition: background-color 260ms ease, color 240ms ease, transform 280ms var(--ui-ease), box-shadow 280ms ease; }
 
 /* Inputs */
-.filter-input,
-.form-group input,
-.form-group select,
-.form-group textarea {
-  transition-duration: 200ms !important;
-  transition-timing-function: var(--ui-ease-soft) !important;
+.filter-input, .form-group input, .form-group select, .form-group textarea {
+  transition: border-color 260ms ease, background-color 260ms ease, box-shadow 320ms var(--ui-ease-soft);
 }
 
-/* Tablas, listas y estados hover */
-table.data-table tbody tr,
-.feed-item,
-.dropdown-item {
-  transition-duration: 180ms !important;
-  transition-timing-function: ease-out !important;
+/* Tablas, listas y mensajes */
+table.data-table tbody tr, .feed-item { transition: background-color 240ms ease, transform 280ms var(--ui-ease); }
+table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0,0); }
+.ai-message { animation: smoothMessage 360ms var(--ui-ease) both; }
+@keyframes smoothMessage {
+  from { opacity: 0; transform: translate3d(0,8px,0) scale(.995); }
+  to { opacity: 1; transform: translate3d(0,0,0) scale(1); }
 }
 
-/* Gráficos: movimientos largos pero suaves */
-.progress-fill {
-  transition: width 650ms var(--ui-ease-soft) !important;
+/* Gráficos y progreso: movimiento visible pero sin tirones */
+.progress-fill { transition: width 700ms var(--ui-ease); }
+.bar-chart .bar { transition: height 700ms var(--ui-ease); }
+#goalRing { transition: stroke-dashoffset 900ms var(--ui-ease); }
+
+/* Entrada de tarjetas: cascada muy ligera */
+.kpi-strip .kpi-box, .dash-row-3 .dash-card, .dash-row-2 .dash-card, .segment-grid .segment-card, .entity-grid .entity-card {
+  animation: smoothCardIn 420ms var(--ui-ease) both !important;
+}
+.kpi-strip .kpi-box:nth-child(1), .dash-row-3 .dash-card:nth-child(1), .segment-grid .segment-card:nth-child(1) { animation-delay: 20ms !important; }
+.kpi-strip .kpi-box:nth-child(2), .dash-row-3 .dash-card:nth-child(2), .segment-grid .segment-card:nth-child(2) { animation-delay: 55ms !important; }
+.kpi-strip .kpi-box:nth-child(3), .segment-grid .segment-card:nth-child(3) { animation-delay: 90ms !important; }
+.kpi-strip .kpi-box:nth-child(4), .segment-grid .segment-card:nth-child(4) { animation-delay: 125ms !important; }
+@keyframes smoothCardIn {
+  from { opacity: 0; transform: translate3d(0,12px,0) scale(.992); }
+  to { opacity: 1; transform: translate3d(0,0,0) scale(1); }
 }
 
-.bar-chart .bar {
-  transition: height 650ms var(--ui-ease-soft) !important;
-}
+/* Configuración */
+.settings-nav-item { transition: transform 280ms var(--ui-ease), background-color 260ms ease, color 240ms ease; }
+.toggle-switch { transition: background-color 320ms ease; }
+.toggle-switch .knob { transition: transform 380ms var(--ui-ease-spring); }
+.settings-pane.active { animation: smoothPageIn 320ms var(--ui-ease) both; }
 
-#goalRing {
-  transition: stroke-dashoffset 700ms var(--ui-ease-soft) !important;
-}
+/* Modal */
+.modal-overlay { transition: opacity 300ms var(--ui-ease-soft); }
+.modal-box { transition: transform 420ms var(--ui-ease-spring), opacity 300ms ease; }
+.modal-close { transition: transform 280ms var(--ui-ease-spring), background-color 240ms ease, color 220ms ease; }
+.modal-close:hover { transform: rotate(90deg) scale(1.04); }
 
-/* Toggle */
-.toggle-switch {
-  transition-duration: 220ms !important;
-  transition-timing-function: var(--ui-ease-soft) !important;
-}
+/* Toast */
+.toast-msg { transition: transform 420ms var(--ui-ease-spring), opacity 300ms ease; }
 
-.toggle-switch .knob {
-  transition-duration: 260ms !important;
-  transition-timing-function: var(--ui-ease) !important;
-}
+/* FAB */
+.fab-container { transition: transform 420ms var(--ui-ease-spring); }
+.fab-btn { transition: transform 320ms var(--ui-ease-spring), box-shadow 360ms var(--ui-ease-soft), background-color 280ms ease; }
+.fab-btn:hover { transform: translate3d(0,-3px,0) scale(1.025); }
+.fab-btn:active { transform: scale(.96); transition-duration: 110ms; }
 
-/* Modales */
-.modal-overlay {
-  transition-duration: 260ms !important;
-  transition-timing-function: ease-out !important;
-}
+/* Evita cambios bruscos durante carga */
+.data-loading .folder-body { transition: opacity 320ms ease; }
 
-.modal-box {
-  transition-duration: 300ms !important;
-  transition-timing-function: var(--ui-ease) !important;
-}
-
-.modal-close:hover {
-  transform: rotate(45deg) scale(1.04);
-}
-
-/* Toasts */
-.toast-msg {
-  transition-duration: 280ms !important;
-  transition-timing-function: var(--ui-ease) !important;
-}
-
-/* Mantener todas las animaciones suaves al cambiar de página */
-*,
-*::before,
-*::after {
-  animation-timing-function: var(--ui-ease-soft);
-}
-
+/* Respeta usuarios que prefieren menos movimiento */
 @media (prefers-reduced-motion: reduce) {
-  .brand-icon-wrapper,
-  .brand-text span {
-    animation: none !important;
+  *, *::before, *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+    scroll-behavior: auto !important;
   }
 }
-
   </style>
 </head>
 <body>
@@ -2313,6 +2225,32 @@ table.data-table tbody tr,
       <div class="form-group"><label>Dirección de Entrega</label><input type="text" id="fPosClientAddress" placeholder="Ej. Av. Larco 123, Miraflores"></div>
       
       <div class="form-group"><label>Notas del Pedido</label><textarea id="fPosOrderNotes" placeholder="Instrucciones especiales para la entrega..."></textarea></div>
+
+      <div class="soft-panel" style="margin-top:12px; padding:14px; background:#f8fafc; border:1px solid #eef0f3;">
+        <div class="form-row-2" style="margin-bottom:0;">
+          <div class="form-group" style="margin-bottom:0;">
+            <label>Método de envío</label>
+            <div class="filter-input-wrap">
+              <i class="ph ph-truck"></i>
+              <select id="posShippingMethod" class="filter-input" style="padding-left:44px; width:100%;" onchange="updatePosShippingFields()">
+                <option value="Directo">Entrega directa</option>
+                <option value="Agencia">Agencia</option>
+                <option value="Courier">Courier</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group" id="posAgencyGroup" style="margin-bottom:0; display:none;">
+            <label>Agencia seleccionada *</label>
+            <div class="filter-input-wrap">
+              <i class="ph ph-buildings"></i>
+              <select id="posAgencyId" class="filter-input" style="padding-left:44px; width:100%;" onchange="updatePosShippingFields()">
+                <option value="">Selecciona una agencia</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div id="posShippingInfo" style="font-size:.78rem; color:var(--text-muted); margin-top:8px; display:none;"></div>
+      </div>
       
       <div style="display:flex; justify-content:space-between; align-items:center; margin-top:15px; border-top:1px solid #eef0f3; padding-top:15px; flex-wrap: wrap; gap: 10px;">
           <div>
@@ -2630,7 +2568,7 @@ table.data-table tbody tr,
 
   <!-- MODAL: DETALLES AGENCIA -->
   <div class="modal-overlay" id="modalDetallesAgencia">
-    <div class="modal-box">
+    <div class="modal-box modal-xl">
       <div class="modal-head">
         <h3 id="agencyDetTitle">Detalles de Agencia</h3>
         <button class="modal-close" onclick="closeModal('modalDetallesAgencia')"><i class="ph ph-x"></i></button>
@@ -3688,6 +3626,11 @@ table.data-table tbody tr,
         document.getElementById('fPosClientEmail').value = '';
         document.getElementById('fPosClientAddress').value = '';
         document.getElementById('fPosOrderNotes').value = '';
+        const shippingMethodEl = document.getElementById('posShippingMethod');
+        if(shippingMethodEl) shippingMethodEl.value = 'Directo';
+        const agencySelectEl = document.getElementById('posAgencyId');
+        if(agencySelectEl) agencySelectEl.value = '';
+        updatePosShippingFields();
 
         const subtotal = DB.posCart.reduce((sum, item) => {
             const product = DB.products.find(p => p.id === item.id);
@@ -3774,6 +3717,13 @@ table.data-table tbody tr,
         }
 
         const payment = document.getElementById('posPaymentMethod')?.value || '';
+        const shippingMethod = document.getElementById('posShippingMethod')?.value || 'Directo';
+        const agencyId = document.getElementById('posAgencyId')?.value || '';
+        const selectedAgency = DB.agencies.find(a => String(a.id) === String(agencyId));
+        if(shippingMethod === 'Agencia' && !selectedAgency) {
+            showToast('Selecciona la agencia que realizará el envío');
+            return;
+        }
         const subtotal = DB.posCart.reduce((sum, item) => {
             const product = DB.products.find(p => p.id === item.id);
             return sum + (product ? Number(product.price || 0) * Number(item.qty || 0) : 0);
@@ -3788,7 +3738,10 @@ table.data-table tbody tr,
             channel: 'POS',
             payment: payment,
             total: grandTotal,
-            status: 'Completado'
+            status: 'Completado',
+            shippingMethod: shippingMethod,
+            agencyId: selectedAgency ? selectedAgency.id : '',
+            agencyName: selectedAgency ? selectedAgency.name : ''
         };
 
         const cartItems = DB.posCart.map(item => ({
@@ -3811,7 +3764,10 @@ table.data-table tbody tr,
             channel: saleData.channel,
             payment: saleData.payment,
             total: saleData.total,
-            status: saleData.status
+            status: saleData.status,
+            shippingMethod: saleData.shippingMethod,
+            agencyId: saleData.agencyId,
+            agencyName: saleData.agencyName
         });
         
         logActivity('Nueva Venta', `Pedido ${saleData.order} por ${money(saleData.total)}`, 'ph-shopping-cart-simple', '#16a34a', '#dcfce7');
@@ -5168,39 +5124,291 @@ table.data-table tbody tr,
         }
     };
 
-    window.openAgencyDetails = function(id) {
+    /* ============================================================
+       AGENCIAS — MÉTRICAS REALES DESDE VENTAS
+       ============================================================ */
+    let currentAgeDetailId = null;
+    let currentAgeOrdersPage = 1;
+    const AGE_ORDERS_PAGE_SIZE = 6;
+
+    function normalizeSaleText(value){
+        return String(value == null ? '' : value).trim().toLowerCase();
+    }
+
+    function getSaleAgencyId(sale){
+        return sale?.agencyId || sale?.agenciaId || sale?.agency_id || sale?.idAgencia || sale?.agency?.id || '';
+    }
+
+    function getSaleAgencyName(sale){
+        return sale?.agencyName || sale?.agenciaNombre || sale?.agency_name || sale?.agencia || (typeof sale?.agency === 'string' ? sale.agency : '') || '';
+    }
+
+    function getSaleShippingMethod(sale){
+        return sale?.shippingMethod || sale?.deliveryMethod || sale?.shipmentMethod || sale?.tipoEnvio || sale?.metodoEnvio || '';
+    }
+
+    function isSameMonth(dateValue, baseDate = new Date()){
+        if(!dateValue) return false;
+        const d = new Date(dateValue);
+        if(Number.isNaN(d.getTime())) return false;
+        return d.getFullYear() === baseDate.getFullYear() && d.getMonth() === baseDate.getMonth();
+    }
+
+    function getAgencySales(a, options = {}){
+        const start = options.start ? new Date(options.start + 'T00:00:00') : null;
+        const end = options.end ? new Date(options.end + 'T23:59:59') : null;
+        const status = options.status || '';
+        const search = normalizeSaleText(options.search || '');
+
+        return (DB.salesHistory || []).filter(sale => {
+            const saleAgencyId = String(getSaleAgencyId(sale));
+            const saleAgencyName = normalizeSaleText(getSaleAgencyName(sale));
+            const agencyId = String(a.id);
+            const agencyName = normalizeSaleText(a.name);
+            const method = normalizeSaleText(getSaleShippingMethod(sale));
+
+            const belongs =
+                saleAgencyId === agencyId ||
+                (saleAgencyName && saleAgencyName === agencyName) ||
+                (method === 'agencia' && saleAgencyName === agencyName);
+
+            if(!belongs) return false;
+
+            const date = sale.date ? new Date(sale.date + (String(sale.date).length <= 10 ? 'T12:00:00' : '')) : null;
+            if(start && (!date || date < start)) return false;
+            if(end && (!date || date > end)) return false;
+            if(status && String(sale.status || '') !== status) return false;
+
+            if(search){
+                const haystack = [sale.order, sale.client, sale.clientName, sale.phone, sale.status, sale.trackingNumber]
+                    .map(normalizeSaleText).join(' ');
+                if(!haystack.includes(search)) return false;
+            }
+            return true;
+        });
+    }
+
+    function getAgencyMonthlySales(a){
+        return getAgencySales(a).filter(sale => isSameMonth(sale.date));
+    }
+
+    function getAgencyShipmentCount(a){
+        return getAgencyMonthlySales(a).length;
+    }
+
+    function getAgencyPointList(a){
+        const raw = String(a?.points || '').trim();
+        if(!raw) return [];
+        return raw.split(/\r?\n|[,;|]+/).map(v => v.trim()).filter(Boolean);
+    }
+
+    function getAgencyPointCount(a){
+        return getAgencyPointList(a).length;
+    }
+
+    function agencyHasNationalCoverage(a){
+        const coverage = normalizeSaleText(a?.coverage);
+        return /nacional|24\s*dpt|24\s*depart|todos|todo\s*el\s*per[uú]/i.test(coverage) ? 'Sí' : 'Según cobertura registrada';
+    }
+
+    function fmtAgencyOrderDate(value){
+        if(!value) return '—';
+        try { return fmtDate(value); } catch(e) { return value; }
+    }
+
+    window.updatePosShippingFields = function(){
+        const method = document.getElementById('posShippingMethod')?.value || 'Directo';
+        const group = document.getElementById('posAgencyGroup');
+        const select = document.getElementById('posAgencyId');
+        const info = document.getElementById('posShippingInfo');
+        if(!group || !select) return;
+
+        if(method === 'Agencia'){
+            group.style.display = '';
+            const current = select.value;
+            select.innerHTML = '<option value="">Selecciona una agencia</option>' +
+                (DB.agencies || []).map(a => `<option value="${a.id}">${a.name}</option>`).join('');
+            if(current && DB.agencies.some(a => String(a.id) === String(current))) select.value = current;
+            if(info){
+                info.style.display = 'block';
+                const a = DB.agencies.find(x => String(x.id) === String(select.value));
+                info.innerHTML = a
+                    ? `<i class="ph-fill ph-info"></i> ${a.name}: ${a.avgDays || 'Tiempo no registrado'} · ${a.coverage || 'Cobertura no registrada'} · ${getAgencyPointCount(a)} puntos de entrega.`
+                    : '<i class="ph-fill ph-info"></i> Selecciona la agencia que realizará el envío.';
+            }
+        } else {
+            group.style.display = 'none';
+            select.value = '';
+            if(info) info.style.display = 'none';
+        }
+    };
+
+    window.saveAgencyDetails = function(id){
         const a = DB.agencies.find(x => x.id === id);
         if(!a) return;
-        
-        document.getElementById('agencyDetTitle').textContent = 'Detalles de la Agencia: ' + a.name;
+        const notes = document.getElementById('agencyDetNotes')?.value || '';
+        const trackingUrl = document.getElementById('agencyDetTrackingUrl')?.value.trim() || '';
+        a.notes = notes;
+        a.trackingUrl = trackingUrl;
+
+        if (typeof google !== 'undefined' && google.script && google.script.run) {
+            google.script.run
+                .withSuccessHandler(function(){ showToast('Datos de seguimiento y notas guardados en Sheets'); })
+                .withFailureHandler(function(err){ console.error(err); showToast('No se pudo guardar en Sheets'); })
+                .guardarAgencia(a);
+        }
+        showToast('Datos de la agencia actualizados');
+    };
+
+    window.filterAgencyOrders = function(){
+        currentAgeOrdersPage = 1;
+        renderAgencyOrders();
+    };
+
+    window.changeAgencyOrdersPage = function(delta){
+        currentAgeOrdersPage += delta;
+        renderAgencyOrders();
+    };
+
+    function renderAgencyOrders(){
+        if(!currentAgeDetailId) return;
+        const a = DB.agencies.find(x => x.id === currentAgeDetailId);
+        if(!a) return;
+
+        const start = document.getElementById('agencyOrdersStart')?.value || '';
+        const end = document.getElementById('agencyOrdersEnd')?.value || '';
+        const status = document.getElementById('agencyOrdersStatus')?.value || '';
+        const search = document.getElementById('agencyOrdersSearch')?.value || '';
+        const orders = getAgencySales(a, {start, end, status, search});
+        const totalPages = Math.max(1, Math.ceil(orders.length / AGE_ORDERS_PAGE_SIZE));
+        currentAgeOrdersPage = Math.min(Math.max(1, currentAgeOrdersPage), totalPages);
+        const startIndex = (currentAgeOrdersPage - 1) * AGE_ORDERS_PAGE_SIZE;
+        const pageOrders = orders.slice(startIndex, startIndex + AGE_ORDERS_PAGE_SIZE);
+        const body = document.getElementById('agencyOrdersBody');
+        if(!body) return;
+
+        body.innerHTML = pageOrders.length ? pageOrders.map(sale => `
+            <tr>
+                <td><b>${sale.order || sale.id || '—'}</b></td>
+                <td>${sale.client || sale.clientName || '—'}</td>
+                <td>${fmtAgencyOrderDate(sale.date)}</td>
+                <td>${sale.status || '—'}</td>
+                <td class="cell-strong">${money(Number(sale.total || 0))}</td>
+                <td>
+                    ${a.trackingUrl ? `<a href="${a.trackingUrl}${a.trackingUrl.includes('?') ? '&' : '?'}order=${encodeURIComponent(sale.order || sale.id || '')}" target="_blank" class="btn btn-outline btn-sm"><i class="ph ph-arrow-square-out"></i> Seguimiento</a>` : '<span class="badge badge-neutral">URL no configurada</span>'}
+                </td>
+            </tr>`).join('') : `<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--text-muted);">No hay pedidos que coincidan con los filtros.</td></tr>`;
+
+        const pageLabel = document.getElementById('agencyOrdersPageLabel');
+        if(pageLabel) pageLabel.textContent = `Página ${currentAgeOrdersPage} de ${totalPages} · ${orders.length} pedido${orders.length === 1 ? '' : 's'}`;
+        const prev = document.getElementById('agencyOrdersPrev');
+        const next = document.getElementById('agencyOrdersNext');
+        if(prev) prev.disabled = currentAgeOrdersPage <= 1;
+        if(next) next.disabled = currentAgeOrdersPage >= totalPages;
+    }
+
+    window.openAgencyDetails = function(id) {
+        currentAgeDetailId = id;
+        currentAgeOrdersPage = 1;
+        const a = DB.agencies.find(x => x.id === id);
+        if(!a) return;
+
+        const monthlySales = getAgencyMonthlySales(a);
+        const monthlyRevenue = monthlySales.reduce((sum, sale) => sum + Number(sale.total || 0), 0);
+        const allAgencySales = getAgencySales(a);
+        const pointList = getAgencyPointList(a);
+        const allAgencyRanking = (DB.agencies || []).map(agency => ({
+            agency,
+            count: getAgencyShipmentCount(agency),
+            total: getAgencyMonthlySales(agency).reduce((sum, sale) => sum + Number(sale.total || 0), 0)
+        })).sort((x,y) => y.count - x.count);
+
+        document.getElementById('agencyDetTitle').textContent = 'Ficha de Agencia: ' + a.name;
         document.getElementById('agencyDetContent').innerHTML = `
-            <div style="display:flex; gap:15px; align-items:center; margin-bottom: 20px;">
-                <div style="width: 80px; height: 80px; border-radius: 20px; background: ${a.logo ? `url('${a.logo}') center/cover` : a.color || '#106FEB'}; display:flex; align-items:center; justify-content:center; color:#fff; font-size:2rem; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+            <div style="display:flex; gap:18px; align-items:flex-start; margin-bottom:22px;">
+                <div style="width:100px;height:100px;border-radius:24px;background:${a.logo ? `url('${a.logo}') center/cover` : a.color || '#106FEB'};display:flex;align-items:center;justify-content:center;color:#fff;font-size:2.6rem;box-shadow:0 8px 20px rgba(0,0,0,.12);flex-shrink:0;">
                     ${!a.logo ? '<i class="ph-fill ph-buildings"></i>' : ''}
                 </div>
-                <div>
-                    <h4 style="margin:0 0 5px 0; font-size:1.4rem;">${a.name}</h4>
-                    <span class="badge ${a.status==='Activo'?'badge-ok':'badge-neutral'}">${a.status || 'Activo'}</span>
-                    <span style="font-size:0.9rem; color:var(--text-muted); margin-left:10px;"><i class="ph-fill ph-map-pin"></i> ${a.location || 'Nacional'}</span>
+                <div style="flex:1;min-width:0;">
+                    <h4 style="margin:0 0 6px;font-size:1.75rem;letter-spacing:-.4px;">${a.name}</h4>
+                    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
+                        <span class="badge ${a.status==='Activo'?'badge-ok':(a.status==='Pausado'?'badge-warn':'badge-danger')}">${a.status || 'Activo'}</span>
+                        <span class="badge badge-blue"><i class="ph-fill ph-map-pin"></i> ${a.location || 'Perú'}</span>
+                    </div>
+                    <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;background:#f8fafc;padding:12px;border-radius:14px;border:1px solid #eef0f3;">
+                        <div><span style="font-size:.72rem;color:var(--text-muted);display:block;">Tiempo de entrega</span><b>${a.avgDays || 'No registrado'}</b></div>
+                        <div><span style="font-size:.72rem;color:var(--text-muted);display:block;">Cobertura nacional</span><b>${agencyHasNationalCoverage(a)}</b></div>
+                        <div><span style="font-size:.72rem;color:var(--text-muted);display:block;">Puntos de entrega</span><b>${pointList.length}</b></div>
+                    </div>
                 </div>
             </div>
-            
-            <div class="form-row-2" style="margin-bottom: 15px;">
-                <div class="soft-panel" style="padding:15px;">
-                    <span style="font-size:0.8rem; color:var(--text-muted);">Cobertura (Departamentos)</span>
-                    <div style="font-weight:700;">${a.coverage || 'No especificada'}</div>
+
+            <div class="kpi-strip" style="grid-template-columns:repeat(4,minmax(0,1fr));margin-bottom:20px;">
+                <div class="kpi-box"><span>Envíos del mes</span><strong>${monthlySales.length}</strong><small>Ventas reales por esta agencia</small></div>
+                <div class="kpi-box"><span>Ventas acumuladas</span><strong>${allAgencySales.length}</strong><small>Histórico registrado</small></div>
+                <div class="kpi-box"><span>Facturación del mes</span><strong>${money(monthlyRevenue)}</strong><small>Solo ventas de esta agencia</small></div>
+                <div class="kpi-box"><span>Oficinas / puntos</span><strong>${pointList.length}</strong><small>Puntos registrados</small></div>
+            </div>
+
+            <div class="split-layout" style="grid-template-columns:1fr 1fr;gap:18px;margin-bottom:20px;">
+                <div class="soft-panel" style="padding:18px;">
+                    <h4 style="margin:0 0 12px;font-size:1rem;"><i class="ph-fill ph-map-trifold" style="color:var(--primary-pill);"></i> Cobertura y puntos disponibles</h4>
+                    <div style="font-size:.85rem;color:var(--text-muted);margin-bottom:10px;"><b style="color:var(--text-main);">Cobertura:</b> ${a.coverage || 'No registrada'}</div>
+                    <div style="max-height:170px;overflow:auto;padding-right:5px;">
+                        ${pointList.length ? pointList.map((point,i)=>`<div style="display:flex;gap:9px;align-items:center;padding:8px 0;border-bottom:1px solid #eef0f3;"><span style="width:24px;height:24px;border-radius:8px;background:#eff6ff;color:var(--primary-pill);display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:800;">${i+1}</span><span style="font-size:.84rem;">${point}</span></div>`).join('') : '<div style="padding:12px;color:var(--text-muted);font-size:.84rem;">No hay puntos registrados.</div>'}
+                    </div>
                 </div>
-                <div class="soft-panel" style="padding:15px;">
-                    <span style="font-size:0.8rem; color:var(--text-muted);">Tiempo Promedio (Días)</span>
-                    <div style="font-weight:700;"><i class="ph-fill ph-clock"></i> ${a.avgDays || 'N/A'}</div>
+                <div class="soft-panel" style="padding:18px;">
+                    <h4 style="margin:0 0 12px;font-size:1rem;"><i class="ph-fill ph-chart-line-up" style="color:var(--ok-color);"></i> Ventas por agencia — mes actual</h4>
+                    <div style="max-height:205px;overflow:auto;padding-right:5px;">
+                        ${allAgencyRanking.map((row,i)=>`<div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #eef0f3;"><span style="font-size:.75rem;font-weight:800;color:var(--text-muted);width:20px;">${i+1}</span><div style="flex:1;min-width:0;"><b style="font-size:.84rem;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${row.agency.name}</b><span style="font-size:.72rem;color:var(--text-muted);">${money(row.total)}</span></div><strong style="font-size:1rem;color:var(--primary-pill);">${row.count}</strong></div>`).join('') || '<div style="color:var(--text-muted);">No hay agencias registradas.</div>'}
+                    </div>
                 </div>
             </div>
-            
-            <div class="soft-panel" style="padding:15px; background:#f8fafc;">
-                <span style="font-size:0.8rem; color:var(--text-muted); display:block; margin-bottom:6px;">Puntos de Entrega (Oficinas clave)</span>
-                <div style="font-weight:500; font-size:0.9rem; white-space:pre-wrap; line-height:1.5;">${a.points || 'Sin oficinas descritas.'}</div>
+
+            <div class="soft-panel" style="padding:18px;margin-bottom:20px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px;">
+                    <h4 style="margin:0;font-size:1.05rem;"><i class="ph-fill ph-package" style="color:var(--primary-pill);"></i> Seguimiento de pedidos</h4>
+                    <span class="badge badge-neutral">${monthlySales.length} envíos este mes</span>
+                </div>
+                <div class="form-row-3" style="align-items:flex-end;">
+                    <div class="form-group" style="margin-bottom:0;"><label>Buscar pedido / cliente</label><input id="agencyOrdersSearch" type="text" placeholder="VTA-, cliente..." oninput="filterAgencyOrders()"></div>
+                    <div class="form-group" style="margin-bottom:0;"><label>Estado</label><select id="agencyOrdersStatus" onchange="filterAgencyOrders()"><option value="">Todos</option><option value="Completado">Completado</option><option value="Procesando">Procesando</option><option value="Anulado">Anulado</option></select></div>
+                    <div class="form-group" style="margin-bottom:0;display:flex;gap:8px;"><div style="flex:1;"><label>Desde</label><input id="agencyOrdersStart" type="date" onchange="filterAgencyOrders()"></div><div style="flex:1;"><label>Hasta</label><input id="agencyOrdersEnd" type="date" onchange="filterAgencyOrders()"></div></div>
+                </div>
+                <div class="data-table-wrap" style="margin-top:14px;max-height:300px;overflow:auto;">
+                    <table class="data-table"><thead><tr><th>Pedido</th><th>Cliente</th><th>Fecha</th><th>Estado</th><th>Total</th><th>Seguimiento</th></tr></thead><tbody id="agencyOrdersBody"></tbody></table>
+                </div>
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:12px;">
+                    <button id="agencyOrdersPrev" class="btn btn-outline btn-sm" onclick="changeAgencyOrdersPage(-1)"><i class="ph ph-caret-left"></i> Anterior</button>
+                    <span id="agencyOrdersPageLabel" style="font-size:.78rem;color:var(--text-muted);">Página 1</span>
+                    <button id="agencyOrdersNext" class="btn btn-outline btn-sm" onclick="changeAgencyOrdersPage(1)">Siguiente <i class="ph ph-caret-right"></i></button>
+                </div>
+            </div>
+
+            <div class="split-layout" style="grid-template-columns:1fr 1fr;gap:18px;">
+                <div class="soft-panel" style="padding:18px;">
+                    <h4 style="margin:0 0 12px;font-size:1rem;"><i class="ph-fill ph-link" style="color:var(--primary-pill);"></i> URL de seguimiento</h4>
+                    <p style="font-size:.78rem;color:var(--text-muted);margin:0 0 10px;">Indica la URL que utilizará esta agencia para consultar sus pedidos.</p>
+                    <input id="agencyDetTrackingUrl" type="url" value="${a.trackingUrl || ''}" placeholder="https://..." style="width:100%;">
+                    <div style="margin-top:10px;display:flex;gap:8px;">
+                        <button class="btn btn-outline btn-sm" onclick="saveAgencyDetails('${a.id}')"><i class="ph ph-floppy-disk"></i> Guardar URL</button>
+                        ${a.trackingUrl ? `<a href="${a.trackingUrl}" target="_blank" class="btn btn-primary btn-sm"><i class="ph ph-arrow-square-out"></i> Abrir seguimiento</a>` : ''}
+                    </div>
+                </div>
+                <div class="soft-panel" style="padding:18px;">
+                    <h4 style="margin:0 0 12px;font-size:1rem;"><i class="ph-fill ph-notebook" style="color:var(--primary-pill);"></i> Notas y acuerdos</h4>
+                    <textarea id="agencyDetNotes" style="width:100%;min-height:110px;padding:12px;border-radius:14px;border:1px solid var(--neutral-line);outline:none;font-family:inherit;resize:vertical;" placeholder="Notas operativas, acuerdos, horarios, condiciones...">${a.notes || ''}</textarea>
+                    <button class="btn btn-outline btn-sm" style="margin-top:10px;" onclick="saveAgencyDetails('${a.id}')"><i class="ph ph-floppy-disk"></i> Guardar notas</button>
+                </div>
             </div>
         `;
+
+        const today = new Date();
+        const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
+        document.getElementById('agencyOrdersStart').value = firstDay.toISOString().slice(0,10);
+        document.getElementById('agencyOrdersEnd').value = today.toISOString().slice(0,10);
+        renderAgencyOrders();
         openModal('modalDetallesAgencia');
     };
 
@@ -5236,13 +5444,13 @@ table.data-table tbody tr,
                 <div class="entity-title"><b>${a.name}</b><span>${a.location || 'Nacional'}</span></div>
               </div>
               <div class="entity-stats">
-                <div class="entity-stat"><b>${a.shipments || 0}</b><span>Envíos/mes</span></div>
+                <div class="entity-stat"><b>${getAgencyShipmentCount(a)}</b><span>Envíos/mes</span></div>
                 <div class="entity-stat"><b>${a.avgDays || '2-5'}</b><span>Días</span></div>
               </div>
               
               <div class="entity-stats" style="flex-direction:column; gap:5px; align-items:flex-start; margin-top:10px; background:#f8fafc; padding:10px; border-radius:12px; border:1px solid #eef0f3;">
                 <div style="font-size:0.8rem; color:var(--text-main);"><b>Cobertura:</b> ${a.coverage || 'N/A'}</div>
-                <div style="font-size:0.8rem; color:var(--text-muted); max-height:40px; overflow:hidden; text-overflow:ellipsis; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;"><b>Puntos:</b> ${a.points || 'No especificados'}</div>
+                <div style="font-size:0.8rem; color:var(--text-muted);"><b>Puntos:</b> ${getAgencyPointCount(a)}</div>
               </div>
 
               <div class="entity-footer" style="margin-top:auto; padding-top:12px; flex-direction:column; align-items:stretch; gap:10px;">
@@ -5275,8 +5483,8 @@ table.data-table tbody tr,
                 </div>
               </td>
               <td class="cell-muted">${a.location || '—'}</td>
-              <td class="cell-muted" style="max-width:200px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${a.points || '—'}</td>
-              <td class="cell-strong">${a.shipments || 0}</td>
+              <td class="cell-muted">${getAgencyPointCount(a)}</td>
+              <td class="cell-strong">${getAgencyShipmentCount(a)}</td>
               <td><span class="badge ${statusCls[a.status] || 'badge-neutral'}">${a.status || '—'}</span></td>
               <td>
                 <div style="display:flex; gap:8px;">
@@ -5320,6 +5528,7 @@ table.data-table tbody tr,
         if(confirm('¿Seguro que deseas eliminar esta agencia?')) {
             DB.agencies = DB.agencies.filter(x => x.id !== id);
             renderAgencies();
+            updatePosShippingFields();
             if (typeof google !== 'undefined' && google.script && google.script.run) {
                 google.script.run.eliminarAgencia(id);
             }
@@ -5347,6 +5556,8 @@ table.data-table tbody tr,
             avgDays: document.getElementById('fAgeTiempo').value,
             points: document.getElementById('fAgePuntos').value,
             shipments: id ? (DB.agencies.find(x=>x.id===id)?.shipments || 0) : 0,
+            notes: id ? (DB.agencies.find(x=>x.id===id)?.notes || '') : '',
+            trackingUrl: id ? (DB.agencies.find(x=>x.id===id)?.trackingUrl || '') : '',
             color: '#106FEB'
         };
 
@@ -5372,6 +5583,7 @@ table.data-table tbody tr,
         }
 
         renderAgencies();
+        updatePosShippingFields();
         closeModal('modalNuevaAgencia');
         showToast(id ? 'Agencia actualizada' : 'Agencia guardada');
     };
