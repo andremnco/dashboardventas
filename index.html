@@ -2899,12 +2899,97 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
       api.guardarPlataforma = function(platData) { return api._execute('guardarPlataforma', [platData || {}]); };
       api.eliminarPlataforma = function(id) { return api._execute('eliminarPlataforma', [id]); };
       api.guardarCourier = function(courierData) { return api._execute('guardarCourier', [courierData || {}]); };
+      api.eliminarCourier = function(id) { return api._execute('eliminarCourier', [id]); };
       api.guardarAgencia = function(agData) { return api._execute('guardarAgencia', [agData || {}]); };
       api.eliminarAgencia = function(id) { return api._execute('eliminarAgencia', [id]); };
+      api.eliminarProducto = function(id) { return api._execute('eliminarProducto', [id]); };
       api.eliminarProveedor = function(id) { return api._execute('eliminarProveedor', [id]); };
+      api.guardarActividad = function(activityData) { return api._execute('guardarActividad', [activityData || {}]); };
 
       return api;
     })();
+
+
+    /* ============================================================
+       ADAPTADOR UNIFICADO DE BACKEND + ARCHIVOS BASE64
+       ============================================================ */
+    function hasBackend(){
+      return !!(window.google && window.google.script && window.google.script.run);
+    }
+
+    function backendCall(method, args, onSuccess, onFailure){
+      args = Array.isArray(args) ? args : [];
+      onSuccess = typeof onSuccess === 'function' ? onSuccess : function(){};
+      onFailure = typeof onFailure === 'function' ? onFailure : function(err){
+        console.error('Backend error:', err);
+        showToast((err && err.message) ? err.message : 'No se pudo completar la operación.');
+      };
+
+      if(!hasBackend()){
+        onFailure(new Error('Google Apps Script no está disponible.'));
+        return false;
+      }
+
+      try{
+        const runner = window.google.script.run
+          .withSuccessHandler(onSuccess)
+          .withFailureHandler(onFailure);
+        const fn = runner[method];
+        if(typeof fn !== 'function'){
+          onFailure(new Error('El backend no expone la función "' + method + '".'));
+          return false;
+        }
+        fn.apply(runner, args);
+        return true;
+      }catch(error){
+        onFailure(error);
+        return false;
+      }
+    }
+
+    function fileToBase64(file){
+      return new Promise(function(resolve, reject){
+        if(!file){
+          resolve(null);
+          return;
+        }
+        const reader = new FileReader();
+        reader.onload = function(){
+          try{
+            const dataUrl = String(reader.result || '');
+            const comma = dataUrl.indexOf(',');
+            resolve({
+              name: file.name || 'archivo',
+              type: file.type || 'application/octet-stream',
+              size: file.size || 0,
+              base64: comma >= 0 ? dataUrl.slice(comma + 1) : dataUrl,
+              dataUrl: dataUrl
+            });
+          }catch(error){ reject(error); }
+        };
+        reader.onerror = function(){ reject(reader.error || new Error('No se pudo leer el archivo.')); };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    async function readOptionalFile(inputId){
+      const input = document.getElementById(inputId);
+      if(!input || !input.files || !input.files[0]) return null;
+      return await fileToBase64(input.files[0]);
+    }
+
+    function preserveExistingFile(data, existing, key){
+      if(data[key] || !existing || !existing[key]) return;
+      data[key] = existing[key];
+    }
+
+    function afterServerMutation(message, options){
+      options = options || {};
+      loadDataFromServer();
+      if(message) showToast(message);
+      if(options.closeModalId) closeModal(options.closeModalId);
+      if(options.resetForm && typeof options.resetForm === 'function') options.resetForm();
+    }
 
     // --- MOTOR DE SONIDOS (PREMIUM) ---
     const AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -3045,7 +3130,7 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
           });
       }
 
-      if (typeof loadDataFromServer === 'function') loadDataFromServer();
+      if (typeof window.loadDataFromServer === 'function') window.loadDataFromServer();
     };
   </script>
 
@@ -3150,10 +3235,24 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
     }
 
     window.logActivity = function(title, desc, icon, color, bg) {
-      const time = new Date().toLocaleTimeString('es-PE', {hour: '2-digit', minute:'2-digit'});
-      DB.activity.unshift({ title, desc, icon, color, bg, time });
-      if(DB.activity.length > 20) DB.activity.pop();
-      renderDashboard(); // Update view
+      const activity = {
+        title: title || '',
+        desc: desc || '',
+        icon: icon || 'ph-activity',
+        color: color || '#106FEB',
+        bg: bg || '#dbeafe',
+        time: new Date().toLocaleTimeString('es-PE', {hour:'2-digit', minute:'2-digit'})
+      };
+
+      /* La actividad persistente, si el backend la soporta, se guarda allí.
+         Nunca se usa como fuente ficticia de datos del ERP. */
+      if(hasBackend()){
+        backendCall('guardarActividad', [activity], function(){
+          loadDataFromServer();
+        }, function(error){
+          console.warn('No se pudo persistir la actividad:', error);
+        });
+      }
     };
 
     /* Funciones Adicionales Sorpresa */
@@ -3187,12 +3286,18 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
     };
 
     window.savePlatNotes = function(id) {
-        const notes = document.getElementById('platNotesArea').value;
-        const p = DB.platforms.find(x => x.id === id);
-        if(p) {
-            p.notes = notes;
-            showToast('Notas de plataforma guardadas');
-        }
+      const p = DB.platforms.find(x => x.id === id);
+      if(!p) return;
+      const notes = document.getElementById('platNotesArea')?.value || '';
+      const updated = { ...p, notes: notes };
+      showToast('Guardando notas...');
+      backendCall('guardarPlataforma', [updated], function(){
+        showToast('Notas de plataforma guardadas en Google Sheets');
+        loadDataFromServer();
+      }, function(err){
+        console.error(err);
+        showToast('No se pudieron guardar las notas');
+      });
     };
 
 
@@ -3200,18 +3305,6 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
        3. RENDER: DASHBOARD
        ============================================================ */
     function renderDashboard(){
-      // Generate synthetic metrics for display if empty to ensure dashboard works
-      if (!DB.salesTrend30.length && DB.salesHistory.length > 0) {
-          DB.salesTrend30 = Array(30).fill(0);
-          DB.revenueByDay = Array(7).fill(0);
-          DB.salesHistory.forEach(s => {
-              if (s.status === 'Completado') {
-                  DB.salesTrend30[29] += s.total; // Dump all to today for visual simplicity
-                  DB.revenueByDay[6] += s.total;
-              }
-          });
-      }
-
       const totalRevenue = DB.revenueByDay.reduce((a,b)=>a+b,0);
       animateCount('kpiRevenueTotal', totalRevenue, {prefix:'S/ ', duration:1000});
 
@@ -3303,13 +3396,13 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
        4. RENDER: ESTADÍSTICAS DE VENTAS Y PRODUCTOS
        ============================================================ */
     function renderSalesStats(){
-      const totalRevenue = DB.revenueByDay.reduce((a,b)=>a+b,0) * 4.3;
+      const totalRevenue = DB.revenueByDay.reduce((a,b)=>a+b,0);
       const totalOrders = DB.sellers.reduce((a,s)=>a+s.orders,0);
       document.getElementById('salesKpiStrip').innerHTML = kpiBoxes([
         {icon:'ph-coins', bg:'#dbeafe', color:'#106FEB', label:'Ingresos (30d)', value: moneyShort(totalRevenue), trend:'real', up:true},
         {icon:'ph-shopping-cart-simple', bg:'#dcfce7', color:'#16a34a', label:'Pedidos totales', value: totalOrders, trend:'real', up:true},
         {icon:'ph-receipt', bg:'#ede9fe', color:'#7c3aed', label:'Ticket promedio', value: totalOrders ? moneyShort(totalRevenue/totalOrders) : 'S/ 0', trend:'real', up:true},
-        {icon:'ph-arrow-u-down-left', bg:'#fee2e2', color:'#dc2626', label:'Tasa de devolución', value: '2.8%', trend:'real', up:false}
+        {icon:'ph-arrow-u-down-left', bg:'#fee2e2', color:'#dc2626', label:'Tasa de devolución', value: (DB.salesHistory.length ? ((DB.salesHistory.filter(s=>s.status==='Anulado').length/DB.salesHistory.length)*100).toFixed(1)+'%' : '0.0%'), trend:'real', up:false}
       ]);
 
       const maxT = DB.salesTrend30.length ? Math.max(...DB.salesTrend30) : 0;
@@ -3442,44 +3535,36 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
     };
 
     window.createClient = function(){
-      const name=document.getElementById('fNombreCliente').value.trim();
-      const phone=document.getElementById('fTelCliente').value.trim();
-      const email=document.getElementById('fCorreoCliente').value.trim();
-      const condition=document.getElementById('fCondicionCliente').value.trim();
+      const name = document.getElementById('fNombreCliente')?.value.trim() || '';
+      const phone = document.getElementById('fTelCliente')?.value.trim() || '';
+      const email = document.getElementById('fCorreoCliente')?.value.trim() || '';
+      const condition = document.getElementById('fCondicionCliente')?.value.trim() || '';
 
       if(!name){ showToast('Ingresa un nombre válido'); return; }
-      
-      const newClient = {
-          id: 'CLI-' + Date.now(),
-          name: name,
-          phone: phone,
-          email: email,
-          condition: condition,
-          segment: 'Nuevo',
-          orders: 0,
-          totalSpent: 0,
-          lastOrder: '',
-          color: '#106FEB'
-      };
-      DB.clients.unshift(newClient);
-      
-      logActivity('Nuevo Cliente', `Cliente ${name} registrado en CRM`, 'ph-user-plus', '#106FEB', '#dbeafe');
 
-      if(typeof google!=='undefined' && google.script && google.script.run){
-        google.script.run
-          .withSuccessHandler(function(){
-            showToast('Cliente guardado en Google Sheets');
-          })
-          .withFailureHandler(function(error){
-            console.error(error);
-            showToast('No se pudo guardar el cliente en Sheets');
-          })
-          .crearCliente({nombre:name, telefono:phone, correo:email, condicion:condition});
-      }
-      
-      closeModal('modalNuevoCliente');
-      renderAll();
-      showToast('Cliente guardado');
+      const clientData = {
+        id: 'CLI-' + Date.now(),
+        nombre: name,
+        telefono: phone,
+        correo: email,
+        condicion: condition,
+        name: name,
+        phone: phone,
+        email: email,
+        condition: condition
+      };
+
+      showToast('Guardando cliente...');
+      backendCall('crearCliente', [clientData], function(){
+        closeModal('modalNuevoCliente');
+        const form = document.getElementById('modalNuevoCliente');
+        if(form) form.querySelectorAll('input,textarea,select').forEach(function(node){ if(node.type !== 'button' && node.type !== 'submit') node.value=''; });
+        showToast('Cliente guardado en Google Sheets');
+        loadDataFromServer();
+      }, function(error){
+        console.error('Error guardando cliente:', error);
+        showToast('No se pudo guardar el cliente en Google Sheets');
+      });
     };
 
     /* ============================================================
@@ -3683,118 +3768,70 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
     };
 
     window.confirmPosOrder = function() {
-        const name = document.getElementById('fPosClientName').value.trim();
-        const phone = document.getElementById('fPosClientPhone').value.trim();
-        const email = document.getElementById('fPosClientEmail').value.trim();
-        const address = document.getElementById('fPosClientAddress').value.trim();
-        let clientId = document.getElementById('fPosClientId').value;
+      const name = document.getElementById('fPosClientName').value.trim();
+      const phone = document.getElementById('fPosClientPhone').value.trim();
+      const email = document.getElementById('fPosClientEmail').value.trim();
+      const address = document.getElementById('fPosClientAddress').value.trim();
+      let clientId = document.getElementById('fPosClientId').value;
 
-        if(!name || !phone) {
-            showToast('Nombre y teléfono son obligatorios');
-            return;
-        }
+      if(!name || !phone) {
+        showToast('Nombre y teléfono son obligatorios');
+        return;
+      }
 
-        if(!clientId) {
-            const existing = DB.clients.find(c => c.phone === phone);
-            if (existing) {
-                clientId = existing.id;
-            } else {
-                clientId = 'CLI-' + Date.now();
-                DB.clients.push({
-                    id: clientId,
-                    name: name,
-                    phone: phone,
-                    email: email,
-                    address: address,
-                    segment: 'Nuevo',
-                    orders: 0,
-                    totalSpent: 0,
-                    lastOrder: new Date().toISOString().slice(0,10),
-                    color: '#106FEB'
-                });
-                logActivity('Nuevo Cliente', `Cliente ${name} creado desde POS`, 'ph-user-plus', '#106FEB', '#dbeafe');
-            }
-        }
+      const payment = document.getElementById('posPaymentMethod')?.value || '';
+      const shippingMethod = document.getElementById('posShippingMethod')?.value || 'Directo';
+      const agencyId = document.getElementById('posAgencyId')?.value || '';
+      const selectedAgency = DB.agencies.find(a => String(a.id) === String(agencyId));
 
-        const payment = document.getElementById('posPaymentMethod')?.value || '';
-        const shippingMethod = document.getElementById('posShippingMethod')?.value || 'Directo';
-        const agencyId = document.getElementById('posAgencyId')?.value || '';
-        const selectedAgency = DB.agencies.find(a => String(a.id) === String(agencyId));
-        if(shippingMethod === 'Agencia' && !selectedAgency) {
-            showToast('Selecciona la agencia que realizará el envío');
-            return;
-        }
-        const subtotal = DB.posCart.reduce((sum, item) => {
-            const product = DB.products.find(p => p.id === item.id);
-            return sum + (product ? Number(product.price || 0) * Number(item.qty || 0) : 0);
-        }, 0);
-        const envio = parseFloat(document.getElementById('posEnvio')?.value || 0);
-        const grandTotal = subtotal + envio;
+      if(shippingMethod === 'Agencia' && !selectedAgency) {
+        showToast('Selecciona la agencia que realizará el envío');
+        return;
+      }
 
-        const saleData = {
-            order: 'VTA-' + Date.now().toString().slice(-6), 
-            clientName: name,
-            date: new Date().toISOString().slice(0,10),
-            channel: 'POS',
-            payment: payment,
-            total: grandTotal,
-            status: 'Completado',
-            shippingMethod: shippingMethod,
-            agencyId: selectedAgency ? selectedAgency.id : '',
-            agencyName: selectedAgency ? selectedAgency.name : ''
-        };
+      const subtotal = DB.posCart.reduce((sum, item) => {
+        const product = DB.products.find(p => p.id === item.id);
+        return sum + (product ? Number(product.price || 0) * Number(item.qty || 0) : 0);
+      }, 0);
+      const envio = parseFloat(document.getElementById('posEnvio')?.value || 0);
+      const grandTotal = subtotal + envio;
 
-        const cartItems = DB.posCart.map(item => ({
-            id: item.id,
-            qty: Number(item.qty || 0)
-        }));
+      const saleData = {
+        order: 'VTA-' + Date.now().toString().slice(-6),
+        clientId: clientId || '',
+        clientName: name,
+        clientPhone: phone,
+        clientEmail: email,
+        clientAddress: address,
+        date: new Date().toISOString().slice(0,10),
+        channel: 'POS',
+        payment: payment,
+        subtotal: subtotal,
+        shippingCost: envio,
+        total: grandTotal,
+        status: 'Completado',
+        shippingMethod: shippingMethod,
+        agencyId: selectedAgency ? selectedAgency.id : '',
+        agencyName: selectedAgency ? selectedAgency.name : ''
+      };
 
-        const cObj = DB.clients.find(c => c.id === clientId);
-        if(cObj) {
-            cObj.orders = (cObj.orders || 0) + 1;
-            cObj.totalSpent = (cObj.totalSpent || 0) + grandTotal;
-            cObj.lastOrder = saleData.date;
-        }
+      const cartItems = DB.posCart.map(item => ({
+        id: item.id,
+        qty: Number(item.qty || 0)
+      }));
 
-        DB.salesHistory.unshift({
-            id: saleData.order,
-            order: saleData.order,
-            client: saleData.clientName,
-            date: saleData.date,
-            channel: saleData.channel,
-            payment: saleData.payment,
-            total: saleData.total,
-            status: saleData.status,
-            shippingMethod: saleData.shippingMethod,
-            agencyId: saleData.agencyId,
-            agencyName: saleData.agencyName
-        });
-        
-        logActivity('Nueva Venta', `Pedido ${saleData.order} por ${money(saleData.total)}`, 'ph-shopping-cart-simple', '#16a34a', '#dcfce7');
-
-        showToast('Generando pedido...');
-        
-        if (typeof google !== 'undefined' && google.script && google.script.run) {
-            google.script.run
-                .withSuccessHandler(function(){
-                    DB.posCart = [];
-                    document.getElementById('posEnvio').value = 0;
-                    showToast('Pedido completado y guardado');
-                    closeModal('modalCheckoutPos');
-                    renderAll();
-                })
-                .withFailureHandler(function(error){
-                    console.error('Error procesando venta:', error);
-                    showToast('No se pudo guardar la venta en Sheets');
-                })
-                .processSaleBackend(saleData, cartItems);
-        } else {
-            DB.posCart = [];
-            document.getElementById('posEnvio').value = 0;
-            showToast('Pedido completado localmente');
-            closeModal('modalCheckoutPos');
-            renderAll();
-        }
+      showToast('Guardando pedido...');
+      backendCall('processSaleBackend', [saleData, cartItems], function(result){
+        DB.posCart = [];
+        const envioNode = document.getElementById('posEnvio');
+        if(envioNode) envioNode.value = 0;
+        closeModal('modalCheckoutPos');
+        showToast('Pedido guardado en Google Sheets');
+        loadDataFromServer();
+      }, function(error){
+        console.error('Error procesando venta:', error);
+        showToast('No se pudo guardar la venta en Google Sheets');
+      });
     };
 
     /* ============================================================
@@ -3840,7 +3877,7 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
       const validUntil = document.getElementById('fFechaCot')?.value || '';
 
       if (!client || !total){ showToast('Completa cliente y monto'); return; }
-      
+
       const quoteData = {
         id: 'COT-' + Date.now(),
         client: client,
@@ -3849,25 +3886,16 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
         date: new Date().toISOString().slice(0,10),
         validUntil: validUntil
       };
-      
-      DB.quotes.push(quoteData);
-      logActivity('Nueva Cotización', `Emitida a ${client} por ${money(total)}`, 'ph-file-text', '#8B5CF6', '#ede9fe');
 
-      if (typeof google !== 'undefined' && google.script && google.script.run){ 
-          google.script.run
-            .withSuccessHandler(function(){
-              showToast('Cotización guardada en Google Sheets');
-            })
-            .withFailureHandler(function(error){
-              console.error('Error guardando cotización:', error);
-              showToast('No se pudo guardar la cotización en la nube');
-            })
-            .saveQuote(quoteData);
-      }
-      
-      closeModal('modalNuevaCotizacion');
-      showToast('Cotización guardada');
-      renderAll();
+      showToast('Guardando cotización...');
+      backendCall('saveQuote', [quoteData], function(){
+        closeModal('modalNuevaCotizacion');
+        showToast('Cotización guardada en Google Sheets');
+        loadDataFromServer();
+      }, function(error){
+        console.error('Error guardando cotización:', error);
+        showToast('No se pudo guardar la cotización');
+      });
     };
 
     /* ============================================================
@@ -3951,82 +3979,73 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
       openModal('modalNuevoProducto');
     };
 
-    window.saveProduct = function(){
+    window.saveProduct = async function(){
       const id = document.getElementById('fProdId').value;
-      const name = document.getElementById('fProdNombre')?.value.trim();
+      const name = document.getElementById('fProdNombre')?.value.trim() || '';
       const price = parseFloat(document.getElementById('fProdPrecio')?.value || 0);
 
       if (!name || !price){ showToast('Completa nombre y precio de venta'); return; }
 
-      const fileInput = document.getElementById('fProdImg');
-      let imgUrl = '';
-      if(fileInput.files && fileInput.files[0]) {
-          imgUrl = URL.createObjectURL(fileInput.files[0]);
+      try{
+        const existing = id ? DB.products.find(x => x.id === id) : null;
+        const imageFile = await readOptionalFile('fProdImg');
+
+        const productData = {
+          id: id || 'PROD-' + Date.now(),
+          name: name,
+          brand: document.getElementById('fProdMarca')?.value || '',
+          lab: document.getElementById('fProdMarca')?.value || '',
+          sku: document.getElementById('fProdSku')?.value || '',
+          category: document.getElementById('fProdCat')?.value || '',
+          providerId: document.getElementById('fProdProv')?.value || '',
+          platformId: document.getElementById('fProdPlat')?.value || '',
+          warehouse: document.getElementById('fProdAlmacen')?.value || '',
+          cost: parseFloat(document.getElementById('fProdCosto')?.value || 0),
+          price: price,
+          minSalePrice: parseFloat(document.getElementById('fProdPrecioMin')?.value || 0),
+          stock: parseInt(document.getElementById('fProdStock')?.value || 0, 10),
+          unknownStock: document.getElementById('fProdStockUnknown').checked,
+          keywords: document.getElementById('fProdKeywords')?.value || '',
+          benefits: document.getElementById('fProdBeneficios')?.value || '',
+          desc: document.getElementById('fProdDesc')?.value || '',
+          minStock: existing ? (existing.minStock || 5) : 5,
+          sales30: existing ? Number(existing.sales30 || 0) : 0
+        };
+
+        if(imageFile){
+          productData.imageFile = imageFile;
+          productData.imageBase64 = imageFile.base64;
+          productData.imageName = imageFile.name;
+          productData.imageType = imageFile.type;
+        }else if(existing && existing.image){
+          productData.image = existing.image;
+        }
+
+        showToast(id ? 'Actualizando producto...' : 'Guardando producto...');
+        backendCall('guardarProducto', [productData], function(){
+          closeModal('modalNuevoProducto');
+          showToast(id ? 'Producto actualizado en Google Sheets' : 'Producto guardado en Google Sheets');
+          loadDataFromServer();
+        }, function(error){
+          console.error('Error guardando producto:', error);
+          showToast('No se pudo guardar el producto');
+        });
+      }catch(error){
+        console.error(error);
+        showToast('No se pudo procesar la imagen o el producto');
       }
-
-      const productData = {
-        id: id || 'PROD-' + Date.now(),
-        name: name,
-        brand: document.getElementById('fProdMarca')?.value || '',
-        lab: document.getElementById('fProdMarca')?.value || '', 
-        sku: document.getElementById('fProdSku')?.value || '',
-        category: document.getElementById('fProdCat')?.value || '',
-        providerId: document.getElementById('fProdProv')?.value || '',
-        platformId: document.getElementById('fProdPlat')?.value || '',
-        warehouse: document.getElementById('fProdAlmacen')?.value || '',
-        cost: parseFloat(document.getElementById('fProdCosto')?.value || 0),
-        price: price,
-        minSalePrice: parseFloat(document.getElementById('fProdPrecioMin')?.value || 0),
-        stock: parseInt(document.getElementById('fProdStock')?.value || 0, 10),
-        unknownStock: document.getElementById('fProdStockUnknown').checked,
-        keywords: document.getElementById('fProdKeywords')?.value || '',
-        benefits: document.getElementById('fProdBeneficios')?.value || '',
-        desc: document.getElementById('fProdDesc')?.value || '',
-        minStock: 5,
-        sales30: 0
-      };
-
-      if(id) {
-          const index = DB.products.findIndex(x => x.id === id);
-          if(index !== -1) {
-              if(!imgUrl) productData.image = DB.products[index].image;
-              else productData.image = imgUrl;
-              
-              productData.sales30 = DB.products[index].sales30 || 0;
-              productData.minStock = DB.products[index].minStock || 5;
-              
-              DB.products[index] = { ...DB.products[index], ...productData };
-          }
-      } else {
-          if(imgUrl) productData.image = imgUrl;
-          DB.products.unshift(productData);
-      }
-      
-      logActivity('Catálogo', id ? `Producto actualizado: ${name}` : `Nuevo producto: ${name}`, 'ph-package', '#F59E0B', '#fef3c7');
-
-      if (typeof google !== 'undefined' && google.script && google.script.run) {
-          google.script.run
-              .withSuccessHandler(function(){
-                  showToast(id ? 'Producto actualizado en Sheets' : 'Producto guardado en Sheets');
-              })
-              .withFailureHandler(function(err){
-                  console.error(err);
-                  showToast('Error al guardar en Sheets');
-              })
-              .guardarProducto(productData);
-      }
-
-      closeModal('modalNuevoProducto');
-      showToast(id ? 'Producto actualizado' : 'Producto guardado');
-      renderAll();
     };
 
     window.deleteProduct = function(id) {
-        if(confirm('¿Seguro que deseas eliminar este producto del catálogo?')) {
-            DB.products = DB.products.filter(x => x.id !== id);
-            showToast('Producto eliminado');
-            renderAll();
-        }
+      if(!confirm('¿Seguro que deseas eliminar este producto del catálogo?')) return;
+      showToast('Eliminando producto...');
+      backendCall('eliminarProducto', [id], function(){
+        showToast('Producto eliminado');
+        loadDataFromServer();
+      }, function(error){
+        console.error(error);
+        showToast('No se pudo eliminar el producto');
+      });
     };
 
     function renderInventoryTable(){
@@ -4159,8 +4178,8 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
 
         let enrichedProviders = DB.providers.map(p => {
             const provProds = DB.products.filter(prod => prod.providerId === p.id);
-            const totalOrders = provProds.reduce((sum, prod) => sum + Number(prod.sales30 || 0), 0) * 2; 
-            const totalSalesValue = provProds.reduce((sum, prod) => sum + (Number(prod.sales30 || 0) * Number(prod.price || 0)), 0) * 3; 
+            const totalOrders = provProds.reduce((sum, prod) => sum + Number(prod.sales30 || 0), 0); 
+            const totalSalesValue = provProds.reduce((sum, prod) => sum + (Number(prod.sales30 || 0) * Number(prod.price || 0)), 0); 
             return { ...p, totalOrders, totalSalesValue };
         });
 
@@ -4359,81 +4378,74 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
     };
 
     window.deleteProv = function(id) {
-        if(confirm('¿Seguro que deseas eliminar este proveedor permanentemente?')) {
-            DB.providers = DB.providers.filter(x => x.id !== id);
-            renderProviders();
-            if (typeof google !== 'undefined' && google.script && google.script.run) {
-                google.script.run.eliminarProveedor(id);
-            }
-            showToast('Proveedor eliminado');
-        }
+      if(!confirm('¿Seguro que deseas eliminar este proveedor permanentemente?')) return;
+      showToast('Eliminando proveedor...');
+      backendCall('eliminarProveedor', [id], function(){
+        showToast('Proveedor eliminado');
+        loadDataFromServer();
+      }, function(err){
+        console.error(err);
+        showToast('No se pudo eliminar el proveedor');
+      });
     };
 
-    window.saveProv = function() {
-        const id = document.getElementById('fProvId').value;
-        const name = document.getElementById('fProvNombre').value.trim();
-        if(!name) { showToast('El nombre del proveedor es obligatorio'); return; }
+    window.saveProv = async function() {
+      const id = document.getElementById('fProvId').value;
+      const name = document.getElementById('fProvNombre').value.trim();
+      if(!name) { showToast('El nombre del proveedor es obligatorio'); return; }
 
-        const fileInput = document.getElementById('fProvLogo');
-        let logoUrl = '';
-        if(fileInput.files && fileInput.files[0]) {
-            logoUrl = URL.createObjectURL(fileInput.files[0]);
-        }
+      try{
+        const existing = id ? DB.providers.find(x => x.id === id) : null;
+        const logoFile = await readOptionalFile('fProvLogo');
 
         const provData = {
-            id: id || 'PROV-' + Date.now(),
-            name: name,
-            platformId: document.getElementById('fProvPlat').value,
-            platformCode: document.getElementById('fProvCod').value,
-            ruc: document.getElementById('fProvRuc').value,
-            legalName: document.getElementById('fProvRazon').value,
-            providerType: document.getElementById('fProvTipo').value,
-            supplyType: document.getElementById('fProvAbast').value,
-            status: document.getElementById('fProvEstado').value,
-            country: document.getElementById('fProvPais').value,
-            region: document.getElementById('fProvRegion').value,
-            city: document.getElementById('fProvCiudad').value,
-            district: document.getElementById('fProvDistrito').value,
-            address: document.getElementById('fProvDir').value,
-            contact: document.getElementById('fProvContacto').value,
-            email: document.getElementById('fProvCorreo').value,
-            joinDate: document.getElementById('fProvFecha').value,
-            category: document.getElementById('fProvCat').value,
-            warehouses: document.getElementById('fProvAlmacenes').value,
-            notes: document.getElementById('fProvNotas').value,
-            color: '#8B5CF6',
-            rating: 5,
-            productsCount: 0
+          id: id || 'PROV-' + Date.now(),
+          name: name,
+          platformId: document.getElementById('fProvPlat').value,
+          platformCode: document.getElementById('fProvCod').value,
+          ruc: document.getElementById('fProvRuc').value,
+          legalName: document.getElementById('fProvRazon').value,
+          providerType: document.getElementById('fProvTipo').value,
+          supplyType: document.getElementById('fProvAbast').value,
+          status: document.getElementById('fProvEstado').value,
+          country: document.getElementById('fProvPais').value,
+          region: document.getElementById('fProvRegion').value,
+          city: document.getElementById('fProvCiudad').value,
+          district: document.getElementById('fProvDistrito').value,
+          address: document.getElementById('fProvDir').value,
+          contact: document.getElementById('fProvContacto').value,
+          email: document.getElementById('fProvCorreo').value,
+          joinDate: document.getElementById('fProvFecha').value,
+          category: document.getElementById('fProvCat').value,
+          warehouses: document.getElementById('fProvAlmacenes').value,
+          notes: document.getElementById('fProvNotas').value,
+          color: existing?.color || '#8B5CF6',
+          rating: existing?.rating || 5,
+          productsCount: existing?.productsCount || 0
         };
 
-        if(id) {
-            const index = DB.providers.findIndex(x => x.id === id);
-            if(index !== -1) {
-                if(!logoUrl) provData.logo = DB.providers[index].logo;
-                else provData.logo = logoUrl;
-                
-                provData.rating = DB.providers[index].rating || 5;
-                provData.productsCount = DB.providers[index].productsCount || 0;
-                
-                DB.providers[index] = { ...DB.providers[index], ...provData };
-            }
-        } else {
-            if(logoUrl) provData.logo = logoUrl;
-            DB.providers.unshift(provData);
-        }
-        
-        logActivity('Proveedores', id ? `Proveedor actualizado: ${name}` : `Nuevo proveedor: ${name}`, 'ph-handshake', '#8B5CF6', '#ede9fe');
-
-        if (typeof google !== 'undefined' && google.script && google.script.run) {
-            google.script.run
-                .withSuccessHandler(function(){ showToast(id ? 'Proveedor actualizado en Sheets' : 'Proveedor guardado en Sheets'); })
-                .withFailureHandler(function(err){ console.error(err); showToast('Error al guardar en Sheets'); })
-                .guardarProveedor(provData);
+        if(logoFile){
+          provData.logoFile = logoFile;
+          provData.logoBase64 = logoFile.base64;
+          provData.logoName = logoFile.name;
+          provData.logoType = logoFile.type;
+        }else if(existing && existing.logo){
+          provData.logo = existing.logo;
         }
 
-        closeModal('modalNuevoProveedor');
-        showToast(id ? 'Proveedor actualizado' : 'Proveedor guardado');
-        renderProviders();
+        showToast(id ? 'Actualizando proveedor...' : 'Guardando proveedor...');
+        backendCall('guardarProveedor', [provData], function(){
+          closeModal('modalNuevoProveedor');
+          showToast(id ? 'Proveedor actualizado en Google Sheets' : 'Proveedor guardado en Google Sheets');
+          loadDataFromServer();
+        }, function(err){
+          console.error(err);
+          showToast('No se pudo guardar el proveedor');
+        });
+      }catch(error){
+        console.error(error);
+        showToast('No se pudo procesar el logo');
+      }
     };
 
     /* ============================================================
@@ -4487,8 +4499,8 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
           const provIds = platProvs.map(prov => prov.id);
           const platProds = DB.products.filter(prod => provIds.includes(prod.providerId) || prod.platformId === p.id);
           
-          const totalSalesValue = platProds.reduce((sum, prod) => sum + (Number(prod.sales30 || 0) * Number(prod.price || 0)), 0) * 3;
-          const totalOrders = platProds.reduce((sum, prod) => sum + Number(prod.sales30 || 0), 0) * 2;
+          const totalSalesValue = platProds.reduce((sum, prod) => sum + (Number(prod.sales30 || 0) * Number(prod.price || 0)), 0);
+          const totalOrders = platProds.reduce((sum, prod) => sum + Number(prod.sales30 || 0), 0);
           
           return { ...p, provCount, totalSalesValue, totalOrders };
       });
@@ -4708,38 +4720,42 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
     };
 
     window.savePlatNotes = function(id) {
-        const notes = document.getElementById('platNotesArea').value;
-        const p = DB.platforms.find(x => x.id === id);
-        if(p) {
-            p.notes = notes;
-            showToast('Notas de plataforma guardadas exitosamente');
-            logActivity('Plataformas', `Actualización de notas en plataforma: ${p.name}`, 'ph-notebook', '#106FEB', '#dbeafe');
-        }
+      const p = DB.platforms.find(x => x.id === id);
+      if(!p) return;
+      const notes = document.getElementById('platNotesArea')?.value || '';
+      const updated = { ...p, notes: notes };
+      showToast('Guardando notas...');
+      backendCall('guardarPlataforma', [updated], function(){
+        showToast('Notas de plataforma guardadas en Google Sheets');
+        loadDataFromServer();
+      }, function(err){
+        console.error(err);
+        showToast('No se pudieron guardar las notas');
+      });
     };
 
     window.calculatePlatSales = function() {
-        if(!currentPlatDetailId) return;
-        const startStr = document.getElementById('platDetStart').value;
-        const endStr = document.getElementById('platDetEnd').value;
-        
-        let salesVal = 0;
-        let salesCount = 0;
+      if(!currentPlatDetailId) return;
+      const startStr = document.getElementById('platDetStart')?.value || '';
+      const endStr = document.getElementById('platDetEnd')?.value || '';
+      const p = DB.platforms.find(x => x.id === currentPlatDetailId);
+      if(!p) return;
 
-        if(startStr && endStr) {
-            const date1 = new Date(startStr);
-            const date2 = new Date(endStr);
-            const diffTime = Math.abs(date2 - date1);
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
-            
-            // Simulación IA para visualización impactante
-            const randomFactor = (currentPlatDetailId.charCodeAt(0) % 5) + 1;
-            salesCount = Math.floor((diffDays + 1) * randomFactor * 1.8);
-            salesVal = salesCount * 115.50; 
-        }
-        
-        animateCount('platDetSalesTotal', salesVal, {prefix:'S/ ', duration:1000});
-        animateCount('platDetSalesCount', salesCount, {duration:1000});
-        playSound('pop');
+      const providerIds = DB.providers.filter(pr => pr.platformId === currentPlatDetailId).map(pr => String(pr.id));
+      const sales = (DB.salesHistory || []).filter(sale => {
+        const salePlatformId = String(sale.platformId || sale.plataformaId || sale.platform_id || '');
+        const saleProviderId = String(sale.providerId || sale.proveedorId || sale.provider_id || '');
+        const date = sale.date ? new Date(String(sale.date).length <= 10 ? sale.date + 'T12:00:00' : sale.date) : null;
+        if(startStr && (!date || date < new Date(startStr + 'T00:00:00'))) return false;
+        if(endStr && (!date || date > new Date(endStr + 'T23:59:59'))) return false;
+        return salePlatformId === String(currentPlatDetailId) || (saleProviderId && providerIds.includes(saleProviderId));
+      });
+
+      const salesVal = sales.reduce((sum,sale) => sum + Number(sale.total || 0), 0);
+      const salesCount = sales.length;
+
+      animateCount('platDetSalesTotal', salesVal, {prefix:'S/ ', duration:700, decimals:2});
+      animateCount('platDetSalesCount', salesCount, {duration:700});
     };
 
     window.openAddPlatformModal = function() {
@@ -4779,67 +4795,63 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
     };
 
     window.deletePlatform = function(id) {
-      if(confirm('¿Seguro que deseas eliminar esta plataforma permanentemente?')) {
-        DB.platforms = DB.platforms.filter(x => x.id !== id);
-        renderPlatforms();
-        if (typeof google !== 'undefined' && google.script && google.script.run) {
-          google.script.run.eliminarPlataforma(id);
-        }
+      if(!confirm('¿Seguro que deseas eliminar esta plataforma permanentemente?')) return;
+      showToast('Eliminando plataforma...');
+      backendCall('eliminarPlataforma', [id], function(){
         showToast('Plataforma eliminada');
-      }
+        loadDataFromServer();
+      }, function(err){
+        console.error(err);
+        showToast('No se pudo eliminar la plataforma');
+      });
     };
 
-    window.savePlatform = function() {
+    window.savePlatform = async function() {
       const id = document.getElementById('fPlatId').value;
       const name = document.getElementById('fPlatNombre').value.trim();
-      
       if(!name) { showToast('El nombre de la plataforma es obligatorio'); return; }
 
-      const fileInput = document.getElementById('fPlatLogo');
-      let logoUrl = '';
-      if(fileInput.files && fileInput.files[0]) {
-         logoUrl = URL.createObjectURL(fileInput.files[0]);
-      }
+      try{
+        const existing = id ? DB.platforms.find(x => x.id === id) : null;
+        const logoFile = await readOptionalFile('fPlatLogo');
 
-      const platData = {
-        id: id || 'PLAT-' + Date.now(),
-        name: name,
-        legalName: document.getElementById('fPlatRazon')?.value || '',
-        ruc: document.getElementById('fPlatRuc')?.value || '',
-        type: document.getElementById('fPlatTipo').value,
-        status: document.getElementById('fPlatEstado').value,
-        country: document.getElementById('fPlatPais').value,
-        url: document.getElementById('fPlatUrl').value,
-        contact: document.getElementById('fPlatContacto').value,
-        date: document.getElementById('fPlatFecha').value,
-        notes: document.getElementById('fPlatNotas').value,
-        color: '#106FEB' 
-      };
+        const platData = {
+          id: id || 'PLAT-' + Date.now(),
+          name: name,
+          legalName: document.getElementById('fPlatRazon')?.value || '',
+          ruc: document.getElementById('fPlatRuc')?.value || '',
+          type: document.getElementById('fPlatTipo').value,
+          status: document.getElementById('fPlatEstado').value,
+          country: document.getElementById('fPlatPais').value,
+          url: document.getElementById('fPlatUrl').value,
+          contact: document.getElementById('fPlatContacto').value,
+          date: document.getElementById('fPlatFecha').value,
+          notes: document.getElementById('fPlatNotas').value,
+          color: existing?.color || '#106FEB'
+        };
 
-      if(id) {
-        const index = DB.platforms.findIndex(x => x.id === id);
-        if(index !== -1) {
-          if(!logoUrl) platData.logo = DB.platforms[index].logo;
-          else platData.logo = logoUrl;
-          DB.platforms[index] = { ...DB.platforms[index], ...platData };
+        if(logoFile){
+          platData.logoFile = logoFile;
+          platData.logoBase64 = logoFile.base64;
+          platData.logoName = logoFile.name;
+          platData.logoType = logoFile.type;
+        }else if(existing && existing.logo){
+          platData.logo = existing.logo;
         }
-      } else {
-        if(logoUrl) platData.logo = logoUrl;
-        DB.platforms.unshift(platData); 
+
+        showToast(id ? 'Actualizando plataforma...' : 'Guardando plataforma...');
+        backendCall('guardarPlataforma', [platData], function(){
+          closeModal('modalNuevaPlataforma');
+          showToast(id ? 'Plataforma actualizada en Google Sheets' : 'Plataforma guardada en Google Sheets');
+          loadDataFromServer();
+        }, function(err){
+          console.error(err);
+          showToast('No se pudo guardar la plataforma');
+        });
+      }catch(error){
+        console.error(error);
+        showToast('No se pudo procesar el logo');
       }
-
-      logActivity('Plataformas', id ? `Plataforma actualizada: ${name}` : `Nueva plataforma: ${name}`, 'ph-app-window', '#106FEB', '#dbeafe');
-
-      if (typeof google !== 'undefined' && google.script && google.script.run) {
-          google.script.run
-              .withSuccessHandler(function(){ showToast(id ? 'Plataforma actualizada en Sheets' : 'Plataforma guardada en Sheets'); })
-              .withFailureHandler(function(err){ console.error(err); showToast('Error al guardar en Sheets'); })
-              .guardarPlataforma(platData);
-      }
-
-      renderPlatforms();
-      closeModal('modalNuevaPlataforma');
-      showToast(id ? 'Plataforma actualizada exitosamente' : 'Plataforma guardada exitosamente');
     };
 
     /* ============================================================
@@ -4916,80 +4928,76 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
     };
 
     window.deleteCourier = function(id) {
-        if(confirm('¿Seguro que deseas eliminar este courier permanentemente?')) {
-            DB.couriers = DB.couriers.filter(x => x.id !== id);
-            renderCouriers();
-            showToast('Courier eliminado');
-        }
+      if(!confirm('¿Seguro que deseas eliminar este courier permanentemente?')) return;
+      showToast('Eliminando courier...');
+      backendCall('eliminarCourier', [id], function(){
+        showToast('Courier eliminado');
+        loadDataFromServer();
+      }, function(err){
+        console.error(err);
+        showToast('No se pudo eliminar el courier');
+      });
     };
 
-    window.saveCourier = function() {
-        const id = document.getElementById('fCourierId').value;
-        const name = document.getElementById('fCourierNombre').value.trim();
-        if(!name) { showToast('El nombre del courier es obligatorio'); return; }
+    window.saveCourier = async function() {
+      const id = document.getElementById('fCourierId').value;
+      const name = document.getElementById('fCourierNombre').value.trim();
+      if(!name) { showToast('El nombre del courier es obligatorio'); return; }
 
-        const fileInput = document.getElementById('fCourierLogo');
-        let logoUrl = '';
-        if(fileInput.files && fileInput.files[0]) {
-            logoUrl = URL.createObjectURL(fileInput.files[0]);
-        }
+      try{
+        const existing = id ? DB.couriers.find(x => x.id === id) : null;
+        const logoFile = await readOptionalFile('fCourierLogo');
 
         const coverageRows = document.querySelectorAll('#courierCoverageBody tr');
-        let coverageData = [];
-        coverageRows.forEach(tr => {
-            coverageData.push({
-                dept: tr.querySelector('.input-dept').value,
-                prov: tr.querySelector('.input-prov').value,
-                cob: tr.querySelector('.input-cob').value,
-                costo: parseFloat(tr.querySelector('.input-costo').value || 0).toFixed(2),
-                tiempo: tr.querySelector('.input-tiempo').value
-            });
+        const coverageData = [];
+        coverageRows.forEach(function(tr){
+          coverageData.push({
+            dept: tr.querySelector('.input-dept')?.value || '',
+            prov: tr.querySelector('.input-prov')?.value || '',
+            cob: tr.querySelector('.input-cob')?.value || 'Contraentrega',
+            costo: parseFloat(tr.querySelector('.input-costo')?.value || 0).toFixed(2),
+            tiempo: tr.querySelector('.input-tiempo')?.value || ''
+          });
         });
 
         const courierData = {
-            id: id || 'COUR-' + Date.now(),
-            name: name,
-            type: document.getElementById('fCourierTipo').value,
-            status: document.getElementById('fCourierEstado').value,
-            method: document.getElementById('fCourierMetodo').value,
-            country: document.getElementById('fCourierPais').value,
-            address: document.getElementById('fCourierDir').value,
-            phone: document.getElementById('fCourierTel').value,
-            whatsapp: document.getElementById('fCourierWsp').value,
-            coverage: coverageData,
-            deliveries: 0,
-            rating: 5,
-            zone: coverageData.length > 0 ? coverageData[0].dept : 'Nacional' 
+          id: id || 'COUR-' + Date.now(),
+          name: name,
+          type: document.getElementById('fCourierTipo').value,
+          status: document.getElementById('fCourierEstado').value,
+          method: document.getElementById('fCourierMetodo').value,
+          country: document.getElementById('fCourierPais').value,
+          address: document.getElementById('fCourierDir').value,
+          phone: document.getElementById('fCourierTel').value,
+          whatsapp: document.getElementById('fCourierWsp').value,
+          coverage: coverageData,
+          deliveries: existing?.deliveries || 0,
+          rating: existing?.rating || 5,
+          zone: coverageData.length ? coverageData[0].dept : 'Nacional'
         };
 
-        if(id) {
-            const index = DB.couriers.findIndex(x => x.id === id);
-            if(index !== -1) {
-                if(!logoUrl) courierData.logo = DB.couriers[index].logo;
-                else courierData.logo = logoUrl;
-                
-                courierData.deliveries = DB.couriers[index].deliveries || 0;
-                courierData.rating = DB.couriers[index].rating || 5;
-                
-                DB.couriers[index] = { ...DB.couriers[index], ...courierData };
-            }
-        } else {
-            if(logoUrl) courierData.logo = logoUrl;
-            DB.couriers.unshift(courierData);
+        if(logoFile){
+          courierData.logoFile = logoFile;
+          courierData.logoBase64 = logoFile.base64;
+          courierData.logoName = logoFile.name;
+          courierData.logoType = logoFile.type;
+        }else if(existing && existing.logo){
+          courierData.logo = existing.logo;
         }
 
-        logActivity('Logística', id ? `Courier actualizado: ${name}` : `Nuevo courier: ${name}`, 'ph-truck', '#F43F5E', '#fee2e2');
-
-        if (typeof google !== 'undefined' && google.script && google.script.run) {
-            google.script.run
-                .withSuccessHandler(function(){ showToast(id ? 'Courier actualizado en Sheets' : 'Courier guardado en Sheets'); })
-                .withFailureHandler(function(err){ console.error(err); showToast('Error al guardar en Sheets'); })
-                .guardarCourier(courierData);
-        }
-
-        renderCouriers();
-        closeModal('modalNuevoCourier');
-        showToast(id ? 'Courier actualizado' : 'Courier guardado');
+        showToast(id ? 'Actualizando courier...' : 'Guardando courier...');
+        backendCall('guardarCourier', [courierData], function(){
+          closeModal('modalNuevoCourier');
+          showToast(id ? 'Courier actualizado en Google Sheets' : 'Courier guardado en Google Sheets');
+          loadDataFromServer();
+        }, function(err){
+          console.error(err);
+          showToast('No se pudo guardar el courier');
+        });
+      }catch(error){
+        console.error(error);
+        showToast('No se pudo procesar el logo');
+      }
     };
 
     window.openCourierDetails = function(id) {
@@ -5244,20 +5252,20 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
     };
 
     window.saveAgencyDetails = function(id){
-        const a = DB.agencies.find(x => x.id === id);
-        if(!a) return;
-        const notes = document.getElementById('agencyDetNotes')?.value || '';
-        const trackingUrl = document.getElementById('agencyDetTrackingUrl')?.value.trim() || '';
-        a.notes = notes;
-        a.trackingUrl = trackingUrl;
+      const a = DB.agencies.find(x => x.id === id);
+      if(!a) return;
+      const notes = document.getElementById('agencyDetNotes')?.value || '';
+      const trackingUrl = document.getElementById('agencyDetTrackingUrl')?.value.trim() || '';
 
-        if (typeof google !== 'undefined' && google.script && google.script.run) {
-            google.script.run
-                .withSuccessHandler(function(){ showToast('Datos de seguimiento y notas guardados en Sheets'); })
-                .withFailureHandler(function(err){ console.error(err); showToast('No se pudo guardar en Sheets'); })
-                .guardarAgencia(a);
-        }
-        showToast('Datos de la agencia actualizados');
+      const updated = { ...a, notes: notes, trackingUrl: trackingUrl };
+      showToast('Guardando cambios...');
+      backendCall('guardarAgencia', [updated], function(){
+        showToast('Datos de la agencia guardados en Google Sheets');
+        loadDataFromServer();
+      }, function(err){
+        console.error(err);
+        showToast('No se pudo guardar en Sheets');
+      });
     };
 
     window.filterAgencyOrders = function(){
@@ -5525,67 +5533,62 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
     };
 
     window.deleteAgency = function(id) {
-        if(confirm('¿Seguro que deseas eliminar esta agencia?')) {
-            DB.agencies = DB.agencies.filter(x => x.id !== id);
-            renderAgencies();
-            updatePosShippingFields();
-            if (typeof google !== 'undefined' && google.script && google.script.run) {
-                google.script.run.eliminarAgencia(id);
-            }
-            showToast('Agencia eliminada');
-        }
+      if(!confirm('¿Seguro que deseas eliminar esta agencia?')) return;
+      showToast('Eliminando agencia...');
+      backendCall('eliminarAgencia', [id], function(){
+        showToast('Agencia eliminada');
+        loadDataFromServer();
+      }, function(err){
+        console.error(err);
+        showToast('No se pudo eliminar la agencia');
+      });
     };
 
-    window.saveAgency = function() {
-        const id = document.getElementById('fAgeId').value;
-        const name = document.getElementById('fAgeNombre').value.trim();
-        if(!name) { showToast('El nombre de la agencia es obligatorio'); return; }
+    window.saveAgency = async function() {
+      const id = document.getElementById('fAgeId').value;
+      const name = document.getElementById('fAgeNombre').value.trim();
+      if(!name) { showToast('El nombre de la agencia es obligatorio'); return; }
 
-        const fileInput = document.getElementById('fAgeLogo');
-        let logoUrl = '';
-        if(fileInput.files && fileInput.files[0]) {
-            logoUrl = URL.createObjectURL(fileInput.files[0]);
-        }
+      try{
+        const existing = id ? DB.agencies.find(x => x.id === id) : null;
+        const logoFile = await readOptionalFile('fAgeLogo');
 
         const ageData = {
-            id: id || 'AGE-' + Date.now(),
-            name: name,
-            location: document.getElementById('fAgeLocalidad').value,
-            status: document.getElementById('fAgeEstado').value,
-            coverage: document.getElementById('fAgeCobertura').value,
-            avgDays: document.getElementById('fAgeTiempo').value,
-            points: document.getElementById('fAgePuntos').value,
-            shipments: id ? (DB.agencies.find(x=>x.id===id)?.shipments || 0) : 0,
-            notes: id ? (DB.agencies.find(x=>x.id===id)?.notes || '') : '',
-            trackingUrl: id ? (DB.agencies.find(x=>x.id===id)?.trackingUrl || '') : '',
-            color: '#106FEB'
+          id: id || 'AGE-' + Date.now(),
+          name: name,
+          location: document.getElementById('fAgeLocalidad').value,
+          status: document.getElementById('fAgeEstado').value,
+          coverage: document.getElementById('fAgeCobertura').value,
+          avgDays: document.getElementById('fAgeTiempo').value,
+          points: document.getElementById('fAgePuntos').value,
+          shipments: existing?.shipments || 0,
+          notes: existing?.notes || '',
+          trackingUrl: existing?.trackingUrl || '',
+          color: existing?.color || '#106FEB'
         };
 
-        if(id) {
-            const index = DB.agencies.findIndex(x => x.id === id);
-            if(index !== -1) {
-                if(!logoUrl) ageData.logo = DB.agencies[index].logo;
-                else ageData.logo = logoUrl;
-                DB.agencies[index] = { ...DB.agencies[index], ...ageData };
-            }
-        } else {
-            if(logoUrl) ageData.logo = logoUrl;
-            DB.agencies.unshift(ageData);
+        if(logoFile){
+          ageData.logoFile = logoFile;
+          ageData.logoBase64 = logoFile.base64;
+          ageData.logoName = logoFile.name;
+          ageData.logoType = logoFile.type;
+        }else if(existing && existing.logo){
+          ageData.logo = existing.logo;
         }
 
-        logActivity('Logística', id ? `Agencia actualizada: ${name}` : `Nueva agencia: ${name}`, 'ph-buildings', '#106FEB', '#dbeafe');
-
-        if (typeof google !== 'undefined' && google.script && google.script.run) {
-            google.script.run
-                .withSuccessHandler(function(){ showToast(id ? 'Agencia actualizada en Sheets' : 'Agencia guardada en Sheets'); })
-                .withFailureHandler(function(err){ console.error(err); showToast('Error al guardar en Sheets'); })
-                .guardarAgencia(ageData);
-        }
-
-        renderAgencies();
-        updatePosShippingFields();
-        closeModal('modalNuevaAgencia');
-        showToast(id ? 'Agencia actualizada' : 'Agencia guardada');
+        showToast(id ? 'Actualizando agencia...' : 'Guardando agencia...');
+        backendCall('guardarAgencia', [ageData], function(){
+          closeModal('modalNuevaAgencia');
+          showToast(id ? 'Agencia actualizada en Google Sheets' : 'Agencia guardada en Google Sheets');
+          loadDataFromServer();
+        }, function(err){
+          console.error(err);
+          showToast('No se pudo guardar la agencia');
+        });
+      }catch(error){
+        console.error(error);
+        showToast('No se pudo procesar el logo');
+      }
     };
 
     /* ============================================================
@@ -5614,11 +5617,19 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
        GOOGLE SHEETS / APPS SCRIPT — FUENTE REAL DE DATOS
        ============================================================ */
     function normalizeArray(value){
-      return Array.isArray(value) ? value : [];
+      if(Array.isArray(value)) return value;
+      if(value && typeof value === 'object'){
+        if(Array.isArray(value.data)) return value.data;
+        return Object.keys(value).map(function(k){ return value[k]; });
+      }
+      return [];
     }
 
     function normalizeServerData(data){
-      const source = data && typeof data === 'object' ? data : {};
+      const source = data && typeof data === 'object'
+        ? (data.result && typeof data.result === 'object' ? data.result : data)
+        : {};
+
       DB.products = normalizeArray(source.products);
       DB.clients = normalizeArray(source.clients);
       DB.providers = normalizeArray(source.providers);
@@ -5629,21 +5640,21 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
       DB.sellers = normalizeArray(source.sellers);
       DB.districts = normalizeArray(source.districts);
       DB.quotes = normalizeArray(source.quotes);
-      
       DB.activity = normalizeArray(source.activity);
-      DB.revenueByDay = normalizeArray(source.revenueByDay);
-      DB.salesTrend30 = normalizeArray(source.salesTrend30);
+      DB.revenueByDay = normalizeArray(source.revenueByDay).map(Number).filter(Number.isFinite);
+      DB.salesTrend30 = normalizeArray(source.salesTrend30).map(Number).filter(Number.isFinite);
       DB.salesHistory = normalizeArray(source.salesHistory);
       salesHistoryData = DB.salesHistory;
 
-      if (Array.isArray(source.quoteStatuses) && source.quoteStatuses.length) {
+      if(Array.isArray(source.quoteStatuses) && source.quoteStatuses.length){
         DB.quoteStatuses = source.quoteStatuses;
       }
+
       DB.goal = source.goal && typeof source.goal === 'object'
         ? {target:Number(source.goal.target)||0, current:Number(source.goal.current)||0}
         : {target:0,current:0};
 
-      const categoriesFromProducts = DB.products.map(p => p.category).filter(Boolean);
+      const categoriesFromProducts = DB.products.map(p => p && p.category).filter(Boolean);
       DB.categories = Array.isArray(source.categories) && source.categories.length
         ? source.categories
         : [...new Set(categoriesFromProducts)];
@@ -5653,45 +5664,46 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
 
     function clearDataUI(){
       const emptyRow = '<tr><td colspan="10" style="text-align:center;padding:2rem;color:var(--text-muted);">No hay datos registrados.</td></tr>';
-      
-      ['clientTableBody','salesHistoryBody','courierTableBody', 'platformListBody', 'providerListBody', 'catEstLowStockTable', 'agencyListBody']
-        .forEach(id => { const node=document.getElementById(id); if(node) node.innerHTML=emptyRow; });
+
+      ['clientTableBody','salesHistoryBody','courierTableBody','platformListBody','providerListBody',
+       'catEstLowStockTable','agencyListBody']
+        .forEach(function(id){
+          const node=document.getElementById(id);
+          if(node) node.innerHTML=emptyRow;
+        });
 
       ['providerGrid','agencyGrid','platformGrid','activityFeed','topProductsList','stockAlertList',
        'courierZones','districtList','segmentRecs','segmentGrid','posProductGrid','inventoryGrid']
-        .forEach(id => { const node=document.getElementById(id); if(node) node.innerHTML='<div style="padding:2rem;text-align:center;color:var(--text-muted);grid-column:1/-1;">No hay datos registrados.</div>'; });
+        .forEach(function(id){
+          const node=document.getElementById(id);
+          if(node) node.innerHTML='<div style="padding:2rem;text-align:center;color:var(--text-muted);grid-column:1/-1;">No hay datos registrados.</div>';
+        });
     }
 
     function loadDataFromServer(){
-      if (typeof window.google === 'undefined' || !window.google.script || !window.google.script.run) {
-        clearDataUI();
-        showToast('La conexión con Google Sheets no está disponible.');
-        return;
-      }
       document.body.classList.add('data-loading');
-      window.google.script.run
-        .withSuccessHandler(function(data){
-          try {
-            normalizeServerData(data);
-            try { renderAll(); } catch (renderError) { console.error('Error en renderAll:', renderError); }
-            loadSettingsFromServer(data);
-            document.body.classList.remove('data-loading');
-            showToast('Datos cargados desde Google Sheets');
-          } catch (error) {
-            console.error('Error procesando datos recibidos:', error);
-            document.body.classList.remove('data-loading');
-            clearDataUI();
-            showToast('Hubo un error al mostrar los datos.');
-          }
-        })
-        .withFailureHandler(function(error){
-          console.error('Error de Apps Script:', error);
+
+      backendCall('obtenerDatosERP', [], function(data){
+        try{
+          normalizeServerData(data);
+          renderAll();
+          loadSettingsFromServer(data);
+          document.body.classList.remove('data-loading');
+        }catch(error){
+          console.error('Error procesando datos recibidos:', error);
           document.body.classList.remove('data-loading');
           clearDataUI();
-          showToast('No se pudieron cargar los datos.');
-        })
-        .obtenerDatosERP();
+          showToast('Los datos llegaron, pero no pudieron procesarse.');
+        }
+      }, function(error){
+        console.error('Error de Apps Script:', error);
+        document.body.classList.remove('data-loading');
+        clearDataUI();
+        showToast('No se pudieron cargar los datos de Google Sheets.');
+      });
     }
+
+    window.loadDataFromServer = loadDataFromServer;
 
     function loadSettingsFromServer(data){
       const source = data && typeof data === 'object' ? data : {};
