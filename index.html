@@ -70,7 +70,7 @@
       /* Ajuste para animaciones ultra fluidas en monitores 120hz+ */
       --ease-smooth: cubic-bezier(0.16, 1, 0.3, 1);
       --spring-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
-      --ease-fluid: cubic-bezier(0.25, 1, 0.5, 1); /* Nueva curva para animaciones más fluidas y suaves */
+      --ease-fluid: cubic-bezier(0.25, 1, 0.5, 1);
 
       /* Gradiente IA */
       --ai-gradient: linear-gradient(135deg, #106FEB, #8B5CF6);
@@ -199,7 +199,6 @@
     .global-sub-tabs-container::-webkit-scrollbar { display: none; }
     .sub-tabs-group { display: none; gap: 6px; background: rgba(0,0,0,0.02); padding: 6px; border-radius: 40px; border: 1px solid rgba(0,0,0,0.04); }
     
-    /* Animación más suave y fluida para los grupos de sub-pestañas */
     .sub-tabs-group.active { display: flex; animation: fadeSlideGroup 0.6s var(--ease-fluid) forwards; }
     @keyframes fadeSlideGroup { 0% { opacity: 0; transform: translateY(-6px); } 100% { opacity: 1; transform: translateY(0); } }
 
@@ -298,7 +297,7 @@
     .action-dropdown.upward-dropdown { top: auto !important; bottom: 70px !important; left: 0 !important; right: auto !important; transform: translateY(15px) scale(0.95); transform-origin: bottom left; }
     .action-dropdown.upward-dropdown.active { transform: translateY(0) scale(1); }
 
-    /* === ANIMACIONES DE TARJETAS (Hardware Accelerated) === */
+    /* === ANIMACIONES DE TARJETAS === */
     .soft-panel, .dash-card, .entity-card, .kpi-box, .pos-product-card, .segment-card, .btn {
       will-change: transform, box-shadow;
       transition: transform 0.4s var(--spring-bounce), box-shadow 0.4s var(--ease-smooth), border-color 0.4s var(--ease-smooth), background-color 0.4s var(--ease-smooth);
@@ -507,7 +506,7 @@
     .pos-cart-items { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
     .pos-cart-item { display: flex; align-items: center; gap: 12px; background: #fff; border-radius: 16px; padding: 12px; border: 1px solid #f0f2f5; }
     .pos-cart-item .pci-info { flex: 1; }
-    .pos-qty-ctrl button { width: 28px; height: 28px; border-radius: 999px; border: none; background: #f1f5f9; cursor: pointer; font-weight: 800; transition: all 0.3s var(--ease-smooth); will-change: transform; }
+    .pos-qty-ctrl button { width: 28px; height: 28px; border-radius: 999px; border: none; background: #f1f5f9; cursor: font-weight: 800; transition: all 0.3s var(--ease-smooth); will-change: transform; }
     .pos-qty-ctrl button:hover { background: var(--primary-pill); color: white; transform: scale(1.15); }
     .pos-cart-empty { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #9ca3af; gap: 10px; }
     .pos-totals { border-top: 1px dashed var(--neutral-line); margin-top: 14px; padding-top: 14px; display: flex; flex-direction: column; gap: 7px; }
@@ -540,7 +539,7 @@
     .modal-overlay.active { opacity: 1; pointer-events: auto; }
     .modal-box { background: #fff; border-radius: 32px; width: 700px; max-width: 95vw; max-height: 86vh; overflow-y: auto; padding: 2.1rem; box-shadow: 0 30px 80px rgba(0,0,0,0.25); transform: scale(0.92) translateY(20px); transition: all 0.5s var(--spring-bounce); will-change: transform, opacity; }
     .modal-box.modal-large { width: 900px; }
-    .modal-box.modal-xl { width: 1100px; } /* Nueva clase agregada para expansión masiva */
+    .modal-box.modal-xl { width: 1100px; }
     .modal-overlay.active .modal-box { transform: scale(1) translateY(0); }
     .modal-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.4rem; }
     .modal-close { width: 38px; height: 38px; border-radius: 50%; background: #f3f4f6; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: var(--text-muted); transition: all 0.3s var(--spring-bounce); will-change: transform; }
@@ -567,7 +566,7 @@
     .mini-table th { text-align: left; padding: 10px 12px; color: var(--text-muted); font-size: 0.72rem; text-transform: uppercase; border-bottom: 1px solid #eef0f3; }
     .mini-table td { padding: 11px 12px; border-bottom: 1px solid #f4f5f7; font-weight: 500; }
 
-    /* Línea de tiempo (Timeline) */
+    /* Línea de tiempo */
     .timeline { border-left: 2px solid var(--neutral-line); padding-left: 15px; margin: 10px 0; display:flex; flex-direction:column; gap:14px; }
     .timeline-item { position: relative; }
     .timeline-item::before { content:''; position:absolute; left: -21px; top: 2px; width: 10px; height: 10px; border-radius: 50%; background: var(--primary-pill); border: 2px solid #fff; }
@@ -583,17 +582,9 @@
     
     #goalRing { transition: stroke-dashoffset 1.2s var(--spring-bounce); }
 
-    /* ============================================================
-       MEDIA QUERIES PARA RESPONSIVE (MÓVIL, TABLET Y ESCRITORIO)
-       ============================================================ */
-    @media (max-width: 1600px) {
-      .product-grid-6 { grid-template-columns: repeat(5, 1fr); }
-    }
-    
-    @media (max-width: 1400px) {
-      .product-grid-6 { grid-template-columns: repeat(4, 1fr); }
-    }
-
+    /* Responsive */
+    @media (max-width: 1600px) { .product-grid-6 { grid-template-columns: repeat(5, 1fr); } }
+    @media (max-width: 1400px) { .product-grid-6 { grid-template-columns: repeat(4, 1fr); } }
     @media (max-width: 1200px) {
       .dash-grid-layout { grid-template-columns: 1fr 1fr; }
       .kpi-strip { grid-template-columns: repeat(2, 1fr); }
@@ -604,12 +595,8 @@
       .settings-grid { grid-template-columns: 1fr; gap: 1rem; }
       .global-sub-tabs-container { max-width: 45%; }
     }
-
     @media (max-width: 1100px) {
       .product-grid-6 { grid-template-columns: repeat(3, 1fr); }
-    }
-
-    @media (max-width: 1100px) {
       .top-global-pill { padding: 0 12px; }
       .brand-container { gap: 9px; }
       .brand-text { font-size: 1.15rem; }
@@ -619,7 +606,6 @@
       .profile-trigger { padding-right: 6px; }
       .global-sub-tabs-container { max-width: 42%; }
     }
-
     @media (max-width: 992px) {
       .pos-layout { grid-template-columns: 1fr; }
       .folder-body { padding: 2rem; }
@@ -629,26 +615,16 @@
       .sub-tab { padding-left: 10px; padding-right: 10px; }
       .sub-tab.active { padding-left: 14px; padding-right: 14px; }
     }
-
-    @media (max-width: 800px) {
-      .product-grid-6 { grid-template-columns: repeat(2, 1fr); }
-    }
-
+    @media (max-width: 800px) { .product-grid-6 { grid-template-columns: repeat(2, 1fr); } }
     @media (max-width: 768px) {
       body { flex-direction: column; overflow-x: hidden; overflow-y: auto; }
       main { padding: 135px 12px 90px 12px; margin-left: 0; overflow: visible; width: 100%; max-width: 100%; height: auto; display: block; flex: none;}
-      
       .folder-body { padding: 1.2rem; border-radius: 20px; overflow-y: visible; overflow-x: hidden; display: block; width: 100%; max-width: 100%;}
       .section-content.active { display: block; height: auto; }
       .sub-content.active { display: flex; height: auto; }
-
-      .top-global-pill { 
-        top: 12px; left: 12px; right: 12px; height: auto; padding: 10px; 
-        flex-wrap: wrap; border-radius: 24px; gap: 8px; justify-content: space-between;
-      }
+      .top-global-pill { top: 12px; left: 12px; right: 12px; height: auto; padding: 10px; flex-wrap: wrap; border-radius: 24px; gap: 8px; justify-content: space-between; }
       .brand-text { display: none; }
       .brand-icon-wrapper { width: 44px; height: 44px; font-size: 1.5rem; }
-      
       .top-right-actions { gap: 8px; flex: 1; justify-content: flex-end;}
       .modern-search:not(:focus-within) { width: 44px; height: 44px; }
       .modern-search:focus-within { width: 100%; position: absolute; right: 0; z-index: 10; }
@@ -657,45 +633,28 @@
       .profile-trigger { padding: 4px; }
       .profile-text { display: none; }
       .profile-trigger i { display: none; }
-
-      .global-sub-tabs-container {
-        position: relative; top: auto; left: auto; transform: none; 
-        width: 100%; max-width: 100%; order: 3; justify-content: flex-start;
-        overflow-x: auto; padding-bottom: 5px; -webkit-overflow-scrolling: touch;
-      }
-
-      .sidebar {
-        top: auto; bottom: 12px; left: 12px; right: 12px; transform: none; 
-        width: calc(100% - 24px); height: 64px; flex-direction: row; padding: 0 10px; 
-        box-sizing: border-box; justify-content: space-around;
-      }
+      .global-sub-tabs-container { position: relative; top: auto; left: auto; transform: none; width: 100%; max-width: 100%; order: 3; justify-content: flex-start; overflow-x: auto; padding-bottom: 5px; -webkit-overflow-scrolling: touch; }
+      .sidebar { top: auto; bottom: 12px; left: 12px; right: 12px; transform: none; width: calc(100% - 24px); height: 64px; flex-direction: row; padding: 0 10px; box-sizing: border-box; justify-content: space-around; }
       .nav-links { flex-direction: row; width: 100%; justify-content: space-around; gap: 0;}
       .nav-link { width: 42px; height: 42px; }
       .nav-link::before, .nav-link::after { display: none !important; }
-
       .kpi-strip, .segment-grid { grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.2rem;}
       .dash-row-3, .dash-row-2 { grid-template-columns: 1fr; gap: 1rem; }
       .form-row-2, .form-row-3 { grid-template-columns: 1fr; gap: 10px; }
-      
       .panel-head { flex-direction: column; align-items: flex-start; gap: 0.8rem; margin-bottom: 1.2rem;}
       .panel-head-text h3 { font-size: 1.8rem; }
       .panel-head-actions { width: 100%; justify-content: flex-start; overflow-x: auto; padding-bottom: 4px; }
-
       .modal-box { width: 100%; max-width: 95vw; padding: 1.2rem; margin: 10px; }
       .fab-container { bottom: 90px; right: 12px; left: auto; }
-      
       .action-dropdown { width: calc(100vw - 24px); right: -6px; top: 70px; }
       #notifDropdown { width: calc(100vw - 24px); }
       .action-dropdown.upward-dropdown { bottom: 70px !important; right: 0 !important; left: auto !important;}
-
       .filter-bar { flex-direction: column; align-items: stretch; }
       select.filter-input { width: 100%; }
-
       .btn { padding: 12px 18px; font-size: 0.9rem; }
       .dash-card { padding: 1.2rem; }
       .soft-panel { padding: 1.2rem; }
     }
-
     @media (max-width: 600px) {
       .panel-head { align-items: stretch; }
       .panel-head-actions { width: 100%; }
@@ -703,7 +662,6 @@
       .data-table-wrap { max-width: 100%; }
       .modal-box { width: 100%; max-width: calc(100vw - 20px); padding: 1.2rem; border-radius: 24px; }
     }
-
     @media (max-width: 480px) {
       .kpi-strip, .segment-grid { grid-template-columns: 1fr; }
       .product-grid-6 { grid-template-columns: 1fr; }
@@ -711,475 +669,6 @@
       .entity-grid { grid-template-columns: 1fr; }
       .panel-head-text h3 { font-size: 1.5rem; }
     }
-
-
-/* ============================================================
-   PERFORMANCE / FLUID UI PATCH
-   Mantiene todas las funciones y estructura existentes.
-   Optimiza únicamente composición, transiciones y animaciones.
-   ============================================================ */
-
-:root {
-  --ui-fast: 120ms;
-  --ui-normal: 180ms;
-  --ui-slow: 240ms;
-  --ui-ease: cubic-bezier(.2,.8,.2,1);
-}
-
-/* Evita crear capas de composición innecesarias */
-.sidebar,
-.brand-icon-wrapper,
-.nav-icon,
-.sub-tab,
-.modern-search,
-.ai-trigger,
-.action-circle-btn,
-.profile-trigger,
-.fab-container,
-.fab-btn,
-.soft-panel,
-.dash-card,
-.entity-card,
-.kpi-box,
-.pos-product-card,
-.segment-card,
-.btn,
-.settings-nav-item,
-.toggle-switch .knob,
-.modal-close {
-  will-change: auto;
-}
-
-/* Solo elementos que realmente necesitan composición anticipada */
-.modal-box,
-.toast-msg,
-.action-dropdown,
-.nav-link::before,
-.nav-link::after {
-  will-change: transform, opacity;
-}
-
-/* El blur de fondo es costoso y no aporta funcionalidad */
-.sidebar,
-.top-global-pill,
-.modal-overlay {
-  -webkit-backdrop-filter: none !important;
-  backdrop-filter: none !important;
-}
-
-/* Transiciones específicas: evita transition: all */
-.nav-link {
-  transition: background-color var(--ui-fast) ease, color var(--ui-fast) ease;
-}
-
-.nav-icon {
-  transition: transform var(--ui-fast) var(--ui-ease), color var(--ui-fast) ease;
-}
-
-.nav-link::before,
-.nav-link::after {
-  transition: transform var(--ui-fast) var(--ui-ease), opacity var(--ui-fast) ease;
-}
-
-.top-global-pill {
-  transition: box-shadow var(--ui-normal) ease, background-color var(--ui-normal) ease;
-}
-
-.brand-icon-wrapper {
-  transition: transform var(--ui-normal) var(--ui-ease), box-shadow var(--ui-normal) ease, background-color var(--ui-normal) ease, color var(--ui-normal) ease;
-}
-
-.brand-text {
-  transition: transform var(--ui-normal) var(--ui-ease);
-}
-
-.brand-text span {
-  transition: color var(--ui-normal) ease, text-shadow var(--ui-normal) ease;
-}
-
-/* La animación permanente del logo consume trabajo incluso estando quieto */
-.brand-icon-wrapper,
-.brand-text span {
-  animation: none !important;
-}
-
-.sub-tabs-group.active {
-  animation: uiTabsIn var(--ui-normal) var(--ui-ease) both;
-}
-
-@keyframes uiTabsIn {
-  from { opacity: 0; transform: translate3d(0,-4px,0); }
-  to { opacity: 1; transform: translate3d(0,0,0); }
-}
-
-.sub-tab {
-  transition: background-color var(--ui-fast) ease, color var(--ui-fast) ease, transform var(--ui-fast) var(--ui-ease), padding var(--ui-fast) var(--ui-ease);
-}
-
-.sub-tab-text {
-  transition: max-width var(--ui-normal) var(--ui-ease), opacity var(--ui-fast) ease, margin-left var(--ui-normal) var(--ui-ease);
-}
-
-.modern-search {
-  transition: width var(--ui-normal) var(--ui-ease), background-color var(--ui-fast) ease, border-color var(--ui-fast) ease, box-shadow var(--ui-fast) ease;
-  will-change: auto;
-}
-
-.modern-search input {
-  transition: opacity var(--ui-fast) ease, transform var(--ui-fast) var(--ui-ease);
-}
-
-.ai-trigger,
-.action-circle-btn,
-.profile-trigger,
-.fab-btn {
-  transition: transform var(--ui-fast) var(--ui-ease), box-shadow var(--ui-fast) ease, color var(--ui-fast) ease, border-color var(--ui-fast) ease, background-color var(--ui-fast) ease;
-}
-
-.action-dropdown {
-  transition: transform var(--ui-normal) var(--ui-ease), opacity var(--ui-fast) ease;
-}
-
-.dropdown-item {
-  transition: background-color var(--ui-fast) ease, color var(--ui-fast) ease;
-}
-
-/* Tarjetas: solo transformaciones ligeras y composición eficiente */
-.soft-panel,
-.dash-card,
-.entity-card,
-.kpi-box,
-.pos-product-card,
-.segment-card,
-.btn {
-  transition: transform var(--ui-normal) var(--ui-ease), border-color var(--ui-fast) ease, background-color var(--ui-fast) ease;
-}
-
-.dash-card:hover,
-.kpi-box:hover,
-.entity-card:hover,
-.pos-product-card:hover,
-.segment-card:hover {
-  transform: translate3d(0,-2px,0);
-  border-color: rgba(16,111,235,.35);
-  box-shadow: none;
-  z-index: 2;
-}
-
-/* Evita animar decoraciones grandes */
-.bg-watermark,
-.soft-panel:hover .bg-watermark,
-.dash-card:hover .bg-watermark,
-.entity-card:hover .bg-watermark,
-.kpi-box:hover .bg-watermark,
-.pos-product-card:hover .bg-watermark,
-.segment-card:hover .bg-watermark {
-  transition: none !important;
-}
-
-/* Navegación de páginas más corta */
-main {
-  transition: none;
-}
-
-.section-content.active {
-  animation: uiPageIn var(--ui-normal) var(--ui-ease) both;
-}
-
-.sub-content.active {
-  animation: uiPageIn var(--ui-normal) var(--ui-ease) both;
-}
-
-@keyframes uiPageIn {
-  from { opacity: 0; transform: translate3d(0,6px,0); }
-  to { opacity: 1; transform: translate3d(0,0,0); }
-}
-
-.folder-body {
-  transition: opacity var(--ui-fast) ease;
-}
-
-/* Botones */
-.btn {
-  transition: transform var(--ui-fast) var(--ui-ease), box-shadow var(--ui-fast) ease, background-color var(--ui-fast) ease, border-color var(--ui-fast) ease, color var(--ui-fast) ease;
-}
-
-.btn-primary:hover {
-  transform: translate3d(0,-1px,0);
-  box-shadow: 0 8px 20px var(--primary-glow);
-}
-
-.btn-ghost:hover,
-.btn-outline:hover {
-  transform: translate3d(0,-1px,0);
-}
-
-.btn:active {
-  transform: scale(.985);
-}
-
-.chip-select button {
-  transition: background-color var(--ui-fast) ease, color var(--ui-fast) ease, transform var(--ui-fast) var(--ui-ease), box-shadow var(--ui-fast) ease;
-  will-change: auto;
-}
-
-/* Inputs */
-.filter-input,
-.form-group input,
-.form-group select,
-.form-group textarea {
-  transition: border-color var(--ui-fast) ease, background-color var(--ui-fast) ease, box-shadow var(--ui-fast) ease;
-}
-
-.form-group input:focus,
-.form-group select:focus,
-.form-group textarea:focus {
-  transform: none;
-}
-
-/* Tablas y listas */
-table.data-table tbody tr,
-.feed-item {
-  transition: background-color var(--ui-fast) ease;
-}
-
-/* Gráficos: duración corta sin spring exagerado */
-.progress-fill,
-.bar-chart .bar,
-#goalRing {
-  transition: width var(--ui-slow) var(--ui-ease), height var(--ui-slow) var(--ui-ease), stroke-dashoffset var(--ui-slow) var(--ui-ease);
-}
-
-/* Entrada de tarjetas: una sola animación corta, sin cascada de delays */
-.kpi-strip .kpi-box,
-.dash-row-3 .dash-card,
-.dash-row-2 .dash-card,
-.segment-grid .segment-card,
-.entity-grid .entity-card {
-  animation: uiCardIn var(--ui-normal) var(--ui-ease) both !important;
-  animation-delay: 0ms !important;
-}
-
-@keyframes uiCardIn {
-  from { opacity: 0; transform: translate3d(0,6px,0); }
-  to { opacity: 1; transform: translate3d(0,0,0); }
-}
-
-.ai-message {
-  animation: uiPageIn var(--ui-normal) var(--ui-ease) both;
-}
-
-.settings-nav-item {
-  transition: transform var(--ui-fast) var(--ui-ease), background-color var(--ui-fast) ease, color var(--ui-fast) ease;
-}
-
-.toggle-switch {
-  transition: background-color var(--ui-fast) ease;
-}
-
-.toggle-switch .knob {
-  transition: transform var(--ui-fast) var(--ui-ease);
-}
-
-.modal-overlay {
-  transition: opacity var(--ui-normal) ease;
-}
-
-.modal-box {
-  transition: transform var(--ui-normal) var(--ui-ease), opacity var(--ui-normal) ease;
-}
-
-.modal-close {
-  transition: transform var(--ui-fast) var(--ui-ease), background-color var(--ui-fast) ease, color var(--ui-fast) ease;
-}
-
-.toast-msg {
-  transition: transform var(--ui-normal) var(--ui-ease), opacity var(--ui-fast) ease;
-}
-
-/* Reduce coste de pintura de elementos fuera del viewport en listas largas.
-   No cambia datos ni comportamiento; solo permite al navegador omitir pintura innecesaria. */
-.entity-grid > .entity-card,
-.pos-product-grid > .pos-product-card,
-.feed-list > .feed-item {
-  content-visibility: auto;
-  contain-intrinsic-size: 120px;
-}
-
-/* Mantener scroll táctil fluido */
-.folder-body,
-.scroll-y,
-.entity-grid,
-.pos-product-grid,
-.ai-chat-messages,
-.feed-list,
-.data-table-wrap {
-  -webkit-overflow-scrolling: touch;
-  overscroll-behavior: contain;
-}
-
-/* Respeta las preferencias de movimiento del sistema */
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 1ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 1ms !important;
-    scroll-behavior: auto !important;
-  }
-}
-
-
-/* ============================================================
-   MOTION POLISH — ANIMACIONES SUAVES Y ELEGANTES
-   Solo ajusta animaciones/transiciones. No elimina funciones.
-   ============================================================ */
-:root {
-  --ui-fast: 180ms;
-  --ui-normal: 300ms;
-  --ui-slow: 520ms;
-  --ui-slower: 700ms;
-  --ui-ease: cubic-bezier(.22,.8,.25,1);
-  --ui-ease-soft: cubic-bezier(.25,.75,.25,1);
-  --ui-ease-spring: cubic-bezier(.22,1.08,.3,1);
-}
-
-/* Navegación */
-.nav-link { transition: background-color 260ms var(--ui-ease-soft), color 260ms var(--ui-ease-soft), transform 300ms var(--ui-ease); }
-.nav-icon { transition: transform 300ms var(--ui-ease), color 240ms ease; }
-.nav-link::before, .nav-link::after { transition: transform 300ms var(--ui-ease), opacity 260ms ease; }
-.sub-tabs-group.active { animation: smoothTabs 360ms var(--ui-ease) both; }
-.sub-tab { transition: background-color 260ms var(--ui-ease-soft), color 240ms ease, transform 300ms var(--ui-ease), padding 300ms var(--ui-ease); }
-.sub-tab-text { transition: max-width 360ms var(--ui-ease), opacity 260ms ease, margin-left 360ms var(--ui-ease); }
-
-@keyframes smoothTabs {
-  from { opacity: 0; transform: translate3d(0,-7px,0); }
-  to { opacity: 1; transform: translate3d(0,0,0); }
-}
-
-/* Logo: movimiento lento y casi imperceptible */
-.brand-icon-wrapper {
-  transition: transform 420ms var(--ui-ease-spring), box-shadow 420ms var(--ui-ease-soft), background-color 320ms ease, color 320ms ease;
-  animation: softLeaf 5.5s ease-in-out infinite;
-}
-.brand-text { transition: transform 360ms var(--ui-ease); }
-.brand-text span {
-  transition: color 350ms ease, text-shadow 450ms ease;
-  animation: softTextGlow 5.5s ease-in-out infinite;
-}
-@keyframes softLeaf {
-  0%,100% { transform: translate3d(0,0,0) rotate(0deg) scale(1); }
-  50% { transform: translate3d(0,-1px,0) rotate(-1deg) scale(1.015); }
-}
-@keyframes softTextGlow {
-  0%,100% { opacity: 1; }
-  50% { opacity: .88; }
-}
-
-/* Buscador y acciones */
-.modern-search { transition: width 360ms var(--ui-ease), background-color 300ms ease, border-color 300ms ease, box-shadow 360ms ease; }
-.modern-search input { transition: opacity 260ms ease, transform 360ms var(--ui-ease); }
-.ai-trigger, .action-circle-btn, .profile-trigger, .fab-btn {
-  transition: transform 280ms var(--ui-ease-spring), box-shadow 320ms var(--ui-ease-soft), color 240ms ease, border-color 280ms ease, background-color 280ms ease;
-}
-.action-dropdown { transition: transform 340ms var(--ui-ease), opacity 260ms ease; }
-.dropdown-item { transition: background-color 220ms ease, color 220ms ease, transform 260ms var(--ui-ease); }
-.dropdown-item:hover { transform: translate3d(3px,0,0); }
-
-/* Tarjetas */
-.soft-panel, .dash-card, .entity-card, .kpi-box, .pos-product-card, .segment-card {
-  transition: transform 360ms var(--ui-ease), border-color 280ms ease, background-color 300ms ease, box-shadow 360ms var(--ui-ease-soft);
-}
-.dash-card:hover, .kpi-box:hover, .entity-card:hover, .pos-product-card:hover, .segment-card:hover {
-  transform: translate3d(0,-3px,0) scale(1.003);
-  border-color: rgba(16,111,235,.28);
-  box-shadow: 0 10px 28px rgba(15,23,42,.055);
-  z-index: 2;
-}
-
-/* Contenido / navegación de páginas */
-main { transition: margin-left 360ms var(--ui-ease), padding 360ms var(--ui-ease); }
-.section-content.active { animation: smoothPageIn 360ms var(--ui-ease) both; }
-.sub-content.active { animation: smoothPageIn 320ms var(--ui-ease) both; }
-@keyframes smoothPageIn {
-  from { opacity: 0; transform: translate3d(0,10px,0); }
-  to { opacity: 1; transform: translate3d(0,0,0); }
-}
-.folder-body { transition: opacity 260ms ease, transform 360ms var(--ui-ease); }
-
-/* Botones */
-.btn {
-  transition: transform 260ms var(--ui-ease-spring), box-shadow 320ms var(--ui-ease-soft), background-color 260ms ease, border-color 260ms ease, color 220ms ease;
-}
-.btn-primary:hover { transform: translate3d(0,-2px,0); box-shadow: 0 9px 24px var(--primary-glow); }
-.btn-ghost:hover, .btn-outline:hover { transform: translate3d(0,-1px,0); }
-.btn:active { transform: translate3d(0,1px,0) scale(.985); transition-duration: 100ms; }
-.chip-select button { transition: background-color 260ms ease, color 240ms ease, transform 280ms var(--ui-ease), box-shadow 280ms ease; }
-
-/* Inputs */
-.filter-input, .form-group input, .form-group select, .form-group textarea {
-  transition: border-color 260ms ease, background-color 260ms ease, box-shadow 320ms var(--ui-ease-soft);
-}
-
-/* Tablas, listas y mensajes */
-table.data-table tbody tr, .feed-item { transition: background-color 240ms ease, transform 280ms var(--ui-ease); }
-table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0,0); }
-.ai-message { animation: smoothMessage 360ms var(--ui-ease) both; }
-@keyframes smoothMessage {
-  from { opacity: 0; transform: translate3d(0,8px,0) scale(.995); }
-  to { opacity: 1; transform: translate3d(0,0,0) scale(1); }
-}
-
-/* Gráficos y progreso: movimiento visible pero sin tirones */
-.progress-fill { transition: width 700ms var(--ui-ease); }
-.bar-chart .bar { transition: height 700ms var(--ui-ease); }
-#goalRing { transition: stroke-dashoffset 900ms var(--ui-ease); }
-
-/* Entrada de tarjetas: cascada muy ligera */
-.kpi-strip .kpi-box, .dash-row-3 .dash-card, .dash-row-2 .dash-card, .segment-grid .segment-card, .entity-grid .entity-card {
-  animation: smoothCardIn 420ms var(--ui-ease) both !important;
-}
-.kpi-strip .kpi-box:nth-child(1), .dash-row-3 .dash-card:nth-child(1), .segment-grid .segment-card:nth-child(1) { animation-delay: 20ms !important; }
-.kpi-strip .kpi-box:nth-child(2), .dash-row-3 .dash-card:nth-child(2), .segment-grid .segment-card:nth-child(2) { animation-delay: 55ms !important; }
-.kpi-strip .kpi-box:nth-child(3), .segment-grid .segment-card:nth-child(3) { animation-delay: 90ms !important; }
-.kpi-strip .kpi-box:nth-child(4), .segment-grid .segment-card:nth-child(4) { animation-delay: 125ms !important; }
-@keyframes smoothCardIn {
-  from { opacity: 0; transform: translate3d(0,12px,0) scale(.992); }
-  to { opacity: 1; transform: translate3d(0,0,0) scale(1); }
-}
-
-/* Configuración */
-.settings-nav-item { transition: transform 280ms var(--ui-ease), background-color 260ms ease, color 240ms ease; }
-.toggle-switch { transition: background-color 320ms ease; }
-.toggle-switch .knob { transition: transform 380ms var(--ui-ease-spring); }
-.settings-pane.active { animation: smoothPageIn 320ms var(--ui-ease) both; }
-
-/* Modal */
-.modal-overlay { transition: opacity 300ms var(--ui-ease-soft); }
-.modal-box { transition: transform 420ms var(--ui-ease-spring), opacity 300ms ease; }
-.modal-close { transition: transform 280ms var(--ui-ease-spring), background-color 240ms ease, color 220ms ease; }
-.modal-close:hover { transform: rotate(90deg) scale(1.04); }
-
-/* Toast */
-.toast-msg { transition: transform 420ms var(--ui-ease-spring), opacity 300ms ease; }
-
-/* FAB */
-.fab-container { transition: transform 420ms var(--ui-ease-spring); }
-.fab-btn { transition: transform 320ms var(--ui-ease-spring), box-shadow 360ms var(--ui-ease-soft), background-color 280ms ease; }
-.fab-btn:hover { transform: translate3d(0,-3px,0) scale(1.025); }
-.fab-btn:active { transform: scale(.96); transition-duration: 110ms; }
-
-/* Evita cambios bruscos durante carga */
-.data-loading .folder-body { transition: opacity 320ms ease; }
-
-/* Respeta usuarios que prefieren menos movimiento */
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 1ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 1ms !important;
-    scroll-behavior: auto !important;
-  }
-}
   </style>
 </head>
 <body>
@@ -1201,7 +690,6 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
 
     <!-- SUB-PESTAÑAS (Centro - Baja en móvil) -->
     <div class="global-sub-tabs-container">
-
         <!-- Tabs de Inicio -->
         <div class="sub-tabs-group" id="tabs-inicio">
             <button class="sub-tab" data-target="inicio-dash" onclick="switchSubTab('inicio-dash', this, true)"><i class="ph ph-layout sub-tab-icon"></i><span class="sub-tab-text">Dashboard</span></button>
@@ -1240,7 +728,6 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
 
     <!-- ACCIONES (Derecha) -->
     <div class="top-right-actions">
-
         <!-- Búsqueda Elástica -->
         <div class="modern-search">
             <i class="ph ph-magnifying-glass search-icon"></i>
@@ -1311,7 +798,7 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
     </ul>
   </nav>
 
-  <!-- === BOTÓN ACCESOS RÁPIDOS === -->
+  <!-- BOTÓN ACCESOS RÁPIDOS -->
   <div class="fab-container">
     <div class="fab-btn" onclick="toggleDropdown('quickAccessDropdown', event)" title="Accesos Rápidos">
       <i class="ph ph-plus"></i>
@@ -1331,21 +818,12 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
 
   <!-- ÁREA DE CONTENIDO -->
   <main>
-
-    <!-- ============================== -->
-    <!-- MÓDULO INICIO                  -->
-    <!-- ============================== -->
+    <!-- MÓDULO INICIO -->
     <div id="inicio" class="section-content">
       <div class="folder-body">
-
-        <!-- === DASHBOARD GRID === -->
         <div class="sub-content active" id="inicio-dash">
           <div class="dash-grid-layout">
-
-            <!-- Columna Izquierda -->
             <div class="dash-col dash-col-left">
-
-              <!-- Tarjeta 1: Panel Principal (Ingresos) -->
               <div class="dash-card" style="flex: 1; background:#fff;">
                 <i class="ph-fill ph-chart-line-up bg-watermark"></i>
                 <div style="display:flex; justify-content:space-between; align-items:flex-start;">
@@ -1366,7 +844,6 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
                 <div id="revenueBarChart" class="bar-chart" style="margin-top:auto;"></div>
               </div>
 
-              <!-- Tarjetas 4, 5, 6: KPIs rápidos -->
               <div class="dash-row-3">
                 <div class="dash-card" style="height: 140px; background:#fff;">
                   <i class="ph-fill ph-users-three bg-watermark"></i>
@@ -1403,7 +880,6 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
                 </div>
               </div>
 
-              <!-- Tarjetas 10 (Ventas por canal) y 9 (Alertas de stock) -->
               <div class="dash-row-2">
                 <div class="dash-card" style="min-height: 220px; background:#fff;">
                   <i class="ph-fill ph-chart-pie-slice bg-watermark"></i>
@@ -1416,13 +892,9 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
                   <div id="stockAlertList" class="scroll-y" style="display:flex; flex-direction:column; gap:8px; overflow-y:auto;"></div>
                 </div>
               </div>
-
             </div>
 
-            <!-- Columna Centro -->
             <div class="dash-col dash-col-mid">
-
-              <!-- Tarjeta 2: Meta Mensual -->
               <div class="dash-card" style="height: 180px; background:#fff;">
                 <i class="ph-fill ph-target bg-watermark"></i>
                 <h4>Meta mensual</h4>
@@ -1442,7 +914,6 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
                 </div>
               </div>
 
-              <!-- Tarjeta 7: Ticket promedio (Pequeña) -->
               <div class="dash-card" style="height: 90px; padding: 1rem 1.3rem; background:#fff; flex-direction:row; align-items:center; gap:14px;">
                 <i class="ph-fill ph-receipt bg-watermark"></i>
                 <div class="kpi-icon" style="background:#ede9fe; color:#7c3aed; width:46px; height:46px; font-size:1.3rem;"><i class="ph-fill ph-receipt"></i></div>
@@ -1452,32 +923,25 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
                 </div>
               </div>
 
-              <!-- Tarjeta 8: Top productos (Ocupa el resto de altura) -->
               <div class="dash-card" style="flex: 1; background:#fff; min-height: 250px;">
                 <i class="ph-fill ph-medal bg-watermark"></i>
                 <h4 style="margin-bottom:12px;">Top productos del mes</h4>
                 <div id="topProductsList" class="scroll-y" style="display:flex; flex-direction:column; gap:12px; overflow-y:auto;"></div>
               </div>
-
             </div>
 
-            <!-- Columna Derecha -->
             <div class="dash-col dash-col-right">
-
-              <!-- Tarjeta 3: Actividades Recientes (Vertical entera) -->
               <div class="dash-card" style="flex: 1; background:#fff; min-height: 300px;">
                 <i class="ph-fill ph-clock-counter-clockwise bg-watermark"></i>
                 <h3 style="font-size:1.2rem; margin-bottom:4px;">Actividad reciente</h3>
                 <p style="font-size:0.78rem; margin-bottom:8px;">Movimientos en vivo del ERP</p>
                 <div id="activityFeed" class="feed-list scroll-y"></div>
               </div>
-
             </div>
-
           </div>
         </div>
         
-        <!-- ===== FINANZAS ===== -->
+        <!-- FINANZAS -->
         <div class="sub-content" id="inicio-finanzas">
           <div class="panel-head">
             <div class="panel-head-text">
@@ -1489,9 +953,7 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
               <button class="btn btn-outline btn-sm"><i class="ph ph-download-simple"></i> Exportar Balance</button>
             </div>
           </div>
-          <div class="kpi-strip" id="finKpiStrip">
-              <!-- KPIs rendered via JS -->
-          </div>
+          <div class="kpi-strip" id="finKpiStrip"></div>
           <div class="split-layout" style="min-height: 380px;">
             <div class="soft-panel" style="display:flex; flex-direction:column;">
               <i class="ph-fill ph-chart-line bg-watermark"></i>
@@ -1513,7 +975,7 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
           </div>
         </div>
 
-        <!-- ===== ESTADÍSTICAS DE VENTAS ===== -->
+        <!-- ESTADÍSTICAS DE VENTAS -->
         <div class="sub-content" id="inicio-est-ventas">
           <div class="panel-head">
             <div class="panel-head-text">
@@ -1525,9 +987,7 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
               <button class="btn btn-primary btn-sm"><i class="ph ph-funnel"></i> Filtros</button>
             </div>
           </div>
-
           <div class="kpi-strip" id="salesKpiStrip"></div>
-
           <div class="split-layout" style="min-height: 380px;">
             <div class="soft-panel" style="display:flex; flex-direction:column;">
               <i class="ph-fill ph-chart-line-up bg-watermark"></i>
@@ -1551,7 +1011,7 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
           </div>
         </div>
 
-        <!-- ===== ESTADÍSTICAS DE PRODUCTOS (INICIO) ===== -->
+        <!-- ESTADÍSTICAS DE PRODUCTOS -->
         <div class="sub-content" id="inicio-est-prod">
           <div class="panel-head">
             <div class="panel-head-text">
@@ -1562,9 +1022,7 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
               <button class="btn btn-outline btn-sm"><i class="ph ph-download-simple"></i> Exportar</button>
             </div>
           </div>
-
           <div class="kpi-strip" id="prodKpiStrip"></div>
-
           <div class="split-layout" style="min-height: 380px;">
             <div class="soft-panel" style="display:flex; flex-direction:column;">
               <i class="ph-fill ph-chart-pie-slice bg-watermark"></i>
@@ -1581,7 +1039,7 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
           </div>
         </div>
         
-        <!-- ===== METAS (OKRS) ===== -->
+        <!-- METAS (OKRS) -->
         <div class="sub-content" id="inicio-metas">
           <div class="panel-head">
             <div class="panel-head-text">
@@ -1626,7 +1084,6 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
     <!-- MÓDULO CLIENTES -->
     <div id="clientes" class="section-content">
       <div class="folder-body">
-        <!-- ===== CRM CLIENTES ===== -->
         <div class="sub-content" id="cli-crm">
           <div class="panel-head">
             <div class="panel-head-text">
@@ -1637,9 +1094,7 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
               <button class="btn btn-primary btn-sm" onclick="openModal('modalNuevoCliente')"><i class="ph ph-user-plus"></i> Nuevo cliente</button>
             </div>
           </div>
-
           <div class="kpi-strip" id="cliKpiStrip"></div>
-
           <div class="split-layout" style="min-height:0;">
             <div style="display:flex; flex-direction:column; min-height:0;">
               <div class="filter-bar">
@@ -1672,7 +1127,6 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
           </div>
         </div>
 
-        <!-- ===== SEGMENTACIÓN IA ===== -->
         <div class="sub-content" id="cli-seg">
           <div class="panel-head">
             <div class="panel-head-text">
@@ -1684,9 +1138,7 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
               <button class="btn btn-primary btn-sm"><i class="ph-fill ph-sparkle"></i> Re-calcular con IA</button>
             </div>
           </div>
-
           <div class="segment-grid" id="segmentGrid"></div>
-
           <div class="split-layout" style="min-height:340px;">
             <div class="soft-panel">
               <i class="ph-fill ph-target bg-watermark"></i>
@@ -1700,14 +1152,12 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
             </div>
           </div>
         </div>
-        
       </div>
     </div>
 
     <!-- MÓDULO VENTAS -->
     <div id="ventas" class="section-content">
       <div class="folder-body">
-        <!-- ===== POS ===== -->
         <div class="sub-content" id="ven-pos">
           <div class="panel-head">
             <div class="panel-head-text">
@@ -1761,7 +1211,6 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
           </div>
         </div>
 
-        <!-- ===== HISTORIAL ===== -->
         <div class="sub-content" id="ven-hist">
           <div class="panel-head">
             <div class="panel-head-text">
@@ -1801,8 +1250,6 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
     <!-- MÓDULO CATÁLOGO -->
     <div id="catalogo" class="section-content">
       <div class="folder-body">
-        
-        <!-- ===== CATÁLOGO GENERAL ===== -->
         <div class="sub-content" id="cat-comp">
           <div class="panel-head">
             <div class="panel-head-text">
@@ -1837,11 +1284,9 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
           </div>
           
           <!-- GRID DE PRODUCTOS (6 Columnas) -->
-          <div class="product-grid-6" id="inventoryGrid">
-          </div>
+          <div class="product-grid-6" id="inventoryGrid"></div>
         </div>
 
-        <!-- ===== ESTADÍSTICAS DEL CATÁLOGO ===== -->
         <div class="sub-content" id="cat-est">
           <div class="panel-head">
             <div class="panel-head-text">
@@ -1881,14 +1326,13 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
             </div>
           </div>
         </div>
-
       </div>
     </div>
 
     <!-- MÓDULO LOGÍSTICA -->
     <div id="logistica" class="section-content">
       <div class="folder-body">
-        <!-- ===== PROVEEDORES ===== -->
+        <!-- PROVEEDORES -->
         <div class="sub-content" id="log-prov">
           <div class="panel-head">
             <div class="panel-head-text">
@@ -1924,7 +1368,7 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
           </div>
         </div>
 
-        <!-- ===== EMPRESAS COURIERS ===== -->
+        <!-- EMPRESAS COURIERS -->
         <div class="sub-content" id="log-cour">
           <div class="panel-head">
             <div class="panel-head-text">
@@ -1950,7 +1394,7 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
           </div>
         </div>
 
-        <!-- ===== AGENCIAS ===== -->
+        <!-- AGENCIAS -->
         <div class="sub-content" id="log-age">
           <div class="panel-head">
             <div class="panel-head-text">
@@ -1982,10 +1426,9 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
               <tbody id="agencyListBody"></tbody>
             </table>
           </div>
-
         </div>
 
-        <!-- ===== PLATAFORMAS ===== -->
+        <!-- PLATAFORMAS -->
         <div class="sub-content" id="log-plat">
           <div class="panel-head">
             <div class="panel-head-text">
@@ -2036,7 +1479,6 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
         </div>
       </div>
     </div>
-
 
     <!-- MÓDULO CONFIGURACIÓN -->
     <div id="configuracion" class="section-content">
@@ -2120,7 +1562,6 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
                 </div>
               </div>
 
-              <!-- Apariencia -->
               <div class="settings-pane" id="pane-apariencia">
                 <div class="settings-row"><div class="settings-row-text"><b>Modo Oscuro Automático</b><span>El sistema se adapta a la configuración del sistema operativo</span></div><div class="toggle-switch" onclick="this.classList.toggle('on')"><div class="knob"></div></div></div>
                 <div class="settings-row"><div class="settings-row-text"><b>Animaciones Fluidas</b><span>Activar efectos de transición (desactivar en equipos lentos)</span></div><div class="toggle-switch on" onclick="this.classList.toggle('on')"><div class="knob"></div></div></div>
@@ -2149,11 +1590,8 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
 
     <!-- MÓDULO: IA CLÍNICA -->
     <div id="ia-clinica" class="section-content">
-      <!-- INTERFAZ DE CHAT -->
       <div class="folder-body">
         <div class="sub-content active ai-chat-layout">
-            
-            <!-- Chat Body -->
             <div class="ai-chat-container" style="background:#fff; border-radius:24px; padding:20px; box-shadow:var(--shadow-card); border:1px solid #e5e7eb;">
                 <div class="ai-chat-messages">
                     <div class="ai-message ai-system">
@@ -2165,7 +1603,6 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
                     </div>
                 </div>
 
-                <!-- Caja de Texto Input Chat -->
                 <div class="ai-chat-input-wrapper">
                     <input type="text" placeholder="Escribe tu consulta médica o comando aquí..." id="aiInputText">
                     <button onclick="playSound('click'); document.getElementById('aiInputText').value = ''; showToast('Mensaje enviado a IA');" title="Enviar Mensaje">
@@ -2174,7 +1611,6 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
                 </div>
             </div>
             
-            <!-- Side Panel Sugerencias -->
             <div class="ai-sidebar" style="display:flex; flex-direction:column; gap:15px;">
                 <div class="soft-panel" style="padding:15px;">
                     <i class="ph-fill ph-lightbulb bg-watermark"></i>
@@ -2191,11 +1627,9 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
                     <p style="font-size:0.8rem; color:var(--text-muted);">El historial de sesiones IA se sincroniza con Google Sheets.</p>
                 </div>
             </div>
-            
         </div>
       </div>
     </div>
-
   </main>
 
   <!-- ===== MODALES COMPLETOS Y EXPANDIDOS ===== -->
@@ -2494,35 +1928,30 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
     </div>
   </div>
 
-  <!-- MODAL: DETALLES PLATAFORMA (EXPANDIDO) -->
+  <!-- MODAL: DETALLES PLATAFORMA -->
   <div class="modal-overlay" id="modalDetallesPlataforma">
     <div class="modal-box modal-xl">
       <div class="modal-head">
         <h3 id="platDetTitle" style="font-size: 1.8rem; margin: 0;">Detalles de la Plataforma</h3>
         <button class="modal-close" onclick="closeModal('modalDetallesPlataforma')"><i class="ph ph-x"></i></button>
       </div>
-
-      <div id="platDetContent">
-        <!-- Contenido inyectado dinámicamente mediante JS -->
-      </div>
+      <div id="platDetContent"></div>
     </div>
   </div>
 
-  <!-- MODAL: RECIBO (NUEVO) -->
+  <!-- MODAL: RECIBO -->
   <div class="modal-overlay" id="modalRecibo">
     <div class="modal-box">
       <div class="modal-head">
         <h3 style="margin:0;">Comprobante de Venta</h3>
         <button class="modal-close" onclick="closeModal('modalRecibo')"><i class="ph ph-x"></i></button>
       </div>
-      <div id="reciboContent" style="padding: 20px; background: #fff; border: 1px dashed var(--neutral-line); font-family: monospace; border-radius: 8px;">
-        <!-- Factura inyectada por JS -->
-      </div>
+      <div id="reciboContent" style="padding: 20px; background: #fff; border: 1px dashed var(--neutral-line); font-family: monospace; border-radius: 8px;"></div>
       <button class="btn btn-primary" style="width:100%; justify-content:center; margin-top:16px;" onclick="showToast('Imprimiendo recibo...'); playSound('pop');"><i class="ph-fill ph-printer"></i> Imprimir Comprobante</button>
     </div>
   </div>
 
-  <!-- MODAL: REGISTRAR GASTO (NUEVO) -->
+  <!-- MODAL: REGISTRAR GASTO -->
   <div class="modal-overlay" id="modalNuevoGasto">
     <div class="modal-box">
       <div class="modal-head">
@@ -2657,7 +2086,7 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
     </div>
   </div>
 
-  <!-- MODAL: NUEVA EMPRESA COURIER (CONTRAENTREGA) -->
+  <!-- MODAL: NUEVA EMPRESA COURIER -->
   <div class="modal-overlay" id="modalNuevoCourier">
     <div class="modal-box modal-large">
       <div class="modal-head">
@@ -2743,9 +2172,7 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
                 <th></th>
               </tr>
             </thead>
-            <tbody id="courierCoverageBody">
-              <!-- Filas insertadas con JS -->
-            </tbody>
+            <tbody id="courierCoverageBody"></tbody>
           </table>
         </div>
       </div>
@@ -2754,7 +2181,7 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
     </div>
   </div>
 
-  <!-- MODAL: NUEVA AGENCIA (NACIONAL) -->
+  <!-- MODAL: NUEVA AGENCIA -->
   <div class="modal-overlay" id="modalNuevaAgencia">
     <div class="modal-box">
       <div class="modal-head">
@@ -2818,11 +2245,6 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
     // --- INTEGRACIÓN PARA GITHUB PAGES Y GOOGLE SHEETS ---
     const GAS_URL = "https://script.google.com/macros/s/AKfycbxewfPz9kZ1Qfof1Z9YxRGXAWa1sU81R_IHYznXIMOi2e4WKyHODUwLNYMGVukZ-1WHug/exec";
 
-    /*
-     * GitHub Pages no dispone de google.script.run.
-     * Este adaptador conserva la misma API que usa la aplicación,
-     * pero transporta las llamadas mediante fetch al Web App de Apps Script.
-     */
     window.google = window.google || {};
     window.google.script = window.google.script || {};
     window.google.script.run = window.google.script.run || (function() {
@@ -2863,7 +2285,6 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
         })
         .then(function(text) {
           let data;
-
           try {
             data = JSON.parse(text);
           } catch (parseError) {
@@ -2906,7 +2327,21 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
       return api;
     })();
 
-    // --- MOTOR DE SONIDOS (PREMIUM) ---
+    // Helper para convertir File a Base64
+    function fileToBase64(file) {
+      return new Promise((resolve, reject) => {
+        if (!file) {
+          resolve(null);
+          return;
+        }
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+      });
+    }
+
+    // --- MOTOR DE SONIDOS ---
     const AudioContext = window.AudioContext || window.webkitAudioContext;
     let audioCtx;
 
@@ -3055,9 +2490,6 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
   <script>
   (function(){
 
-    /* ============================================================
-       1. BASE DE DATOS COMPARTIDA (simulada, en memoria)
-       ============================================================ */
     const DB = {
       categories: [],
       catIcons: {
@@ -3090,13 +2522,9 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
 
     window.APP_DB = DB;
 
-    /* ============================================================
-       2. UTILIDADES
-       ============================================================ */
     function money(n){ return 'S/ ' + Number(n).toLocaleString('es-PE', {minimumFractionDigits:2, maximumFractionDigits:2}); }
     function moneyShort(n){ return 'S/ ' + Number(n).toLocaleString('es-PE', {maximumFractionDigits:0}); }
     function initials(name){ return name.split(' ').filter(Boolean).slice(0,2).map(w=>w[0]).join('').toUpperCase(); }
-    function el(html){ const d = document.createElement('div'); d.innerHTML = html.trim(); return d.firstChild; }
     function fmtDate(d){ const dt = new Date(d+'T00:00:00'); return dt.toLocaleDateString('es-PE', {day:'2-digit', month:'short'}); }
 
     function animateCount(elementId, endValue, opts){
@@ -3136,9 +2564,6 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
       if (e.target.classList && e.target.classList.contains('modal-overlay')) e.target.classList.remove('active');
     });
 
-    function segmentColor(seg){
-      return {VIP:'#106FEB', Frecuente:'#8B5CF6', Nuevo:'#F59E0B', 'En riesgo':'#F43F5E'}[seg] || '#6b7280';
-    }
     function segmentBadgeClass(seg){
       return {VIP:'badge-blue', Frecuente:'badge-info', Nuevo:'badge-warn', 'En riesgo':'badge-danger'}[seg] || 'badge-neutral';
     }
@@ -3153,10 +2578,9 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
       const time = new Date().toLocaleTimeString('es-PE', {hour: '2-digit', minute:'2-digit'});
       DB.activity.unshift({ title, desc, icon, color, bg, time });
       if(DB.activity.length > 20) DB.activity.pop();
-      renderDashboard(); // Update view
+      renderDashboard();
     };
 
-    /* Funciones Adicionales Sorpresa */
     window.exportToMetaAds = function() {
         showToast('Preparando lista encriptada de clientes (Hashed Data)...');
         setTimeout(() => showToast('Archivo CSV generado para Públicos Similares de Meta'), 2000);
@@ -3186,27 +2610,13 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
         openModal('modalRecibo');
     };
 
-    window.savePlatNotes = function(id) {
-        const notes = document.getElementById('platNotesArea').value;
-        const p = DB.platforms.find(x => x.id === id);
-        if(p) {
-            p.notes = notes;
-            showToast('Notas de plataforma guardadas');
-        }
-    };
-
-
-    /* ============================================================
-       3. RENDER: DASHBOARD
-       ============================================================ */
     function renderDashboard(){
-      // Generate synthetic metrics for display if empty to ensure dashboard works
       if (!DB.salesTrend30.length && DB.salesHistory.length > 0) {
           DB.salesTrend30 = Array(30).fill(0);
           DB.revenueByDay = Array(7).fill(0);
           DB.salesHistory.forEach(s => {
               if (s.status === 'Completado') {
-                  DB.salesTrend30[29] += s.total; // Dump all to today for visual simplicity
+                  DB.salesTrend30[29] += s.total;
                   DB.revenueByDay[6] += s.total;
               }
           });
@@ -3299,9 +2709,6 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
       document.getElementById(containerId).innerHTML = svg + legend;
     }
 
-    /* ============================================================
-       4. RENDER: ESTADÍSTICAS DE VENTAS Y PRODUCTOS
-       ============================================================ */
     function renderSalesStats(){
       const totalRevenue = DB.revenueByDay.reduce((a,b)=>a+b,0) * 4.3;
       const totalOrders = DB.sellers.reduce((a,s)=>a+s.orders,0);
@@ -3340,9 +2747,6 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
         </div>`).join('');
     }
 
-    /* ============================================================
-       5. RENDER: CRM CLIENTES
-       ============================================================ */
     function renderClientKpis(){
       const total = DB.clients.length;
       const vip = DB.clients.filter(c=>c.segment==='VIP').length;
@@ -3482,9 +2886,6 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
       showToast('Cliente guardado');
     };
 
-    /* ============================================================
-       6. RENDER: SEGMENTACIÓN IA (RFM)
-       ============================================================ */
     const segmentMeta = {
       VIP: {color:'#106FEB', icon:'ph-crown-simple', desc:'Compran seguido y gastan más del promedio. Prioridad de atención.'},
       Frecuente: {color:'#8B5CF6', icon:'ph-repeat', desc:'Compran con regularidad, potencial para subir a VIP.'},
@@ -3522,9 +2923,6 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
       renderDonut('segmentDonut', donutItems);
     }
 
-    /* ============================================================
-       7. RENDER: POS Y CHECKOUT
-       ============================================================ */
     function renderPosGrid(){
       const search = (document.getElementById('posSearchInput')?.value || '').toLowerCase();
       const grid = document.getElementById('posProductGrid');
@@ -3797,9 +3195,6 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
         }
     };
 
-    /* ============================================================
-       8. RENDER: HISTORIAL DE VENTAS
-       ============================================================ */
     let salesHistoryData = DB.salesHistory;
 
     function renderSalesHistory(){
@@ -3831,9 +3226,6 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
       ]);
     }
 
-    /* ============================================================
-       9. RENDER: COTIZACIONES (LOCAL Y CLOUD)
-       ============================================================ */
     window.createQuote = function(){
       const client = document.getElementById('fClienteCot')?.value || '';
       const total = parseFloat(document.getElementById('fMontoCot')?.value || 0);
@@ -3870,9 +3262,6 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
       renderAll();
     };
 
-    /* ============================================================
-       11. RENDER: CATÁLOGO GENERAL (NUEVA VISTA TARJETAS 6 COLS COMPACTA)
-       ============================================================ */
     let isProdEditMode = false;
 
     window.toggleProdEditMode = function() {
@@ -3951,7 +3340,7 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
       openModal('modalNuevoProducto');
     };
 
-    window.saveProduct = function(){
+    window.saveProduct = async function(){
       const id = document.getElementById('fProdId').value;
       const name = document.getElementById('fProdNombre')?.value.trim();
       const price = parseFloat(document.getElementById('fProdPrecio')?.value || 0);
@@ -3959,9 +3348,9 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
       if (!name || !price){ showToast('Completa nombre y precio de venta'); return; }
 
       const fileInput = document.getElementById('fProdImg');
-      let imgUrl = '';
+      let base64Img = null;
       if(fileInput.files && fileInput.files[0]) {
-          imgUrl = URL.createObjectURL(fileInput.files[0]);
+          base64Img = await fileToBase64(fileInput.files[0]);
       }
 
       const productData = {
@@ -3986,19 +3375,19 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
         sales30: 0
       };
 
+      if (base64Img) {
+          productData.image = base64Img;
+      }
+
       if(id) {
           const index = DB.products.findIndex(x => x.id === id);
           if(index !== -1) {
-              if(!imgUrl) productData.image = DB.products[index].image;
-              else productData.image = imgUrl;
-              
+              if(!base64Img) productData.image = DB.products[index].image;
               productData.sales30 = DB.products[index].sales30 || 0;
               productData.minStock = DB.products[index].minStock || 5;
-              
               DB.products[index] = { ...DB.products[index], ...productData };
           }
       } else {
-          if(imgUrl) productData.image = imgUrl;
           DB.products.unshift(productData);
       }
       
@@ -4006,7 +3395,11 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
 
       if (typeof google !== 'undefined' && google.script && google.script.run) {
           google.script.run
-              .withSuccessHandler(function(){
+              .withSuccessHandler(function(res){
+                  if(res && res.image) {
+                      productData.image = res.image;
+                      renderInventoryTable();
+                  }
                   showToast(id ? 'Producto actualizado en Sheets' : 'Producto guardado en Sheets');
               })
               .withFailureHandler(function(err){
@@ -4063,10 +3456,10 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
                         <i class="ph-fill ${meta.icon}"></i>`;
               
               const actionButtons = isProdEditMode ? `
-                 <div style="display:flex; gap:6px; margin-top:10px; border-top:1px solid var(--neutral-line); padding-top:10px;">
+                  <div style="display:flex; gap:6px; margin-top:10px; border-top:1px solid var(--neutral-line); padding-top:10px;">
                     <button class="btn btn-outline btn-sm" style="flex:1; justify-content:center;" onclick="openProductModal('${p.id}')"><i class="ph ph-pencil-simple"></i> Editar</button>
                     <button class="btn btn-outline btn-sm btn-danger-outline" style="flex:0 0 40px; justify-content:center; padding:0;" onclick="deleteProduct('${p.id}')"><i class="ph ph-trash"></i></button>
-                 </div>` : '';
+                  </div>` : '';
 
               return `
               <div class="entity-card" style="padding: 1rem; cursor:default; display:flex; flex-direction:column; gap:4px; height: 100%; box-shadow: 0 4px 15px rgba(0,0,0,0.04); border-radius: 20px;">
@@ -4104,9 +3497,6 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
       }
     }
 
-    /* ============================================================
-       12. RENDER Y CRUD: PROVEEDORES (LOGÍSTICA)
-       ============================================================ */
     let currentProvView = 'grid';
     let isProvEditMode = false;
 
@@ -4369,15 +3759,15 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
         }
     };
 
-    window.saveProv = function() {
+    window.saveProv = async function() {
         const id = document.getElementById('fProvId').value;
         const name = document.getElementById('fProvNombre').value.trim();
         if(!name) { showToast('El nombre del proveedor es obligatorio'); return; }
 
         const fileInput = document.getElementById('fProvLogo');
-        let logoUrl = '';
+        let base64Logo = null;
         if(fileInput.files && fileInput.files[0]) {
-            logoUrl = URL.createObjectURL(fileInput.files[0]);
+            base64Logo = await fileToBase64(fileInput.files[0]);
         }
 
         const provData = {
@@ -4406,19 +3796,19 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
             productsCount: 0
         };
 
+        if (base64Logo) {
+            provData.logo = base64Logo;
+        }
+
         if(id) {
             const index = DB.providers.findIndex(x => x.id === id);
             if(index !== -1) {
-                if(!logoUrl) provData.logo = DB.providers[index].logo;
-                else provData.logo = logoUrl;
-                
+                if(!base64Logo) provData.logo = DB.providers[index].logo;
                 provData.rating = DB.providers[index].rating || 5;
                 provData.productsCount = DB.providers[index].productsCount || 0;
-                
                 DB.providers[index] = { ...DB.providers[index], ...provData };
             }
         } else {
-            if(logoUrl) provData.logo = logoUrl;
             DB.providers.unshift(provData);
         }
         
@@ -4426,7 +3816,13 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
 
         if (typeof google !== 'undefined' && google.script && google.script.run) {
             google.script.run
-                .withSuccessHandler(function(){ showToast(id ? 'Proveedor actualizado en Sheets' : 'Proveedor guardado en Sheets'); })
+                .withSuccessHandler(function(res){
+                    if (res && res.logo) {
+                        provData.logo = res.logo;
+                        renderProviders();
+                    }
+                    showToast(id ? 'Proveedor actualizado en Sheets' : 'Proveedor guardado en Sheets');
+                })
                 .withFailureHandler(function(err){ console.error(err); showToast('Error al guardar en Sheets'); })
                 .guardarProveedor(provData);
         }
@@ -4437,7 +3833,7 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
     };
 
     /* ============================================================
-       12b. RENDER Y CRUD: PLATAFORMAS (LOGÍSTICA) - CON MULTIDATOS
+       12b. RENDER Y CRUD: PLATAFORMAS (LOGÍSTICA)
        ============================================================ */
     let currentPlatView = 'grid';
     let isPlatEditMode = false;
@@ -4596,7 +3992,6 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
         
         document.getElementById('platDetTitle').textContent = 'Ficha de Plataforma: ' + p.name;
         
-        // Relaciones con Proveedores y Productos
         const platProvs = DB.providers.filter(prov => prov.platformId === id);
         const provIds = platProvs.map(pr => pr.id);
         const platProds = DB.products.filter(prod => provIds.includes(prod.providerId) || prod.platformId === id);
@@ -4707,16 +4102,6 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
         openModal('modalDetallesPlataforma');
     };
 
-    window.savePlatNotes = function(id) {
-        const notes = document.getElementById('platNotesArea').value;
-        const p = DB.platforms.find(x => x.id === id);
-        if(p) {
-            p.notes = notes;
-            showToast('Notas de plataforma guardadas exitosamente');
-            logActivity('Plataformas', `Actualización de notas en plataforma: ${p.name}`, 'ph-notebook', '#106FEB', '#dbeafe');
-        }
-    };
-
     window.calculatePlatSales = function() {
         if(!currentPlatDetailId) return;
         const startStr = document.getElementById('platDetStart').value;
@@ -4731,7 +4116,6 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
             const diffTime = Math.abs(date2 - date1);
             const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
             
-            // Simulación IA para visualización impactante
             const randomFactor = (currentPlatDetailId.charCodeAt(0) % 5) + 1;
             salesCount = Math.floor((diffDays + 1) * randomFactor * 1.8);
             salesVal = salesCount * 115.50; 
@@ -4789,16 +4173,16 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
       }
     };
 
-    window.savePlatform = function() {
+    window.savePlatform = async function() {
       const id = document.getElementById('fPlatId').value;
       const name = document.getElementById('fPlatNombre').value.trim();
       
       if(!name) { showToast('El nombre de la plataforma es obligatorio'); return; }
 
       const fileInput = document.getElementById('fPlatLogo');
-      let logoUrl = '';
+      let base64Logo = null;
       if(fileInput.files && fileInput.files[0]) {
-         logoUrl = URL.createObjectURL(fileInput.files[0]);
+          base64Logo = await fileToBase64(fileInput.files[0]);
       }
 
       const platData = {
@@ -4816,15 +4200,17 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
         color: '#106FEB' 
       };
 
+      if (base64Logo) {
+          platData.logo = base64Logo;
+      }
+
       if(id) {
         const index = DB.platforms.findIndex(x => x.id === id);
         if(index !== -1) {
-          if(!logoUrl) platData.logo = DB.platforms[index].logo;
-          else platData.logo = logoUrl;
+          if(!base64Logo) platData.logo = DB.platforms[index].logo;
           DB.platforms[index] = { ...DB.platforms[index], ...platData };
         }
       } else {
-        if(logoUrl) platData.logo = logoUrl;
         DB.platforms.unshift(platData); 
       }
 
@@ -4832,7 +4218,13 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
 
       if (typeof google !== 'undefined' && google.script && google.script.run) {
           google.script.run
-              .withSuccessHandler(function(){ showToast(id ? 'Plataforma actualizada en Sheets' : 'Plataforma guardada en Sheets'); })
+              .withSuccessHandler(function(res){
+                  if(res && res.logo) {
+                      platData.logo = res.logo;
+                      renderPlatforms();
+                  }
+                  showToast(id ? 'Plataforma actualizada en Sheets' : 'Plataforma guardada en Sheets');
+              })
               .withFailureHandler(function(err){ console.error(err); showToast('Error al guardar en Sheets'); })
               .guardarPlataforma(platData);
       }
@@ -4923,15 +4315,15 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
         }
     };
 
-    window.saveCourier = function() {
+    window.saveCourier = async function() {
         const id = document.getElementById('fCourierId').value;
         const name = document.getElementById('fCourierNombre').value.trim();
         if(!name) { showToast('El nombre del courier es obligatorio'); return; }
 
         const fileInput = document.getElementById('fCourierLogo');
-        let logoUrl = '';
+        let base64Logo = null;
         if(fileInput.files && fileInput.files[0]) {
-            logoUrl = URL.createObjectURL(fileInput.files[0]);
+            base64Logo = await fileToBase64(fileInput.files[0]);
         }
 
         const coverageRows = document.querySelectorAll('#courierCoverageBody tr');
@@ -4962,19 +4354,19 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
             zone: coverageData.length > 0 ? coverageData[0].dept : 'Nacional' 
         };
 
+        if (base64Logo) {
+            courierData.logo = base64Logo;
+        }
+
         if(id) {
             const index = DB.couriers.findIndex(x => x.id === id);
             if(index !== -1) {
-                if(!logoUrl) courierData.logo = DB.couriers[index].logo;
-                else courierData.logo = logoUrl;
-                
+                if(!base64Logo) courierData.logo = DB.couriers[index].logo;
                 courierData.deliveries = DB.couriers[index].deliveries || 0;
                 courierData.rating = DB.couriers[index].rating || 5;
-                
                 DB.couriers[index] = { ...DB.couriers[index], ...courierData };
             }
         } else {
-            if(logoUrl) courierData.logo = logoUrl;
             DB.couriers.unshift(courierData);
         }
 
@@ -4982,7 +4374,13 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
 
         if (typeof google !== 'undefined' && google.script && google.script.run) {
             google.script.run
-                .withSuccessHandler(function(){ showToast(id ? 'Courier actualizado en Sheets' : 'Courier guardado en Sheets'); })
+                .withSuccessHandler(function(res){
+                    if(res && res.logo) {
+                        courierData.logo = res.logo;
+                        renderCouriers();
+                    }
+                    showToast(id ? 'Courier actualizado en Sheets' : 'Courier guardado en Sheets');
+                })
                 .withFailureHandler(function(err){ console.error(err); showToast('Error al guardar en Sheets'); })
                 .guardarCourier(courierData);
         }
@@ -5086,7 +4484,6 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
         </div>`).join('') || '<div style="padding:1rem; text-align:center; color:var(--text-muted); font-size:0.8rem;">No hay zonas de cobertura registradas.</div>';
     }
 
-
     /* ============================================================
        13b. RENDER Y CRUD: AGENCIAS
        ============================================================ */
@@ -5124,9 +4521,6 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
         }
     };
 
-    /* ============================================================
-       AGENCIAS — MÉTRICAS REALES DESDE VENTAS
-       ============================================================ */
     let currentAgeDetailId = null;
     let currentAgeOrdersPage = 1;
     const AGE_ORDERS_PAGE_SIZE = 6;
@@ -5536,15 +4930,15 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
         }
     };
 
-    window.saveAgency = function() {
+    window.saveAgency = async function() {
         const id = document.getElementById('fAgeId').value;
         const name = document.getElementById('fAgeNombre').value.trim();
         if(!name) { showToast('El nombre de la agencia es obligatorio'); return; }
 
         const fileInput = document.getElementById('fAgeLogo');
-        let logoUrl = '';
+        let base64Logo = null;
         if(fileInput.files && fileInput.files[0]) {
-            logoUrl = URL.createObjectURL(fileInput.files[0]);
+            base64Logo = await fileToBase64(fileInput.files[0]);
         }
 
         const ageData = {
@@ -5561,15 +4955,17 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
             color: '#106FEB'
         };
 
+        if (base64Logo) {
+            ageData.logo = base64Logo;
+        }
+
         if(id) {
             const index = DB.agencies.findIndex(x => x.id === id);
             if(index !== -1) {
-                if(!logoUrl) ageData.logo = DB.agencies[index].logo;
-                else ageData.logo = logoUrl;
+                if(!base64Logo) ageData.logo = DB.agencies[index].logo;
                 DB.agencies[index] = { ...DB.agencies[index], ...ageData };
             }
         } else {
-            if(logoUrl) ageData.logo = logoUrl;
             DB.agencies.unshift(ageData);
         }
 
@@ -5577,7 +4973,13 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
 
         if (typeof google !== 'undefined' && google.script && google.script.run) {
             google.script.run
-                .withSuccessHandler(function(){ showToast(id ? 'Agencia actualizada en Sheets' : 'Agencia guardada en Sheets'); })
+                .withSuccessHandler(function(res){
+                    if(res && res.logo) {
+                        ageData.logo = res.logo;
+                        renderAgencies();
+                    }
+                    showToast(id ? 'Agencia actualizada en Sheets' : 'Agencia guardada en Sheets');
+                })
                 .withFailureHandler(function(err){ console.error(err); showToast('Error al guardar en Sheets'); })
                 .guardarAgencia(ageData);
         }
@@ -5740,10 +5142,6 @@ table.data-table tbody tr:hover, .feed-item:hover { transform: translate3d(2px,0
 
     window.loadDataFromServer=loadDataFromServer;
     window.refreshERPData=loadDataFromServer;
-
-    /* ============================================================
-       CORRECCIÓN DE FUNCIONES DE RENDERIZADO FALTANTES
-       ============================================================ */
 
     function populatePosClientSelect(){
       const sel = document.getElementById('fClienteCot');
